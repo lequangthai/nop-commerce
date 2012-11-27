@@ -2983,5 +2983,51 @@ namespace Nop.Web.Controllers
         }
 
         #endregion
+
+        #region Gia's Code
+        [ChildActionOnly]
+        public ActionResult CategoryBestSellers(int? productThumbPictureSize, int categoryId)
+        {
+            if (_catalogSettings.NumberOfBestsellersOnHomepage == 0)
+                return Content("");
+
+            //load and cache report
+            var report = _cacheManager.Get(ModelCacheEventConsumer.CATEGORY_BESTSELLERS_WITH_IDs + categoryId,
+                () => _orderReportService.BestSellersReportByCategory(null, null, null, null, null, categoryId, _catalogSettings.NumberOfBestsellersOnHomepage));
+            var products = new List<Product>();
+            foreach (var line in report)
+            {
+                var productVariant = _productService.GetProductVariantById(line.ProductVariantId);
+                if (productVariant != null)
+                {
+                    var product = productVariant.Product;
+                    if (product != null)
+                    {
+                        bool contains = false;
+                        foreach (var p in products)
+                        {
+                            if (p.Id == product.Id)
+                            {
+                                contains = true;
+                                break;
+                            }
+                        }
+                        if (!contains)
+                            products.Add(product);
+                    }
+                }
+            }
+
+
+            var model = new HomePageBestsellersModel()
+            {
+                UseSmallProductBox = _catalogSettings.UseSmallProductBoxOnHomePage,
+            };
+            model.Products = PrepareProductOverviewModels(products,
+                !_catalogSettings.UseSmallProductBoxOnHomePage, true, productThumbPictureSize)
+                .ToList();
+            return PartialView(model);
+        }
+        #endregion
     }
 }

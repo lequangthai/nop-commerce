@@ -296,6 +296,15 @@ namespace Nop.Admin.Controllers
                 var variant = model.ToEntity();
                 variant.CreatedOnUtc = DateTime.UtcNow;
                 variant.UpdatedOnUtc = DateTime.UtcNow;
+                //caculator discount
+                if (variant.OldPrice > 0 && variant.Price >= 0 && variant.Price <= variant.OldPrice)
+                {
+                    variant.PercentDiscount = Math.Round((variant.Price / variant.OldPrice) * 100, 0);
+                }
+                else
+                {
+                    variant.PercentDiscount = null;
+                }
                 //insert variant
                 _productService.InsertProductVariant(variant);
                 //locales
@@ -379,6 +388,15 @@ namespace Nop.Admin.Controllers
                 var prevStockQuantity = variant.StockQuantity;
                 variant = model.ToEntity(variant);
                 variant.UpdatedOnUtc = DateTime.UtcNow;
+                //caculator discount
+                if (variant.OldPrice > 0 && variant.Price >= 0 && variant.Price <= variant.OldPrice)
+                {
+                    variant.PercentDiscount = Math.Round((variant.Price / variant.OldPrice) * 100, 0);
+                }
+                else
+                {
+                    variant.PercentDiscount = null;
+                }
                 //save variant
                 _productService.UpdateProductVariant(variant);
                 //locales

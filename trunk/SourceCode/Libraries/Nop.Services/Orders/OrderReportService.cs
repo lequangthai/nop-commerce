@@ -24,6 +24,8 @@ namespace Nop.Services.Orders
         private readonly IRepository<OrderProductVariant> _opvRepository;
         private readonly IRepository<Product> _productRepository;
         private readonly IRepository<ProductVariant> _productVariantRepository;
+        private readonly IRepository<ProductCategory> _productCategoryRepository;
+        private readonly IRepository<Category> _categoryRepository;
 
         private readonly IDateTimeHelper _dateTimeHelper;
         private readonly IProductService _productService;
@@ -45,12 +47,17 @@ namespace Nop.Services.Orders
             IRepository<OrderProductVariant> opvRepository,
             IRepository<Product> productRepository,
             IRepository<ProductVariant> productVariantRepository,
+            IRepository<ProductCategory> productCategoryRepository,
+            IRepository<Category> cateRepository,
             IDateTimeHelper dateTimeHelper, IProductService productService)
         {
             this._orderRepository = orderRepository;
             this._opvRepository = opvRepository;
             this._productRepository = productRepository;
             this._productVariantRepository = productVariantRepository;
+            this._productCategoryRepository = productCategoryRepository;
+            this._categoryRepository = cateRepository;
+
             this._dateTimeHelper = dateTimeHelper;
             this._productService = productService;
         }
@@ -234,6 +241,106 @@ namespace Nop.Services.Orders
                              TotalQuantity = g.Sum(x => x.Quantity),
                          };
             
+            switch (orderBy)
+            {
+                case 1:
+                    {
+                        query2 = query2.OrderByDescending(x => x.TotalQuantity);
+                    }
+                    break;
+                case 2:
+                    {
+                        query2 = query2.OrderByDescending(x => x.TotalAmount);
+                    }
+                    break;
+                default:
+                    throw new ArgumentException("Wrong orderBy parameter", "orderBy");
+            }
+
+            if (recordsToReturn != 0 && recordsToReturn != int.MaxValue)
+                query2 = query2.Take(recordsToReturn);
+
+            var result = query2.ToList().Select(x =>
+            {
+                return new BestsellersReportLine()
+                {
+                    ProductVariantId = x.ProductVariantId,
+                    TotalAmount = x.TotalAmount,
+                    TotalQuantity = x.TotalQuantity
+                };
+            }).ToList();
+
+            return result;
+        }
+
+        private IList<int> BuildCategoriesTree(int rootCategoryId)
+        {
+            var list = new List<int> {rootCategoryId};
+
+            var childrenId = from c in _categoryRepository.Table where c.ParentCategoryId == rootCategoryId select c.Id;
+            foreach (var childId in childrenId)
+            {
+                list = GetChildrenOfCategory(childId, list);
+            }
+
+            return list;
+        }
+
+        private List<int> GetChildrenOfCategory(int categoryId, IList<int> categoryIds)
+        {
+            categoryIds.Add(categoryId);
+
+            var childrenId = from c in _categoryRepository.Table where c.ParentCategoryId == categoryId  select c.Id;
+            foreach (var childId in childrenId)
+            {
+                categoryIds.Add(childId);
+            }
+
+            return categoryIds.ToList();
+        }
+
+        public IList<BestsellersReportLine> BestSellersReportByCategory(DateTime? startTime, DateTime? endTime, OrderStatus? os, PaymentStatus? ps, ShippingStatus? ss, int categoryId, int recordsToReturn = 5, int orderBy = 1, bool showHidden = false)
+        {
+            int? orderStatusId = null;
+            if (os.HasValue)
+                orderStatusId = (int)os.Value;
+
+            int? paymentStatusId = null;
+            if (ps.HasValue)
+                paymentStatusId = (int)ps.Value;
+
+            int? shippingStatusId = null;
+            if (ss.HasValue)
+                shippingStatusId = (int)ss.Value;
+
+            var categoryIds = BuildCategoriesTree(categoryId);
+
+            var query1 = from opv in _opvRepository.Table
+                         join o in _orderRepository.Table on opv.OrderId equals o.Id
+                         join pv in _productVariantRepository.Table on opv.ProductVariantId equals pv.Id
+                         join p in _productRepository.Table on pv.ProductId equals p.Id
+                         join pc in _productCategoryRepository.Table on p.Id equals pc.ProductId
+                         where (!startTime.HasValue || startTime.Value <= o.CreatedOnUtc) &&
+                         (!endTime.HasValue || endTime.Value >= o.CreatedOnUtc) &&
+                         (!orderStatusId.HasValue || orderStatusId == o.OrderStatusId) &&
+                         (!paymentStatusId.HasValue || paymentStatusId == o.PaymentStatusId) &&
+                         (!shippingStatusId.HasValue || shippingStatusId == o.ShippingStatusId) &&
+                         (!o.Deleted) &&
+                         (!p.Deleted) &&
+                         (!pv.Deleted) &&
+                         (showHidden || p.Published) &&
+                         (showHidden || pv.Published) && categoryIds.Contains(pc.CategoryId)
+                         select opv;
+
+            var query2 = from opv in query1
+                         group opv by opv.ProductVariantId into g
+                         select new
+                         {
+                             ProductVariantId = g.Key,
+                             TotalAmount = g.Sum(x => x.PriceExclTax),
+                             TotalQuantity = g.Sum(x => x.Quantity),
+                         };
+
             switch (orderBy)
             {
                 case 1:

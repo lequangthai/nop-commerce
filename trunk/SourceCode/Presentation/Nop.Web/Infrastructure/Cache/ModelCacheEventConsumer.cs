@@ -242,6 +242,8 @@ namespace Nop.Web.Infrastructure.Cache
         public const string HOMEPAGE_BESTSELLERS_IDS_KEY = "nop.pres.bestsellers.homepage";
         public const string HOMEPAGE_BESTSELLERS_IDS_PATTERN_KEY = "nop.pres.bestsellers.homepage";
 
+        public const string CATEGORY_BESTSELLERS_WITH_IDs = "gia.nop.category.bestsellers.ids.";
+
         /// <summary>
         /// Key for default product picture caching
         /// </summary>

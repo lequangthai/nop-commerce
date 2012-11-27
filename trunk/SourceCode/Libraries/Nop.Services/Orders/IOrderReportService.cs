@@ -51,6 +51,23 @@ namespace Nop.Services.Orders
         IList<BestsellersReportLine> BestSellersReport(DateTime? startTime,
             DateTime? endTime, OrderStatus? os, PaymentStatus? ps, ShippingStatus? ss,
             int recordsToReturn = 5, int orderBy = 1, bool showHidden = false);
+
+        /// <summary>
+        /// Get best sellers report
+        /// </summary>
+        /// <param name="startTime">Order start time; null to load all</param>
+        /// <param name="endTime">Order end time; null to load all</param>
+        /// <param name="os">Order status; null to load all records</param>
+        /// <param name="ps">Order payment status; null to load all records</param>
+        /// <param name="ss">Shipping status; null to load all records</param>
+        /// <param name="categoryId">product best sellers of category</param>
+        /// <param name="recordsToReturn">Records to return</param>
+        /// <param name="orderBy">1 - order by quantity, 2 - order by total amount</param>
+        /// <param name="showHidden">A value indicating whether to show hidden records</param>
+        /// <returns>Result</returns>
+        IList<BestsellersReportLine> BestSellersReportByCategory(DateTime? startTime,
+            DateTime? endTime, OrderStatus? os, PaymentStatus? ps, ShippingStatus? ss, int categoryId,
+            int recordsToReturn = 5, int orderBy = 1, bool showHidden = false);
         
         /// <summary>
         /// Gets a list of products purchased by other customers who purchased the above

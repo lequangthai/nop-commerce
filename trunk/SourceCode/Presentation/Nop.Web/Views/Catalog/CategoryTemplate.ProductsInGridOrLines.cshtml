@@ -32,7 +32,7 @@
                 <li>
                     @if (isLastCategory)
                     {
-                        @*uncomment to disable clickable link
+@*uncomment to disable clickable link
                         <strong>@cat.Name</strong>*@
                         <strong><a href="@Url.RouteUrl("Category", new { categoryId = cat.Id, SeName = cat.SeName })" title="@cat.Name">@cat.Name</a></strong>
                     }
@@ -73,20 +73,20 @@
         {
             <div class="sub-category-grid">
                 @(Html.DataList<CategoryModel.SubCategoryModel>(Model.SubCategories, 3,
-                @<div class="item-box">
-                    <div class="sub-category-item">
-                        <h2 class="category-title">
-                            <a href="@Url.RouteUrl("Category", new { categoryId = item.Id, SeName = item.SeName })" title="@item.PictureModel.Title">
-                                @item.Name</a>
-                        </h2>
-                        <div class="picture">
-                            <a href="@Url.RouteUrl("Category", new { categoryId = item.Id, SeName = item.SeName })" title="@item.PictureModel.Title">
-                                <img alt="@item.PictureModel.AlternateText" src="@item.PictureModel.ImageUrl"
-                                    title="@item.PictureModel.Title" /></a>
-                        </div>
-                    </div>
-                </div>
-            ))
+                                                                @<div class="item-box">
+                                                                    <div class="sub-category-item">
+                                                                        <h2 class="category-title">
+                                                                            <a href="@Url.RouteUrl("Category", new { categoryId = item.Id, SeName = item.SeName })" title="@item.PictureModel.Title">
+                                                                                @item.Name</a>
+                                                                        </h2>
+                                                                        <div class="picture">
+                                                                            <a href="@Url.RouteUrl("Category", new { categoryId = item.Id, SeName = item.SeName })" title="@item.PictureModel.Title">
+                                                                                <img alt="@item.PictureModel.AlternateText" src="@item.PictureModel.ImageUrl"
+                                                                                      title="@item.PictureModel.Title" /></a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                      ))
             </div>
             <div class="clear">
             </div>
@@ -101,10 +101,10 @@
                 </div>
                 <div>
                     @(Html.DataList<ProductOverviewModel>(Model.FeaturedProducts, 2,
-                    @<div class="item-box">
-                        @Html.Partial("_ProductBox", @item)
-                    </div>
-                ))
+                                                          @<div class="item-box">
+                                                              @Html.Partial("_ProductBox", @item)
+                                                          </div>
+                          ))
                 </div>
             </div>
             <div class="clear">
@@ -119,7 +119,7 @@
                 @Html.DropDownList("products-viewmode", Model.PagingFilteringContext.AvailableViewModes, new { onchange = "setLocation(this.value);" })
             </div>
         }
-        @*sorting*@
+@*sorting*@
         @if (Model.PagingFilteringContext.AllowProductSorting && Model.Products.Count > 0)
         {
             <div class="product-sorting">
@@ -127,7 +127,7 @@
                 @Html.DropDownList("products-orderby", Model.PagingFilteringContext.AvailableSortOptions, new { onchange = "setLocation(this.value);" })
             </div>
         }
-        @*page size*@
+@*page size*@
         @if (Model.PagingFilteringContext.AllowCustomersToSelectPageSize && Model.Products.Count > 0)
         {
             <div class="product-page-size">
@@ -140,7 +140,7 @@
         @Html.Widget("categorydetails_before_filters")
         @*filtering*@
         @if (Model.PagingFilteringContext.PriceRangeFilter.Enabled ||
-        Model.PagingFilteringContext.SpecificationFilter.Enabled)
+             Model.PagingFilteringContext.SpecificationFilter.Enabled)
         {
             <div class="product-filters">
                 <div class="filter-title">
@@ -168,7 +168,7 @@
         {
             if (Model.PagingFilteringContext.ViewMode == "list")
             {
-            @*list mode*@
+@*list mode*@
             <div class="product-list">
                 @foreach (var product in Model.Products)
                 {
@@ -180,13 +180,13 @@
             }
             else
             {
-            @*grid mode*@
+@*grid mode*@
             <div class="product-grid">
                 @(Html.DataList<ProductOverviewModel>(Model.Products, 2,
-                        @<div class="item-box">
-                            @Html.Partial("_ProductBox", @item)
-                        </div>
-                    ))
+                                                          @<div class="item-box">
+                                                              @Html.Partial("_ProductBox", @item)
+                                                          </div>
+                          ))
             </div>
             }
         }
@@ -197,4 +197,8 @@
         </div>
         @Html.Widget("categorydetails_bottom")
     </div>
+</div>
+
+@Html.Action("CategoryBestSellers", "Catalog", new {categoryId = Model.Id})
+<div class="clear">
 </div>

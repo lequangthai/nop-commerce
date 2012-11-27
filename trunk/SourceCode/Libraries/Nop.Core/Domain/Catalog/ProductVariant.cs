@@ -373,7 +373,10 @@ namespace Nop.Core.Domain.Catalog
         /// </summary>
         public virtual DateTime UpdatedOnUtc { get; set; }
 
-
+        /// <summary>
+        /// Gets or sets the percent of discount
+        /// </summary>
+        public virtual Nullable<decimal> PercentDiscount { get; set; }
 
 
 
