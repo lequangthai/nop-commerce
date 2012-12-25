@@ -1748,6 +1748,7 @@
     <Content Include="Views\Catalog\Gia_CategoryBestSellers.cshtml" />
     <Content Include="Views\Catalog\Gia_CategoryClearances.cshtml" />
     <Content Include="Views\Catalog\Gia_CategorySpecialAttributes.cshtml" />
+    <Content Include="Views\Catalog\Gia_HomeClearances.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

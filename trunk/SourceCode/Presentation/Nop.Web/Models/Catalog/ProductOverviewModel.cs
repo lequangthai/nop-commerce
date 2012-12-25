@@ -17,6 +17,7 @@ namespace Nop.Web.Models.Catalog
         public string ShortDescription { get; set; }
         public string FullDescription { get; set; }
         public string SeName { get; set; }
+        public string Manufacture { get; set; }
 
         //price
         public ProductPriceModel ProductPrice { get; set; }

@@ -52,6 +52,10 @@ namespace Nop.Services.Orders
             DateTime? endTime, OrderStatus? os, PaymentStatus? ps, ShippingStatus? ss,
             int recordsToReturn = 5, int orderBy = 1, bool showHidden = false);
 
+        IList<BestsellersReportLine> BestSellersReportWithPager(DateTime? startTime,
+            DateTime? endTime, OrderStatus? os, PaymentStatus? ps, ShippingStatus? ss,
+            int recordsToReturn = 5, int pageIndex = 1, int orderBy = 1, bool showHidden = false);
+
         /// <summary>
         /// Get best sellers report
         /// </summary>
@@ -73,6 +77,9 @@ namespace Nop.Services.Orders
         IList<BestsellersReportLine> BestSellersReportByCategory(DateTime? startTime,
             DateTime? endTime, OrderStatus? os, PaymentStatus? ps, ShippingStatus? ss, int categoryId, ref int totalPage,
             int recordsToReturn = 5, int pageIndex = 1, int orderBy = 1, bool showHidden = false);
+
+        IList<ClearacneReportLine> ClearancesReport(int recordsToReturn = 5, 
+            int pageIndex = 1, int orderBy = 1, bool showHidden = false);
 
         IList<ClearacneReportLine> ClearancesReportByCategory(int categoryId,
             int recordsToReturn = 5, int pageIndex = 1, int orderBy = 1, bool showHidden = false);

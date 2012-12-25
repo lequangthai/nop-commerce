@@ -239,11 +239,12 @@ namespace Nop.Web.Infrastructure.Cache
         /// <summary>
         /// Key for bestsellers identifiers displayed on the home page
         /// </summary>
-        public const string HOMEPAGE_BESTSELLERS_IDS_KEY = "nop.pres.bestsellers.homepage";
+        public const string HOMEPAGE_BESTSELLERS_IDS_KEY_PAGE = "nop.pres.bestsellers.homepage.page.";
         public const string HOMEPAGE_BESTSELLERS_IDS_PATTERN_KEY = "nop.pres.bestsellers.homepage";
 
         public const string CATEGORY_BESTSELLERS_WITH_IDs = "gia.nop.category.bestsellers.ids.";
 
+        public const string HOME_CLEARANCE_WITH_PAGEs = "gia.nop.home.clearance.pages.";
         public const string CATEGORY_CLEARANCE_WITH_IDs = "gia.nop.category.clearance.ids.";
 
         public const string CATEGORY_SPECIAL_WITH_VALUEs = "gia.nop.category.clearance.values.";
