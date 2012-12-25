@@ -1,2 +1,2 @@
 DataProvider: sqlserver
-DataConnectionString: Data Source=.\sqlexpress;Initial Catalog=db_gia;Integrated Security=False;Persist Security Info=False;User ID=sa;Password=123456;MultipleActiveResultSets=True
+DataConnectionString: Data Source=112.213.89.107;Initial Catalog=gia_test;Integrated Security=False;Persist Security Info=False;User ID=gia_user;Password=perfurm@123;MultipleActiveResultSets=True
