@@ -29,7 +29,7 @@ namespace Nop.Services.Catalog
         private const string PRODUCTVARIANTS_PATTERN_KEY = "Nop.productvariant.";
         private const string TIERPRICES_PATTERN_KEY = "Nop.tierprice.";
         #endregion
-
+        
         #region Fields
 
         private readonly IRepository<Product> _productRepository;
@@ -40,6 +40,8 @@ namespace Nop.Services.Catalog
         private readonly IRepository<LocalizedProperty> _localizedPropertyRepository;
         private readonly IRepository<ProductPicture> _productPictureRepository;
         private readonly IRepository<ProductSpecificationAttribute> _productSpecificationAttributeRepository;
+        private readonly IRepository<Category> _categoryRepository;
+        private readonly IRepository<ProductCategory> _productCategoryRepository;
         private readonly IProductAttributeService _productAttributeService;
         private readonly IProductAttributeParser _productAttributeParser;
         private readonly ILanguageService _languageService;
@@ -67,6 +69,8 @@ namespace Nop.Services.Catalog
         /// <param name="localizedPropertyRepository">Localized property repository</param>
         /// <param name="productPictureRepository">Product picture repository</param>
         /// <param name="productSpecificationAttributeRepository">Product specification attribute repository</param>
+        /// <param name="categoryRepository"> </param>
+        /// <param name="productCategoryRepository"> </param>
         /// <param name="productAttributeService">Product attribute service</param>
         /// <param name="productAttributeParser">Product attribute parser service</param>
         /// <param name="languageService">Language service</param>
@@ -85,6 +89,8 @@ namespace Nop.Services.Catalog
             IRepository<ProductPicture> productPictureRepository,
             IRepository<LocalizedProperty> localizedPropertyRepository,
             IRepository<ProductSpecificationAttribute> productSpecificationAttributeRepository,
+            IRepository<Category> categoryRepository,
+            IRepository<ProductCategory> productCategoryRepository,
             IProductAttributeService productAttributeService,
             IProductAttributeParser productAttributeParser,
             ILanguageService languageService,
@@ -102,6 +108,7 @@ namespace Nop.Services.Catalog
             this._productPictureRepository = productPictureRepository;
             this._localizedPropertyRepository = localizedPropertyRepository;
             this._productSpecificationAttributeRepository = productSpecificationAttributeRepository;
+            this._categoryRepository = categoryRepository;
             this._productAttributeService = productAttributeService;
             this._productAttributeParser = productAttributeParser;
             this._languageService = languageService;
@@ -210,6 +217,158 @@ namespace Nop.Services.Catalog
                     sortedProducts.Add(product);
             }
             return sortedProducts;
+        }
+
+        public IList<int> GetProductsBySpecialAttriubte(string attributeName, bool value, int itemsCount)
+        {
+            IQueryable<Product> query1;
+            if (value)
+            {
+                query1 = from p in _productRepository.Table
+                         join psa in _productSpecificationAttributeRepository.Table on p.Id equals psa.ProductId
+                         where (!p.Deleted) && (p.Published)
+                         && psa.SpecificationAttributeOption.SpecificationAttribute.Name.ToLower().Equals(attributeName.ToLower())
+                         && psa.SpecificationAttributeOption.Name.ToLower().Equals("true")
+                         select p;
+            }
+            else
+            {
+                query1 = from p in _productRepository.Table
+                         join psa in _productSpecificationAttributeRepository.Table on p.Id equals psa.ProductId
+                         where (!p.Deleted) && (p.Published)
+                         && psa.SpecificationAttributeOption.SpecificationAttribute.Name.ToLower().Equals(attributeName.ToLower())
+                         && psa.SpecificationAttributeOption.Name.ToLower().Equals("false")
+                         select p;
+            }
+
+            var result = query1.OrderBy(c => c.Name).Take(itemsCount).Select(c => c.Id).ToList();
+
+            return result;
+        }
+
+        public IList<int> GetProductsBySpecialAttriubte(string attributeName, bool value, int itemsCount, int pageIndex, ref int totalPage)
+        {
+            IQueryable<Product> query1;
+            if (value)
+            {
+                query1 = from p in _productRepository.Table
+                                         join psa in _productSpecificationAttributeRepository.Table on p.Id equals psa.ProductId
+                                         where (!p.Deleted) && (p.Published)
+                                         && psa.SpecificationAttributeOption.SpecificationAttribute.Name.ToLower().Equals(attributeName.ToLower())
+                                         && psa.SpecificationAttributeOption.Name.ToLower().Equals("true")
+                                         select p;
+            }
+            else
+            {
+                query1 = from p in _productRepository.Table
+                         join psa in _productSpecificationAttributeRepository.Table on p.Id equals psa.ProductId
+                         where (!p.Deleted) && (p.Published)
+                         && psa.SpecificationAttributeOption.SpecificationAttribute.Name.ToLower().Equals(attributeName.ToLower())
+                         && psa.SpecificationAttributeOption.Name.ToLower().Equals("false")
+                         select p;
+            }
+
+            var totalItems = query1.Count();
+            totalPage = totalItems/itemsCount + (totalItems%itemsCount == 0 ? 0 : 1);
+
+            var result = query1.OrderBy(c => c.Name).Skip((pageIndex - 1)*itemsCount).Take(itemsCount).Select(c => c.Id).ToList();
+
+            return result;
+        }
+
+        private IList<int> BuildCategoriesTree(int rootCategoryId)
+        {
+            var list = new List<int> { rootCategoryId };
+
+            var childrenId = from c in _categoryRepository.Table where c.ParentCategoryId == rootCategoryId select c.Id;
+            foreach (var childId in childrenId)
+            {
+                list = GetChildrenOfCategory(childId, list);
+            }
+
+            return list;
+        }
+
+        private List<int> GetChildrenOfCategory(int categoryId, IList<int> categoryIds)
+        {
+            categoryIds.Add(categoryId);
+
+            var childrenId = from c in _categoryRepository.Table where c.ParentCategoryId == categoryId select c.Id;
+            foreach (var childId in childrenId)
+            {
+                categoryIds.Add(childId);
+            }
+
+            return categoryIds.ToList();
+        }
+
+        public IList<int> GetProductsByCategoryAndSpecialAttriubte(string attributeName, int categoryId, bool value, int itemsCount)
+        {
+            var categoryIds = BuildCategoriesTree(categoryId);
+
+            IQueryable<Product> query1;
+            if (value)
+            {
+                query1 = from p in _productRepository.Table
+                         join psa in _productSpecificationAttributeRepository.Table on p.Id equals psa.ProductId
+                         join pc in _productCategoryRepository.Table on p.Id equals pc.ProductId
+                         where (!p.Deleted) && (p.Published)
+                         && categoryIds.Contains(pc.CategoryId)
+                         && psa.SpecificationAttributeOption.SpecificationAttribute.Name.ToLower().Equals(attributeName.ToLower())
+                         && psa.SpecificationAttributeOption.Name.ToLower().Equals("true")
+                         select p;
+            }
+            else
+            {
+                query1 = from p in _productRepository.Table
+                         join psa in _productSpecificationAttributeRepository.Table on p.Id equals psa.ProductId
+                         join pc in _productCategoryRepository.Table on p.Id equals pc.ProductId
+                         where (!p.Deleted) && (p.Published)
+                         && categoryIds.Contains(pc.CategoryId)
+                         && psa.SpecificationAttributeOption.SpecificationAttribute.Name.ToLower().Equals(attributeName.ToLower())
+                         && psa.SpecificationAttributeOption.Name.ToLower().Equals("false")
+                         select p;
+            }
+
+            var result = query1.OrderBy(c => c.Name).Take(itemsCount).Select(c => c.Id).ToList();
+
+            return result;
+        }
+
+        public IList<int> GetProductsByCategoryAndSpecialAttriubte(string attributeName, int categoryId, bool value, int itemsCount, int pageIndex, ref int totalPage)
+        {
+            var categoryIds = BuildCategoriesTree(categoryId);
+
+            IQueryable<Product> query1;
+            if (value)
+            {
+                query1 = from p in _productRepository.Table
+                         join psa in _productSpecificationAttributeRepository.Table on p.Id equals psa.ProductId
+                         join pc in _productCategoryRepository.Table on p.Id equals pc.ProductId
+                         where (!p.Deleted) && (p.Published)
+                         && categoryIds.Contains(pc.CategoryId)
+                         && psa.SpecificationAttributeOption.SpecificationAttribute.Name.ToLower().Equals(attributeName.ToLower())
+                         && psa.SpecificationAttributeOption.Name.ToLower().Equals("true")
+                         select p;
+            }
+            else
+            {
+                query1 = from p in _productRepository.Table
+                         join psa in _productSpecificationAttributeRepository.Table on p.Id equals psa.ProductId
+                         join pc in _productCategoryRepository.Table on p.Id equals pc.ProductId
+                         where (!p.Deleted) && (p.Published)
+                         && categoryIds.Contains(pc.CategoryId)
+                         && psa.SpecificationAttributeOption.SpecificationAttribute.Name.ToLower().Equals(attributeName.ToLower())
+                         && psa.SpecificationAttributeOption.Name.ToLower().Equals("false")
+                         select p;
+            }
+
+            var totalItems = query1.Count();
+            totalPage = totalItems / itemsCount + (totalItems % itemsCount == 0 ? 0 : 1);
+
+            var result = query1.OrderBy(c => c.Name).Take(itemsCount).Select(c => c.Id).ToList();
+
+            return result;
         }
 
         /// <summary>

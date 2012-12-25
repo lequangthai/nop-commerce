@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel.Syndication;
@@ -2986,14 +2987,20 @@ namespace Nop.Web.Controllers
 
         #region Gia's Code
         [ChildActionOnly]
-        public ActionResult CategoryBestSellers(int? productThumbPictureSize, int categoryId)
+        public ActionResult Gia_CategoryBestSellers(int? productThumbPictureSize, int categoryId)
         {
-            if (_catalogSettings.NumberOfBestsellersOnHomepage == 0)
-                return Content("");
+            var itemsCount = 9;
+            if (_catalogSettings.NumberOfBestsellersOnHomepage != 0) itemsCount = _catalogSettings.NumberOfBestsellersOnHomepage;
+
+            try
+            {
+                itemsCount = Convert.ToInt32(ConfigurationManager.AppSettings["Gia_ItemsCountOnTab"]);
+            }
+            catch (Exception) {}
 
             //load and cache report
             var report = _cacheManager.Get(ModelCacheEventConsumer.CATEGORY_BESTSELLERS_WITH_IDs + categoryId,
-                () => _orderReportService.BestSellersReportByCategory(null, null, null, null, null, categoryId, _catalogSettings.NumberOfBestsellersOnHomepage));
+                () => _orderReportService.BestSellersReportByCategory(null, null, null, null, null, categoryId, itemsCount));
             var products = new List<Product>();
             foreach (var line in report)
             {
@@ -3018,6 +3025,54 @@ namespace Nop.Web.Controllers
                 }
             }
 
+            var model = new HomePageBestsellersModel()
+            {
+                UseSmallProductBox = _catalogSettings.UseSmallProductBoxOnHomePage,
+            };
+            model.Products = PrepareProductOverviewModels(products,
+                !_catalogSettings.UseSmallProductBoxOnHomePage, true, productThumbPictureSize)
+                .ToList();
+            return PartialView(model);
+        }
+
+        [ChildActionOnly]
+        public ActionResult Gia_CategoryClearances(int? productThumbPictureSize, int categoryId)
+        {
+            var itemsCount = 9;
+            if (_catalogSettings.NumberOfBestsellersOnHomepage != 0) itemsCount = _catalogSettings.NumberOfBestsellersOnHomepage;
+
+            try
+            {
+                itemsCount = Convert.ToInt32(ConfigurationManager.AppSettings["Gia_ItemsCountOnTab"]);
+            }
+            catch (Exception) { }
+
+            //load and cache report
+            var report = _cacheManager.Get(ModelCacheEventConsumer.CATEGORY_CLEARANCE_WITH_IDs + categoryId,
+                () => _orderReportService.ClearancesReportByCategory(categoryId, itemsCount));
+            var products = new List<Product>();
+            foreach (var line in report)
+            {
+                var productVariant = _productService.GetProductVariantById(line.ProductVariantId);
+                if (productVariant != null)
+                {
+                    var product = productVariant.Product;
+                    if (product != null)
+                    {
+                        bool contains = false;
+                        foreach (var p in products)
+                        {
+                            if (p.Id == product.Id)
+                            {
+                                contains = true;
+                                break;
+                            }
+                        }
+                        if (!contains)
+                            products.Add(product);
+                    }
+                }
+            }
 
             var model = new HomePageBestsellersModel()
             {
@@ -3026,6 +3081,53 @@ namespace Nop.Web.Controllers
             model.Products = PrepareProductOverviewModels(products,
                 !_catalogSettings.UseSmallProductBoxOnHomePage, true, productThumbPictureSize)
                 .ToList();
+            return PartialView(model);
+        }
+
+        [ChildActionOnly]
+        public ActionResult Gia_CategorySpecialAttributes(int? productThumbPictureSize, int categoryId, string attributeName)
+        {
+            var itemsCount = 9;
+            if (_catalogSettings.NumberOfBestsellersOnHomepage != 0) itemsCount = _catalogSettings.NumberOfBestsellersOnHomepage;
+
+            try
+            {
+                itemsCount = Convert.ToInt32(ConfigurationManager.AppSettings["Gia_ItemsCountOnTab"]);
+            }
+            catch (Exception) { }
+
+            //load and cache report
+            var report = _cacheManager.Get(ModelCacheEventConsumer.CATEGORY_SPECIAL_WITH_VALUEs + categoryId + "_" + attributeName,
+                () => _productService.GetProductsBySpecialAttriubte(attributeName, true, itemsCount));
+            var products = new List<Product>();
+            foreach (var line in report)
+            {
+                var product = _productService.GetProductById(line);
+                if (product != null)
+                {
+                    bool contains = false;
+                    foreach (var p in products)
+                    {
+                        if (p.Id == product.Id)
+                        {
+                            contains = true;
+                            break;
+                        }
+                    }
+                    if (!contains)
+                        products.Add(product);
+                }
+            }
+
+            var model = new HomePageBestsellersModel()
+            {
+                UseSmallProductBox = _catalogSettings.UseSmallProductBoxOnHomePage,
+            };
+            model.Products = PrepareProductOverviewModels(products,
+                !_catalogSettings.UseSmallProductBoxOnHomePage, true, productThumbPictureSize)
+                .ToList();
+
+            ViewBag.AttributeName = attributeName;
             return PartialView(model);
         }
         #endregion

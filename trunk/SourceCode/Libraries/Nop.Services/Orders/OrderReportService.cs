@@ -299,7 +299,7 @@ namespace Nop.Services.Orders
             return categoryIds.ToList();
         }
 
-        public IList<BestsellersReportLine> BestSellersReportByCategory(DateTime? startTime, DateTime? endTime, OrderStatus? os, PaymentStatus? ps, ShippingStatus? ss, int categoryId, int recordsToReturn = 5, int orderBy = 1, bool showHidden = false)
+        public IList<BestsellersReportLine> BestSellersReportByCategory(DateTime? startTime, DateTime? endTime, OrderStatus? os, PaymentStatus? ps, ShippingStatus? ss, int categoryId, int recordsToReturn = 5, int pageIndex = 1, int orderBy = 1, bool showHidden = false)
         {
             int? orderStatusId = null;
             if (os.HasValue)
@@ -357,8 +357,9 @@ namespace Nop.Services.Orders
                     throw new ArgumentException("Wrong orderBy parameter", "orderBy");
             }
 
+            if (pageIndex < 1) pageIndex = 1;
             if (recordsToReturn != 0 && recordsToReturn != int.MaxValue)
-                query2 = query2.Take(recordsToReturn);
+                query2 = query2.Skip((pageIndex - 1)*recordsToReturn).Take(recordsToReturn);
 
             var result = query2.ToList().Select(x =>
             {
@@ -367,6 +368,177 @@ namespace Nop.Services.Orders
                     ProductVariantId = x.ProductVariantId,
                     TotalAmount = x.TotalAmount,
                     TotalQuantity = x.TotalQuantity
+                };
+            }).ToList();
+            
+            return result;
+        }
+
+        public IList<BestsellersReportLine> BestSellersReportByCategory(DateTime? startTime, DateTime? endTime, OrderStatus? os, PaymentStatus? ps, ShippingStatus? ss, int categoryId, ref int totalPage, int recordsToReturn = 5, int pageIndex = 1, int orderBy = 1, bool showHidden = false)
+        {
+            int? orderStatusId = null;
+            if (os.HasValue)
+                orderStatusId = (int)os.Value;
+
+            int? paymentStatusId = null;
+            if (ps.HasValue)
+                paymentStatusId = (int)ps.Value;
+
+            int? shippingStatusId = null;
+            if (ss.HasValue)
+                shippingStatusId = (int)ss.Value;
+
+            var categoryIds = BuildCategoriesTree(categoryId);
+
+            var query1 = from opv in _opvRepository.Table
+                         join o in _orderRepository.Table on opv.OrderId equals o.Id
+                         join pv in _productVariantRepository.Table on opv.ProductVariantId equals pv.Id
+                         join p in _productRepository.Table on pv.ProductId equals p.Id
+                         join pc in _productCategoryRepository.Table on p.Id equals pc.ProductId
+                         where (!startTime.HasValue || startTime.Value <= o.CreatedOnUtc) &&
+                         (!endTime.HasValue || endTime.Value >= o.CreatedOnUtc) &&
+                         (!orderStatusId.HasValue || orderStatusId == o.OrderStatusId) &&
+                         (!paymentStatusId.HasValue || paymentStatusId == o.PaymentStatusId) &&
+                         (!shippingStatusId.HasValue || shippingStatusId == o.ShippingStatusId) &&
+                         (!o.Deleted) &&
+                         (!p.Deleted) &&
+                         (!pv.Deleted) &&
+                         (showHidden || p.Published) &&
+                         (showHidden || pv.Published) && categoryIds.Contains(pc.CategoryId)
+                         select opv;
+
+            var query2 = from opv in query1
+                         group opv by opv.ProductVariantId into g
+                         select new
+                         {
+                             ProductVariantId = g.Key,
+                             TotalAmount = g.Sum(x => x.PriceExclTax),
+                             TotalQuantity = g.Sum(x => x.Quantity),
+                         };
+
+            switch (orderBy)
+            {
+                case 1:
+                    {
+                        query2 = query2.OrderByDescending(x => x.TotalQuantity);
+                    }
+                    break;
+                case 2:
+                    {
+                        query2 = query2.OrderByDescending(x => x.TotalAmount);
+                    }
+                    break;
+                default:
+                    throw new ArgumentException("Wrong orderBy parameter", "orderBy");
+            }
+
+            var totalItems = query2.Count();
+            totalPage = totalItems/recordsToReturn + (totalItems%recordsToReturn == 0 ? 0 : 1);
+
+            if (pageIndex < 1) pageIndex = 1;
+            if (recordsToReturn != 0 && recordsToReturn != int.MaxValue)
+                query2 = query2.Skip((pageIndex - 1) * recordsToReturn).Take(recordsToReturn);
+
+            var result = query2.ToList().Select(x =>
+            {
+                return new BestsellersReportLine()
+                {
+                    ProductVariantId = x.ProductVariantId,
+                    TotalAmount = x.TotalAmount,
+                    TotalQuantity = x.TotalQuantity
+                };
+            }).ToList();
+
+            return result;
+        }
+
+        public IList<ClearacneReportLine> ClearancesReportByCategory(int categoryId, int recordsToReturn = 5, int pageIndex = 9, int orderBy = 1, bool showHidden = false)
+        {
+            var categoryIds = BuildCategoriesTree(categoryId);
+
+            var query1 = from pv in _productVariantRepository.Table
+                         join p in _productRepository.Table on pv.ProductId equals p.Id
+                         join pc in _productCategoryRepository.Table on p.Id equals pc.ProductId
+                         where (pv.PercentDiscount.HasValue) &&
+                         (!p.Deleted) &&
+                         (!pv.Deleted) &&
+                         (showHidden || p.Published) &&
+                         (showHidden || pv.Published) && categoryIds.Contains(pc.CategoryId)
+                         select pv;
+
+            switch (orderBy)
+            {
+                case 1:
+                    {
+                        query1 = query1.OrderByDescending(x => x.Name);
+                    }
+                    break;
+                case 2:
+                    {
+                        query1 = query1.OrderByDescending(x => x.Name);
+                    }
+                    break;
+                default:
+                    throw new ArgumentException("Wrong orderBy parameter", "orderBy");
+            }
+
+            if (pageIndex < 1) pageIndex = 1;
+            if (recordsToReturn != 0 && recordsToReturn != int.MaxValue)
+                query1 = query1.Skip((pageIndex - 1) * recordsToReturn).Take(recordsToReturn);
+
+            var result = query1.ToList().Select(x =>
+            {
+                return new ClearacneReportLine()
+                {
+                    ProductVariantId = x.Id
+                };
+            }).ToList();
+
+            return result;
+        }
+
+        public IList<ClearacneReportLine> ClearancesReportByCategory(int categoryId, ref int totalPage, int recordsToReturn = 5, int pageIndex = 1, int orderBy = 1, bool showHidden = false)
+        {
+            var categoryIds = BuildCategoriesTree(categoryId);
+
+            var query1 = from pv in _productVariantRepository.Table
+                         join p in _productRepository.Table on pv.ProductId equals p.Id
+                         join pc in _productCategoryRepository.Table on p.Id equals pc.ProductId
+                         where (pv.PercentDiscount.HasValue) &&
+                         (!p.Deleted) &&
+                         (!pv.Deleted) &&
+                         (showHidden || p.Published) &&
+                         (showHidden || pv.Published) && categoryIds.Contains(pc.CategoryId)
+                         select pv;
+
+            switch (orderBy)
+            {
+                case 1:
+                    {
+                        query1 = query1.OrderByDescending(x => x.Name);
+                    }
+                    break;
+                case 2:
+                    {
+                        query1 = query1.OrderByDescending(x => x.Name);
+                    }
+                    break;
+                default:
+                    throw new ArgumentException("Wrong orderBy parameter", "orderBy");
+            }
+
+            var totalItems = query1.Count();
+            totalPage = totalItems / recordsToReturn + (totalItems % recordsToReturn == 0 ? 0 : 1);
+
+            if (pageIndex < 1) pageIndex = 1;
+            if (recordsToReturn != 0 && recordsToReturn != int.MaxValue)
+                query1 = query1.Skip((pageIndex - 1) * recordsToReturn).Take(recordsToReturn);
+
+            var result = query1.ToList().Select(x =>
+            {
+                return new ClearacneReportLine()
+                {
+                    ProductVariantId = x.Id
                 };
             }).ToList();
 

@@ -48,7 +48,7 @@ namespace Nop.Services.ExportImport
         /// <param name="filePath">Excel file path</param>
         public virtual void ImportProductsFromXlsx(string filePath)
         {
-            
+
             var newFile = new FileInfo(filePath);
             // ok, we can run the real code of the sample now
             using (var xlPackage = new ExcelPackage(newFile))
@@ -57,7 +57,7 @@ namespace Nop.Services.ExportImport
                 var worksheet = xlPackage.Workbook.Worksheets.FirstOrDefault();
                 if (worksheet == null)
                     throw new NopException("No worksheet found");
-                
+
                 //the columns
                 var properties = new string[]
                 {
@@ -217,7 +217,7 @@ namespace Nop.Services.ExportImport
                     var specialPriceEndDateTimeUtcExcel = worksheet.Cells[iRow, GetColumnIndex(properties, "SpecialPriceEndDateTimeUtc")].Value;
                     if (specialPriceEndDateTimeUtcExcel != null)
                         specialPriceEndDateTimeUtc = DateTime.FromOADate(Convert.ToDouble(specialPriceEndDateTimeUtcExcel));
-                    
+
                     bool customerEntersPrice = Convert.ToBoolean(worksheet.Cells[iRow, GetColumnIndex(properties, "CustomerEntersPrice")].Value);
                     decimal minimumCustomerEnteredPrice = Convert.ToDecimal(worksheet.Cells[iRow, GetColumnIndex(properties, "MinimumCustomerEnteredPrice")].Value);
                     decimal maximumCustomerEnteredPrice = Convert.ToDecimal(worksheet.Cells[iRow, GetColumnIndex(properties, "MaximumCustomerEnteredPrice")].Value);
@@ -393,6 +393,200 @@ namespace Nop.Services.ExportImport
                             Height = height,
                             Published = published,
                             CreatedOnUtc = createdOnUtc,
+                            UpdatedOnUtc = DateTime.UtcNow
+                        };
+
+                        _productService.InsertProductVariant(productVariant);
+                    }
+
+                    //category mappings
+                    if (!String.IsNullOrEmpty(categoryIds))
+                    {
+                        foreach (var id in categoryIds.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries).Select(x => Convert.ToInt32(x.Trim())))
+                        {
+                            if (productVariant.Product.ProductCategories.Where(x => x.CategoryId == id).FirstOrDefault() == null)
+                            {
+                                //ensure that category exists
+                                var category = _categoryService.GetCategoryById(id);
+                                if (category != null)
+                                {
+                                    var productCategory = new ProductCategory()
+                                    {
+                                        ProductId = productVariant.Product.Id,
+                                        CategoryId = category.Id,
+                                        IsFeaturedProduct = false,
+                                        DisplayOrder = 1
+                                    };
+                                    _categoryService.InsertProductCategory(productCategory);
+                                }
+                            }
+                        }
+                    }
+
+                    //manufacturer mappings
+                    if (!String.IsNullOrEmpty(manufacturerIds))
+                    {
+                        foreach (var id in manufacturerIds.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries).Select(x => Convert.ToInt32(x.Trim())))
+                        {
+                            if (productVariant.Product.ProductManufacturers.Where(x => x.ManufacturerId == id).FirstOrDefault() == null)
+                            {
+                                //ensure that manufacturer exists
+                                var manufacturer = _manufacturerService.GetManufacturerById(id);
+                                if (manufacturer != null)
+                                {
+                                    var productManufacturer = new ProductManufacturer()
+                                    {
+                                        ProductId = productVariant.Product.Id,
+                                        ManufacturerId = manufacturer.Id,
+                                        IsFeaturedProduct = false,
+                                        DisplayOrder = 1
+                                    };
+                                    _manufacturerService.InsertProductManufacturer(productManufacturer);
+                                }
+                            }
+                        }
+                    }
+
+                    //pictures
+                    foreach (var picture in new string[] { picture1, picture2, picture3 })
+                    {
+                        if (String.IsNullOrEmpty(picture))
+                            continue;
+
+                        productVariant.Product.ProductPictures.Add(new ProductPicture()
+                        {
+                            Picture = _pictureService.InsertPicture(File.ReadAllBytes(picture), "image/jpeg", _pictureService.GetPictureSeName(name), true),
+                            DisplayOrder = 1,
+                        });
+                        _productService.UpdateProduct(productVariant.Product);
+                    }
+
+                    //update "HasTierPrices" and "HasDiscountsApplied" properties
+                    _productService.UpdateHasTierPricesProperty(productVariant);
+                    _productService.UpdateHasDiscountsApplied(productVariant);
+
+
+
+                    //next product
+                    iRow++;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Import products from XLSX file
+        /// </summary>
+        /// <param name="filePath">Excel file path</param>
+        public virtual void Gia_ImportProductsFromXlsx(string filePath)
+        {
+
+            var newFile = new FileInfo(filePath);
+            // ok, we can run the real code of the sample now
+            using (var xlPackage = new ExcelPackage(newFile))
+            {
+                // get the first worksheet in the workbook
+                var worksheet = xlPackage.Workbook.Worksheets.FirstOrDefault();
+                if (worksheet == null)
+                    throw new NopException("No worksheet found");
+
+                //the columns
+                var properties = new string[]
+                                     {
+                                         "Name",
+                                         "ShortDescription",
+                                         "FullDescription",
+                                         "Published",
+                                         "ProductVariantName",
+                                         "SKU",
+                                         "ManufacturerPartNumber",
+                                         "StockQuantity",
+                                         "Price",
+                                         "OldPrice",
+                                         "CategoryIds",
+                                         "ManufacturerIds",
+                                         "Picture1",
+                                         "Picture2",
+                                         "Picture3"
+                                     };
+
+
+                int iRow = 2;
+                while (true)
+                {
+                    bool allColumnsAreEmpty = true;
+                    for (var i = 1; i <= properties.Length; i++)
+                        if (worksheet.Cells[iRow, i].Value != null && !String.IsNullOrEmpty(worksheet.Cells[iRow, i].Value.ToString()))
+                        {
+                            allColumnsAreEmpty = false;
+                            break;
+                        }
+                    if (allColumnsAreEmpty)
+                        break;
+
+                    var name = worksheet.Cells[iRow, GetColumnIndex(properties, "Name")].Value as string;
+                    var shortDescription = worksheet.Cells[iRow, GetColumnIndex(properties, "ShortDescription")].Value as string;
+                    var fullDescription = worksheet.Cells[iRow, GetColumnIndex(properties, "FullDescription")].Value as string;
+                    var published = Convert.ToBoolean(worksheet.Cells[iRow, GetColumnIndex(properties, "Published")].Value);
+                    var productVariantName = worksheet.Cells[iRow, GetColumnIndex(properties, "ProductVariantName")].Value as string;
+                    var sku = worksheet.Cells[iRow, GetColumnIndex(properties, "SKU")].Value as string;
+                    var manufacturerPartNumber = worksheet.Cells[iRow, GetColumnIndex(properties, "ManufacturerPartNumber")].Value as string;
+                    var stockQuantity = Convert.ToInt32(worksheet.Cells[iRow, GetColumnIndex(properties, "StockQuantity")].Value);
+                    var price = Convert.ToDecimal(worksheet.Cells[iRow, GetColumnIndex(properties, "Price")].Value);
+                    var oldPrice = Convert.ToDecimal(worksheet.Cells[iRow, GetColumnIndex(properties, "OldPrice")].Value);
+                    var categoryIds = worksheet.Cells[iRow, GetColumnIndex(properties, "CategoryIds")].Value as string;
+                    var manufacturerIds = worksheet.Cells[iRow, GetColumnIndex(properties, "ManufacturerIds")].Value as string;
+                    var picture1 = worksheet.Cells[iRow, GetColumnIndex(properties, "Picture1")].Value as string;
+                    var picture2 = worksheet.Cells[iRow, GetColumnIndex(properties, "Picture2")].Value as string;
+                    var picture3 = worksheet.Cells[iRow, GetColumnIndex(properties, "Picture3")].Value as string;
+
+
+
+                    var productVariant = _productService.GetProductVariantBySku(sku);
+                    if (productVariant != null)
+                    {
+                        var product = productVariant.Product;
+                        product.Name = name;
+                        product.ShortDescription = shortDescription;
+                        product.FullDescription = fullDescription;
+                        product.Published = published;
+                        product.UpdatedOnUtc = DateTime.UtcNow;
+
+                        _productService.UpdateProduct(product);
+
+                        productVariant.Name = productVariantName;
+                        productVariant.Sku = sku;
+                        productVariant.ManufacturerPartNumber = manufacturerPartNumber;
+                        productVariant.StockQuantity = stockQuantity;
+                        productVariant.Price = price;
+                        productVariant.OldPrice = oldPrice;
+                        productVariant.Published = published;
+                        productVariant.UpdatedOnUtc = DateTime.UtcNow;
+
+                        _productService.UpdateProductVariant(productVariant);
+                    }
+                    else
+                    {
+                        var product = new Product()
+                        {
+                            Name = name,
+                            ShortDescription = shortDescription,
+                            FullDescription = fullDescription,
+                            Published = published,
+                            CreatedOnUtc = DateTime.UtcNow,
+                            UpdatedOnUtc = DateTime.UtcNow
+                        };
+                        _productService.InsertProduct(product);
+
+                        productVariant = new ProductVariant()
+                        {
+                            ProductId = product.Id,
+                            Name = productVariantName,
+                            Sku = sku,
+                            ManufacturerPartNumber = manufacturerPartNumber,
+                            Price = price,
+                            OldPrice = oldPrice,
+                            Published = published,
+                            CreatedOnUtc = DateTime.UtcNow,
                             UpdatedOnUtc = DateTime.UtcNow
                         };
 

@@ -1542,6 +1542,7 @@
     <Content Include="Views\Shared\_Notifications.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="GiaHelper\" />
     <Folder Include="Plugins\bin\" />
   </ItemGroup>
   <ItemGroup>
@@ -1744,7 +1745,9 @@
     <Content Include="Views\ShoppingCart\_ButtonPaymentMethod.cshtml" />
     <Content Include="Views\ShoppingCart\_OrderReviewData.cshtml" />
     <Content Include="Views\ShoppingCart\_OrderReviewData.Mobile.cshtml" />
-    <Content Include="Views\Catalog\CategoryBestSellers.cshtml" />
+    <Content Include="Views\Catalog\Gia_CategoryBestSellers.cshtml" />
+    <Content Include="Views\Catalog\Gia_CategoryClearances.cshtml" />
+    <Content Include="Views\Catalog\Gia_CategorySpecialAttributes.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

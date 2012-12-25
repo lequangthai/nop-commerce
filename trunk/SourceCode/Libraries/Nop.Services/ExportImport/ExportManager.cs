@@ -436,7 +436,7 @@ public partial class ExportManager : IExportManager
             xmlWriter.Close();
             return stringWriter.ToString();
         }
-
+     
         /// <summary>
         /// Export products to XLSX
         /// </summary>
@@ -804,6 +804,160 @@ public partial class ExportManager : IExportManager
 
 
 
+
+
+                // we had better add some document properties to the spreadsheet 
+
+                // set some core property values
+                xlPackage.Workbook.Properties.Title = string.Format("{0} products", _storeInformationSettings.StoreName);
+                xlPackage.Workbook.Properties.Author = _storeInformationSettings.StoreName;
+                xlPackage.Workbook.Properties.Subject = string.Format("{0} products", _storeInformationSettings.StoreName);
+                xlPackage.Workbook.Properties.Keywords = string.Format("{0} products", _storeInformationSettings.StoreName);
+                xlPackage.Workbook.Properties.Category = "Products";
+                xlPackage.Workbook.Properties.Comments = string.Format("{0} products", _storeInformationSettings.StoreName);
+
+                // set some extended property values
+                xlPackage.Workbook.Properties.Company = _storeInformationSettings.StoreName;
+                xlPackage.Workbook.Properties.HyperlinkBase = new Uri(_storeInformationSettings.StoreUrl);
+
+                // save the new spreadsheet
+                xlPackage.Save();
+            }
+        }
+
+        /// <summary>
+        /// Export products to XLSX
+        /// </summary>
+        /// <param name="filePath">File path to use</param>
+        /// <param name="products">Products</param>
+        public virtual void Gia_ExportProductsToXlsx(string filePath, IList<Product> products)
+        {
+            var newFile = new FileInfo(filePath);
+            // ok, we can run the real code of the sample now
+            using (var xlPackage = new ExcelPackage(newFile))
+            {
+                // uncomment this line if you want the XML written out to the outputDir
+                //xlPackage.DebugMode = true; 
+
+                // get handle to the existing worksheet
+                var worksheet = xlPackage.Workbook.Worksheets.Add("Products");
+                //Create Headers and format them 
+                var properties = new string[]
+                {
+                    "Name",
+                    "ShortDescription",
+                    "FullDescription",
+                    "Published",
+                    "ProductVariantName",
+                    "SKU",
+                    "ManufacturerPartNumber",
+                    "StockQuantity",
+                    "Price",
+                    "OldPrice",
+                    "CategoryIds",
+                    "ManufacturerIds",
+                    "Picture1",
+                    "Picture2",
+                    "Picture3",
+                };
+                for (int i = 0; i < properties.Length; i++)
+                {
+                    worksheet.Cells[1, i + 1].Value = properties[i];
+                    worksheet.Cells[1, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    worksheet.Cells[1, i + 1].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(184, 204, 228));
+                    worksheet.Cells[1, i + 1].Style.Font.Bold = true;
+                }
+
+
+                int row = 2;
+                foreach (var p in products)
+                {
+                    var productVariants = _productService.GetProductVariantsByProductId(p.Id, true);
+                    foreach (var pv in productVariants)
+                    {
+                        int col = 1;
+
+                        worksheet.Cells[row, col].Value = p.Name;
+                        col++;
+
+                        worksheet.Cells[row, col].Value = p.ShortDescription;
+                        col++;
+
+                        worksheet.Cells[row, col].Value = p.FullDescription;
+                        col++;
+
+                        worksheet.Cells[row, col].Value = p.Published;
+                        col++;
+
+                        worksheet.Cells[row, col].Value = pv.Name;
+                        col++;
+
+                        worksheet.Cells[row, col].Value = pv.Sku;
+                        col++;
+
+                        worksheet.Cells[row, col].Value = pv.ManufacturerPartNumber;
+                        col++;
+
+                        worksheet.Cells[row, col].Value = pv.StockQuantity;
+                        col++;
+
+                        worksheet.Cells[row, col].Value = pv.Price;
+                        col++;
+
+                        worksheet.Cells[row, col].Value = pv.OldPrice;
+                        col++;
+
+                        //category identifiers
+                        string categoryIds = null;
+                        foreach (var pc in _categoryService.GetProductCategoriesByProductId(p.Id))
+                        {
+                            categoryIds += pc.CategoryId;
+                            categoryIds += ";";
+                        }
+                        worksheet.Cells[row, col].Value = categoryIds;
+                        col++;
+
+                        //manufacturer identifiers
+                        string manufacturerIds = null;
+                        foreach (var pm in _manufacturerService.GetProductManufacturersByProductId(p.Id))
+                        {
+                            manufacturerIds += pm.ManufacturerId;
+                            manufacturerIds += ";";
+                        }
+                        worksheet.Cells[row, col].Value = manufacturerIds;
+                        col++;
+
+                        //pictures (up to 3 pictures)
+                        string picture1 = null;
+                        string picture2 = null;
+                        string picture3 = null;
+                        var pictures = _pictureService.GetPicturesByProductId(p.Id, 3);
+                        for (int i = 0; i < pictures.Count; i++)
+                        {
+                            string pictureLocalPath = _pictureService.GetPictureLocalPath(pictures[i]);
+                            switch (i)
+                            {
+                                case 0:
+                                    picture1 = pictureLocalPath;
+                                    break;
+                                case 1:
+                                    picture2 = pictureLocalPath;
+                                    break;
+                                case 2:
+                                    picture3 = pictureLocalPath;
+                                    break;
+                            }
+                        }
+                        worksheet.Cells[row, col].Value = picture1;
+                        col++;
+                        worksheet.Cells[row, col].Value = picture2;
+                        col++;
+                        worksheet.Cells[row, col].Value = picture3;
+                        col++;
+
+                        row++;
+                    }
+                }
 
 
                 // we had better add some document properties to the spreadsheet 

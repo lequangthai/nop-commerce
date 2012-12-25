@@ -11,5 +11,11 @@ namespace Nop.Services.ExportImport
         /// </summary>
         /// <param name="filePath">Excel file path</param>
         void ImportProductsFromXlsx(string filePath);
+
+        /// <summary>
+        /// Import products from XLSX file
+        /// </summary>
+        /// <param name="filePath">Excel file path</param>
+        void Gia_ImportProductsFromXlsx(string filePath);
     }
 }

@@ -39,6 +39,13 @@ namespace Nop.Services.ExportImport
         void ExportProductsToXlsx(string filePath, IList<Product> products);
 
         /// <summary>
+        /// Export products to XLSX
+        /// </summary>
+        /// <param name="filePath">File path to use</param>
+        /// <param name="products">Products</param>
+        void Gia_ExportProductsToXlsx(string filePath, IList<Product> products);
+
+        /// <summary>
         /// Export order list to xml
         /// </summary>
         /// <param name="orders">Orders</param>

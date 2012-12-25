@@ -244,6 +244,10 @@ namespace Nop.Web.Infrastructure.Cache
 
         public const string CATEGORY_BESTSELLERS_WITH_IDs = "gia.nop.category.bestsellers.ids.";
 
+        public const string CATEGORY_CLEARANCE_WITH_IDs = "gia.nop.category.clearance.ids.";
+
+        public const string CATEGORY_SPECIAL_WITH_VALUEs = "gia.nop.category.clearance.values.";
+
         /// <summary>
         /// Key for default product picture caching
         /// </summary>

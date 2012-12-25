@@ -62,12 +62,23 @@ namespace Nop.Services.Orders
         /// <param name="ss">Shipping status; null to load all records</param>
         /// <param name="categoryId">product best sellers of category</param>
         /// <param name="recordsToReturn">Records to return</param>
+        /// <param name="pageIndex">page index </param>
         /// <param name="orderBy">1 - order by quantity, 2 - order by total amount</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>Result</returns>
         IList<BestsellersReportLine> BestSellersReportByCategory(DateTime? startTime,
             DateTime? endTime, OrderStatus? os, PaymentStatus? ps, ShippingStatus? ss, int categoryId,
-            int recordsToReturn = 5, int orderBy = 1, bool showHidden = false);
+            int recordsToReturn = 5, int pageIndex = 1, int orderBy = 1, bool showHidden = false);
+
+        IList<BestsellersReportLine> BestSellersReportByCategory(DateTime? startTime,
+            DateTime? endTime, OrderStatus? os, PaymentStatus? ps, ShippingStatus? ss, int categoryId, ref int totalPage,
+            int recordsToReturn = 5, int pageIndex = 1, int orderBy = 1, bool showHidden = false);
+
+        IList<ClearacneReportLine> ClearancesReportByCategory(int categoryId,
+            int recordsToReturn = 5, int pageIndex = 1, int orderBy = 1, bool showHidden = false);
+
+        IList<ClearacneReportLine> ClearancesReportByCategory(int categoryId, ref int totalPage,
+            int recordsToReturn = 5, int pageIndex = 1, int orderBy = 1, bool showHidden = false);
         
         /// <summary>
         /// Gets a list of products purchased by other customers who purchased the above

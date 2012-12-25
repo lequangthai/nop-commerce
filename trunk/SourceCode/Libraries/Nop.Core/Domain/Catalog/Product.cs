@@ -17,6 +17,11 @@ namespace Nop.Core.Domain.Catalog
         private ICollection<ProductSpecificationAttribute> _productSpecificationAttributes;
         private ICollection<ProductTag> _productTags;
 
+        public Product()
+        {
+            ViewCount = 0;
+        }
+
         /// <summary>
         /// Gets or sets the name
         /// </summary>
@@ -111,6 +116,11 @@ namespace Nop.Core.Domain.Catalog
         /// Gets or sets the date and time of product update
         /// </summary>
         public virtual DateTime UpdatedOnUtc { get; set; }
+
+        /// <summary>
+        /// Gets or sets the date and time of product update
+        /// </summary>
+        public virtual int ViewCount { get; set; }
 
         /// <summary>
         /// Gets or sets the product variants

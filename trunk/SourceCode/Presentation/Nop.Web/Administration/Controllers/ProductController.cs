@@ -1605,7 +1605,7 @@ namespace Nop.Admin.Controllers
                 string fileName = string.Format("products_{0}_{1}.xlsx", DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss"), CommonHelper.GenerateRandomDigitCode(4));
                 string filePath = System.IO.Path.Combine(Request.PhysicalApplicationPath, "content\\files\\ExportImport", fileName);
 
-                _exportManager.ExportProductsToXlsx(filePath, products);
+                _exportManager.Gia_ExportProductsToXlsx(filePath, products);
 
                 var bytes = System.IO.File.ReadAllBytes(filePath);
                 return File(bytes, "text/xls", fileName);
@@ -1635,7 +1635,7 @@ namespace Nop.Admin.Controllers
             string fileName = string.Format("products_{0}_{1}.xlsx", DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss"), CommonHelper.GenerateRandomDigitCode(4));
             string filePath = System.IO.Path.Combine(Request.PhysicalApplicationPath, "content\\files\\ExportImport", fileName);
 
-            _exportManager.ExportProductsToXlsx(filePath, products);
+            _exportManager.Gia_ExportProductsToXlsx(filePath, products);
 
             var bytes = System.IO.File.ReadAllBytes(filePath);
             return File(bytes, "text/xls", fileName);
@@ -1659,7 +1659,7 @@ namespace Nop.Admin.Controllers
                     string filePath = System.IO.Path.Combine(Request.PhysicalApplicationPath, "content\\files\\ExportImport", fileName);
 
                     System.IO.File.WriteAllBytes(filePath, fileBytes);
-                    _importManager.ImportProductsFromXlsx(filePath);
+                    _importManager.Gia_ImportProductsFromXlsx(filePath);
                 }
                 else
                 {
