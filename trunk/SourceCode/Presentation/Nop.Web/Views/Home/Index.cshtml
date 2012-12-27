@@ -1,7 +1,7 @@
 ﻿@{
-    Layout = "~/Views/Shared/_ColumnsThree.cshtml";
+    Layout = "~/Views/Shared/_ColumnsTwo.cshtml";
 }
-<div class="page home-page">
+@*<div class="page home-page">
     <div class="page-body">
         @Html.Widget("home_page_top")
         @Html.Action("TopicBlock", "Topic", new { systemName = "HomePageText" })
@@ -22,4 +22,6 @@
         @Html.Action("HomePagePolls", "Poll")
         @Html.Widget("home_page_bottom")
     </div>
-</div>
+</div>*@
+
+@Html.Partial("_HomeProductTab")

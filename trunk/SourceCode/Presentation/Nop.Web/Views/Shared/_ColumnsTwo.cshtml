@@ -37,7 +37,9 @@
     {
         @Html.Widget("left_side_column_before")
         <div class="clear">
-        </div>  
+        </div>
+        @Html.Partial("_Navigation")
+        @*  
         @Html.Action("CategoryNavigation", "Catalog", new { currentCategoryId = currentCategoryId, currentProductId = currentProductId })
         <div class="clear">
         </div>
@@ -45,6 +47,7 @@
         <div class="clear">
         </div>
         @Html.Action("NewsletterBox", "Newsletter")
+        *@
         <div class="clear">
         </div>
         @Html.Widget("left_side_column_after")

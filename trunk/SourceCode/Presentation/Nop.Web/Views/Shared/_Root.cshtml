@@ -9,18 +9,27 @@
         <script type="text/javascript">
             AjaxCart.init(false, '.header-links .cart-qty', '.header-links .wishlist-qty', '#flyout-cart');
         </script>
-        @Html.Partial("Header")
-        @Html.Partial("HeaderMenu")
-        @Html.Widget("content_before")
-        @*ajax loading window*@
-        <div class="ajax-loading-block-window" style="display: none">
-            <div class="loading-image">
+        <header>
+            @Html.Partial("Header")
+            @Html.Partial("HeaderMenu")
+            @Html.Partial("HeaderBanner")
+        </header>
+        <div id="body">
+            @Html.Widget("content_before")
+            @*ajax loading window*@
+            <div class="ajax-loading-block-window" style="display: none">
+                <div class="loading-image">
+                </div>
             </div>
+            @RenderBody()
+            @Html.Widget("content_after")
+            @Html.Action("EuCookieLaw", "Common")
+            <div class="clear"></div>
         </div>
-        @RenderBody()
-        @Html.Widget("content_after")
-        @Html.Action("EuCookieLaw", "Common")
     </div>
-    @Html.Action("Footer", "Common")
+    <footer>
+        @*@Html.Action("Footer", "Common")*@
+        @Html.Partial("_Root.Footer")
+    </footer>
 </div>
 @Html.Widget("body_end_html_tag_before")

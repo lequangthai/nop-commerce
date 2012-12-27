@@ -1,21 +1,47 @@
-﻿<div class="header">
-    <div class="header-logo">
-        <a href="@Url.RouteUrl("HomePage")" class="logo">&nbsp; </a>
+﻿<div id="top-header">
+    <div class="top">
+        <a href="#">Home</a>
+        <span>|</span>
+        <a href="#">1-800 GIA Perfumes (727-3867)</a>
     </div>
-    <div class="header-links-wrapper">
-        @Html.Action("HeaderLinks", "Common")
-        @Html.Action("FlyoutShoppingCart", "ShoppingCart")
+    <img class="mainlogo" src="/Content/layout/logo.jpg" />
+    <div id="ulitybar-top">
+        <ul>
+            <li>
+                <a href="#" class="help">Help</a>
+            </li>
+            <li>
+                <a href="#" class="old_status">Older Status</a>
+            </li>
+            <li>
+                <a href="#" class="account">My Account</a>
+            </li>
+            <li>
+                <a href="#" class="cart">View Cart</a>
+            </li>
+        </ul>
     </div>
-    <div class="header-selectors-wrapper">
-        <div class="tax-display-type-selector">
-            @Html.Action("TaxTypeSelector", "Common")
+    <div id="ulitybar-bottom">
+        <div class="shopping_bag float-left">
+            <span class="shopping_bag_text">1 items</span>
         </div>
-        <div class="currency-selector">
-            @Html.Action("CurrencySelector", "Common")
+        <div class="float-left">
+            <input type="text" id="search_input" value="Product Search" onclick="txtSearch_focus('Product Search');" onmouseout="txtSearch_lostfocus('Product Search');" />
+            <img src="/Content/layout/icon/search.png" style="cursor: pointer; float: left; margin-left: 5px;" />
         </div>
-        <div class="language-selector">
-            @Html.Action("LanguageSelector", "Common")
-        </div>
-        @Html.Widget("header_selectors")
+        <div class="clear-fix"></div>
     </div>
 </div>
+
+<script type="text/javascript">
+    function txtSearch_focus(default_text) {
+        if($("#search_input")[0].value==default_text) {
+            $("#search_input")[0].value = "";
+        }
+    }
+    function txtSearch_lostfocus(default_text) {
+        if ($("#search_input")[0].value == "") {
+            $("#search_input")[0].value = default_text;
+        }
+    }
+</script>

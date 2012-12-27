@@ -1296,6 +1296,36 @@ namespace Nop.Web.Controllers
             return View(templateViewPath, model);
         }
 
+         [NopHttpsRequirement(SslRequirement.No)]
+        [ChildActionOnly]
+        public ActionResult ManufacturerSlideShow()
+        {
+            var model = new List<ManufacturerModel>();
+            var manufacturers = _manufacturerService.GetAllManufacturers();
+            foreach (var manufacturer in manufacturers)
+            {
+                var modelMan = manufacturer.ToModel();
+
+                //prepare picture model
+                int pictureSize = _mediaSettings.ManufacturerThumbPictureSize;
+                var manufacturerPictureCacheKey = string.Format(ModelCacheEventConsumer.MANUFACTURER_PICTURE_MODEL_KEY, manufacturer.Id, pictureSize, true, _workContext.WorkingLanguage.Id, _webHelper.IsCurrentConnectionSecured());
+                modelMan.PictureModel = _cacheManager.Get(manufacturerPictureCacheKey, () =>
+                {
+                    var pictureModel = new PictureModel()
+                    {
+                        FullSizeImageUrl = _pictureService.GetPictureUrl(manufacturer.PictureId),
+                        ImageUrl = _pictureService.GetPictureUrl(manufacturer.PictureId, pictureSize),
+                        Title = string.Format(_localizationService.GetResource("Media.Manufacturer.ImageLinkTitleFormat"), modelMan.Name),
+                        AlternateText = string.Format(_localizationService.GetResource("Media.Manufacturer.ImageAlternateTextFormat"), modelMan.Name)
+                    };
+                    return pictureModel;
+                });
+                model.Add(modelMan);
+            }
+
+            return PartialView(model);
+        }
+
         [NopHttpsRequirement(SslRequirement.No)]
         public ActionResult ManufacturerAll()
         {

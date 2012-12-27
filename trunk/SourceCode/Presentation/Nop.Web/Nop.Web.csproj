@@ -176,6 +176,7 @@
     <Compile Include="Extensions\EditorExtensions.cs" />
     <Compile Include="Extensions\MappingExtensions.cs" />
     <Compile Include="Extensions\PagerHtmlExtension.cs" />
+    <Compile Include="GiaHelper\HtmlHelpers.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -1146,6 +1147,60 @@
     <Content Include="Content\install\images\topright.gif" />
     <Content Include="Content\install\style.css" />
     <Content Include="Content\install\style.rtl.css" />
+    <Content Include="Content\jcarousel\jquery.jcarousel.min.js" />
+    <Content Include="Content\jcarousel\next-horizontal.png" />
+    <Content Include="Content\jcarousel\next-vertical.png" />
+    <Content Include="Content\jcarousel\prev-horizontal.png" />
+    <Content Include="Content\jcarousel\prev-vertical.png" />
+    <Content Include="Content\jcarousel\skin.css" />
+    <Content Include="Content\layout\beauty_logo.gif" />
+    <Content Include="Content\layout\brand\brands_01.gif" />
+    <Content Include="Content\layout\brand\brands_02.gif" />
+    <Content Include="Content\layout\brand\brands_03.gif" />
+    <Content Include="Content\layout\brand\brands_05.gif" />
+    <Content Include="Content\layout\brand\brands_06.gif" />
+    <Content Include="Content\layout\brand\brands_07.gif" />
+    <Content Include="Content\layout\brand\brands_08.gif" />
+    <Content Include="Content\layout\brand\brands_09.gif" />
+    <Content Include="Content\layout\brand\brands_10.gif" />
+    <Content Include="Content\layout\icon\account.png" />
+    <Content Include="Content\layout\icon\amex.png" />
+    <Content Include="Content\layout\icon\bizrate.gif" />
+    <Content Include="Content\layout\icon\discover.png" />
+    <Content Include="Content\layout\icon\document.png" />
+    <Content Include="Content\layout\icon\facebook.png" />
+    <Content Include="Content\layout\icon\help.png" />
+    <Content Include="Content\layout\icon\jcb.png" />
+    <Content Include="Content\layout\icon\mastercard.png" />
+    <Content Include="Content\layout\icon\mcafee.gif" />
+    <Content Include="Content\layout\icon\payment_bug.gif" />
+    <Content Include="Content\layout\icon\paypal.png" />
+    <Content Include="Content\layout\icon\pinterest.png" />
+    <Content Include="Content\layout\icon\search.png" />
+    <Content Include="Content\layout\icon\shopcart.png" />
+    <Content Include="Content\layout\icon\tellapal_icon.jpg" />
+    <Content Include="Content\layout\icon\twitter.png" />
+    <Content Include="Content\layout\icon\visa.png" />
+    <Content Include="Content\layout\icon\youtube.png" />
+    <Content Include="Content\layout\logo.jpg" />
+    <Content Include="Content\layout\menu_item_bg.jpg" />
+    <Content Include="Content\layout\menu_item_bg_active.jpg" />
+    <Content Include="Content\layout\product\1.jpg" />
+    <Content Include="Content\layout\product\10.jpg" />
+    <Content Include="Content\layout\product\115760.jpg" />
+    <Content Include="Content\layout\product\118790.jpg" />
+    <Content Include="Content\layout\product\2.jpg" />
+    <Content Include="Content\layout\product\3.jpg" />
+    <Content Include="Content\layout\product\4.jpg" />
+    <Content Include="Content\layout\product\5.jpg" />
+    <Content Include="Content\layout\product\6.jpg" />
+    <Content Include="Content\layout\product\7.jpg" />
+    <Content Include="Content\layout\product\8.jpg" />
+    <Content Include="Content\layout\product\9.jpg" />
+    <Content Include="Content\layout\salesoff1.jpg" />
+    <Content Include="Content\layout\shopping_bag.gif" />
+    <Content Include="Content\layout\women-homepage-bg.jpg" />
+    <Content Include="Content\layout\women-menu-bg.jpg" />
     <Content Include="Content\samples\category_accessories.jpg" />
     <Content Include="Content\samples\category_accessories_apparel.jpg" />
     <Content Include="Content\samples\category_apparel_shoes.jpeg" />
@@ -1293,7 +1348,65 @@
     <Content Include="Scripts\public.onepagecheckout.js" />
     <Content Include="Scripts\public.common.js" />
     <Content Include="Scripts\slimbox2.js" />
+    <Content Include="Scripts\verticalmenu.js" />
     <Content Include="StoreClosed.htm" />
+    <Content Include="Themes\Perfume\Content\images\ajax_loader_big.gif" />
+    <Content Include="Themes\Perfume\Content\images\ajax_loader_large.gif" />
+    <Content Include="Themes\Perfume\Content\images\ajax_loader_small.gif" />
+    <Content Include="Themes\Perfume\Content\images\arrow-up.png" />
+    <Content Include="Themes\Perfume\Content\images\bbeditor-button-bg.gif" />
+    <Content Include="Themes\Perfume\Content\images\bg-body.gif" />
+    <Content Include="Themes\Perfume\Content\images\bg-container.gif" />
+    <Content Include="Themes\Perfume\Content\images\box-header-left.gif" />
+    <Content Include="Themes\Perfume\Content\images\box-header-right.gif" />
+    <Content Include="Themes\Perfume\Content\images\cart-footer-bg.gif" />
+    <Content Include="Themes\Perfume\Content\images\cart-header-bg.gif" />
+    <Content Include="Themes\Perfume\Content\images\category-bg.gif" />
+    <Content Include="Themes\Perfume\Content\images\category-title.gif" />
+    <Content Include="Themes\Perfume\Content\images\closelabel.gif" />
+    <Content Include="Themes\Perfume\Content\images\download-sample-bg.gif" />
+    <Content Include="Themes\Perfume\Content\images\filterbox-bg.gif" />
+    <Content Include="Themes\Perfume\Content\images\forum-footer-bg.gif" />
+    <Content Include="Themes\Perfume\Content\images\forum-header-bg.gif" />
+    <Content Include="Themes\Perfume\Content\images\grey-button-bg.gif" />
+    <Content Include="Themes\Perfume\Content\images\grid-bg.gif" />
+    <Content Include="Themes\Perfume\Content\images\ico-account.gif" />
+    <Content Include="Themes\Perfume\Content\images\ico-admin.gif" />
+    <Content Include="Themes\Perfume\Content\images\ico-arrow-r.gif" />
+    <Content Include="Themes\Perfume\Content\images\ico-cart.gif" />
+    <Content Include="Themes\Perfume\Content\images\ico-delete.gif" />
+    <Content Include="Themes\Perfume\Content\images\ico-edit.gif" />
+    <Content Include="Themes\Perfume\Content\images\ico-forum-post-add.gif" />
+    <Content Include="Themes\Perfume\Content\images\ico-forum-post-high.gif" />
+    <Content Include="Themes\Perfume\Content\images\ico-forum-post.gif" />
+    <Content Include="Themes\Perfume\Content\images\ico-forum-watch.gif" />
+    <Content Include="Themes\Perfume\Content\images\ico-forum.gif" />
+    <Content Include="Themes\Perfume\Content\images\ico-inbox.gif" />
+    <Content Include="Themes\Perfume\Content\images\ico-login.gif" />
+    <Content Include="Themes\Perfume\Content\images\ico-logout.gif" />
+    <Content Include="Themes\Perfume\Content\images\ico-move-topic.gif" />
+    <Content Include="Themes\Perfume\Content\images\ico-pm.png" />
+    <Content Include="Themes\Perfume\Content\images\ico-register.gif" />
+    <Content Include="Themes\Perfume\Content\images\ico-wishlist.gif" />
+    <Content Include="Themes\Perfume\Content\images\loading.gif" />
+    <Content Include="Themes\Perfume\Content\images\logo.gif" />
+    <Content Include="Themes\Perfume\Content\images\nextlabel.gif" />
+    <Content Include="Themes\Perfume\Content\images\orange-button-bg.gif" />
+    <Content Include="Themes\Perfume\Content\images\pm-footer-bg.gif" />
+    <Content Include="Themes\Perfume\Content\images\pm-header-bg.gif" />
+    <Content Include="Themes\Perfume\Content\images\prevlabel.gif" />
+    <Content Include="Themes\Perfume\Content\images\productbox-grid-bg.gif" />
+    <Content Include="Themes\Perfume\Content\images\productbox-list-bg.gif" />
+    <Content Include="Themes\Perfume\Content\images\progress-step-active.gif" />
+    <Content Include="Themes\Perfume\Content\images\progress-step-inactive.gif" />
+    <Content Include="Themes\Perfume\Content\images\star-x-active.gif" />
+    <Content Include="Themes\Perfume\Content\images\star-x-inactive.gif" />
+    <Content Include="Themes\Perfume\Content\styles.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Themes\Perfume\Content\styles.rtl.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Themes\DarkOrange\Content\images\ajax_loader_big.gif" />
     <Content Include="Themes\DarkOrange\Content\images\ajax_loader_large.gif" />
     <Content Include="Themes\DarkOrange\Content\images\ajax_loader_small.gif" />
@@ -1542,7 +1655,6 @@
     <Content Include="Views\Shared\_Notifications.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="GiaHelper\" />
     <Folder Include="Plugins\bin\" />
   </ItemGroup>
   <ItemGroup>
@@ -1748,7 +1860,20 @@
     <Content Include="Views\Catalog\Gia_CategoryBestSellers.cshtml" />
     <Content Include="Views\Catalog\Gia_CategoryClearances.cshtml" />
     <Content Include="Views\Catalog\Gia_CategorySpecialAttributes.cshtml" />
-    <Content Include="Views\Catalog\Gia_HomeClearances.cshtml" />
+	<Content Include="Views\Catalog\Gia_HomeClearances.cshtml" />
+    <Content Include="Themes\Perfume\theme.config" />
+    <Content Include="Themes\Perfume\Views\Shared\Head.cshtml" />
+    <Content Include="Themes\Perfume\Views\Web.config" />
+    <Content Include="Views\Shared\HeaderBanner.cshtml" />
+    <Content Include="Views\Shared\_Brands.cshtml" />
+    <Content Include="Views\Shared\_Navigation.cshtml" />
+    <Content Include="Views\Shared\_WomenNavigation.cshtml" />
+    <Content Include="Views\Shared\_Menu.cshtml" />
+    <Content Include="Views\Shared\_Root.Footer.cshtml" />
+    <Content Include="Views\Shared\_ProductTab.cshtml" />
+    <Content Include="Views\Home\_HomeProductTab.cshtml" />
+    <Content Include="Views\Catalog\ManufacturerSlideShow.cshtml" />
+
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

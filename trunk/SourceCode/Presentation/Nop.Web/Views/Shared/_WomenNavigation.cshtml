@@ -1,0 +1,37 @@
+﻿@{
+    Layout = null;
+}
+<div class="pink-header" style="margin-top:0;">
+    women's discount perfume
+</div>
+<div class="letter-box">
+    <ul>
+        @{
+            var c = 'a';
+            while (c<='z')
+            {
+                <li><a href="#">@c.ToString().ToUpper()</a></li>
+                c++;
+            }
+        }
+        <li class="active"><a href="#">#</a></li>
+        <script type="text/javascript">
+            $(".letter-box li").click(function () {
+                $(".letter-box li").each(function() {
+                    $(this).removeClass("active");
+                });
+                $(this).addClass("active");
+            })
+        </script>
+    </ul>
+    <div class="clear-fix"></div>
+</div>
+<div id="letter-listitem">
+    <ul>
+        <li><a href="#">A scent by issey miake</a></li>
+        <li><a href="#">Ab spirit</a></li>
+        <li><a href="#">Absolu</a></li>
+    </ul>
+    <div class="clear-fix"></div>
+</div>
+@RenderPage("_Menu.cshtml")
