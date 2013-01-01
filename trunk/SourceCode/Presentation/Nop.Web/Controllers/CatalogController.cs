@@ -218,11 +218,12 @@ namespace Nop.Web.Controllers
                     SeName = product.GetSeName()
                 };
 
-                //set manufacter
+                //set manufacture, objectToServer
                 if (product.ProductManufacturers.Count > 0)
                 {
                     model.Manufacture = product.ProductManufacturers.First().Manufacturer.Name;
                 }
+                model.ObjectToServer = GetSpecialAttributeValue(model.Id, Nop.Services.GiaHelper.GiaConstance.ObjectToServiceKey);
 
                 //price
                 if (preparePriceModel)
@@ -2189,32 +2190,15 @@ namespace Nop.Web.Controllers
                 return Content("");
 
             //load and cache report
-            var report = _cacheManager.Get(ModelCacheEventConsumer.HOMEPAGE_BESTSELLERS_IDS_KEY_PAGE + pageValue, 
-                () => _orderReportService.BestSellersReportWithPager(null, null, null, null, null, _catalogSettings.NumberOfBestsellersOnHomepage, pageValue));
+            var report = _cacheManager.Get(ModelCacheEventConsumer.HOMEPAGE_BESTSELLERS_IDS_KEY_PAGE + pageValue,
+                () => _orderReportService.BestSellersReportWithPager(null, _catalogSettings.NumberOfBestsellersOnHomepage));
+
             var products = new List<Product>();
             foreach (var line in report)
             {
-                var productVariant = _productService.GetProductVariantById(line.ProductVariantId);
-                if (productVariant != null)
-                {
-                    var product = productVariant.Product;
-                    if (product != null)
-                    {
-                        bool contains = false;
-                        foreach (var p in products)
-                        {
-                            if (p.Id == product.Id)
-                            {
-                                contains = true;
-                                break;
-                            }
-                        }
-                        if (!contains)
-                            products.Add(product);
-                    }
-                }
+                var product = _productService.GetProductById(line.ProductId);
+                products.Add(product);
             }
-
 
             var model = new HomePageBestsellersModel()
             {
@@ -3043,56 +3027,7 @@ namespace Nop.Web.Controllers
 
         #region Gia's Code
         [ChildActionOnly]
-        public ActionResult Gia_CategoryBestSellers(int? productThumbPictureSize, int categoryId, int? pageIndex)
-        {
-            var itemsCount = 9;
-            if (_catalogSettings.NumberOfBestsellersOnHomepage != 0) itemsCount = _catalogSettings.NumberOfBestsellersOnHomepage;
-
-            try
-            {
-                itemsCount = Convert.ToInt32(ConfigurationManager.AppSettings["Gia_ItemsCountOnTab"]);
-            }
-            catch (Exception) {}
-
-            //load and cache report
-            var report = _cacheManager.Get(ModelCacheEventConsumer.CATEGORY_BESTSELLERS_WITH_IDs + categoryId,
-                () => _orderReportService.BestSellersReportByCategory(null, null, null, null, null, categoryId, itemsCount));
-            var products = new List<Product>();
-            foreach (var line in report)
-            {
-                var productVariant = _productService.GetProductVariantById(line.ProductVariantId);
-                if (productVariant != null)
-                {
-                    var product = productVariant.Product;
-                    if (product != null)
-                    {
-                        bool contains = false;
-                        foreach (var p in products)
-                        {
-                            if (p.Id == product.Id)
-                            {
-                                contains = true;
-                                break;
-                            }
-                        }
-                        if (!contains)
-                            products.Add(product);
-                    }
-                }
-            }
-
-            var model = new HomePageBestsellersModel()
-            {
-                UseSmallProductBox = _catalogSettings.UseSmallProductBoxOnHomePage,
-            };
-            model.Products = PrepareProductOverviewModels(products,
-                !_catalogSettings.UseSmallProductBoxOnHomePage, true, productThumbPictureSize)
-                .ToList();
-            return PartialView(model);
-        }
-
-        [ChildActionOnly]
-        public ActionResult Gia_HomeClearances(int? productThumbPictureSize, int? pageIndex)
+        public ActionResult Gia_Clearances(int? productThumbPictureSize, bool? hasPager, int? categoryId, int? pageIndex)
         {
             var pageValue = pageIndex.HasValue ? pageIndex.Value : 1;
 
@@ -3105,31 +3040,29 @@ namespace Nop.Web.Controllers
             }
             catch (Exception) { }
 
-            //load and cache report
-            var report = _cacheManager.Get(ModelCacheEventConsumer.HOME_CLEARANCE_WITH_PAGEs + pageValue,
-                () => _orderReportService.ClearancesReport(itemsCount));
+            IList<ClearacneReportLine> report;
+            if (categoryId.HasValue)
+            {
+                //load and cache report
+                report =
+                    _cacheManager.Get(
+                        ModelCacheEventConsumer.GIA_CLEARANCE_WITH_PAGEs + pageValue + "." + categoryId.Value,
+                        () => _orderReportService.ClearancesReport(categoryId, pageIndex.HasValue, itemsCount));
+
+            }
+            else
+            {
+                //load and cache report
+                report = _cacheManager.Get(ModelCacheEventConsumer.GIA_CLEARANCE_WITH_PAGEs + pageValue,
+                                           () => _orderReportService.ClearancesReport(null, false, itemsCount));
+
+            }
+
             var products = new List<Product>();
             foreach (var line in report)
             {
-                var productVariant = _productService.GetProductVariantById(line.ProductVariantId);
-                if (productVariant != null)
-                {
-                    var product = productVariant.Product;
-                    if (product != null)
-                    {
-                        bool contains = false;
-                        foreach (var p in products)
-                        {
-                            if (p.Id == product.Id)
-                            {
-                                contains = true;
-                                break;
-                            }
-                        }
-                        if (!contains)
-                            products.Add(product);
-                    }
-                }
+                var product = _productService.GetProductById(line.ProductId);
+                products.Add(product);
             }
 
             var model = new HomePageBestsellersModel()
@@ -3143,8 +3076,10 @@ namespace Nop.Web.Controllers
         }
 
         [ChildActionOnly]
-        public ActionResult Gia_CategoryClearances(int? productThumbPictureSize, int categoryId)
+        public ActionResult Gia_SpecialAttributes(int? productThumbPictureSize, string attributeName, int? categoryId, int? pageIndex)
         {
+            var pageValue = pageIndex.HasValue ? pageIndex.Value : 1;
+
             var itemsCount = 9;
             if (_catalogSettings.NumberOfBestsellersOnHomepage != 0) itemsCount = _catalogSettings.NumberOfBestsellersOnHomepage;
 
@@ -3154,76 +3089,31 @@ namespace Nop.Web.Controllers
             }
             catch (Exception) { }
 
-            //load and cache report
-            var report = _cacheManager.Get(ModelCacheEventConsumer.CATEGORY_CLEARANCE_WITH_IDs + categoryId,
-                () => _orderReportService.ClearancesReportByCategory(categoryId, itemsCount));
-            var products = new List<Product>();
-            foreach (var line in report)
+            IList<int> report;
+            if (categoryId.HasValue)
             {
-                var productVariant = _productService.GetProductVariantById(line.ProductVariantId);
-                if (productVariant != null)
-                {
-                    var product = productVariant.Product;
-                    if (product != null)
-                    {
-                        bool contains = false;
-                        foreach (var p in products)
-                        {
-                            if (p.Id == product.Id)
-                            {
-                                contains = true;
-                                break;
-                            }
-                        }
-                        if (!contains)
-                            products.Add(product);
-                    }
-                }
+                //load and cache report
+                report =
+                    _cacheManager.Get(
+                        ModelCacheEventConsumer.GIA_SPECIALATTRIBUTES_WITH_PAGEs + pageValue + "." + categoryId.Value,
+                        () => _productService.GetProductsBySpecialAttriubte(attributeName, "true", itemsCount, categoryId.Value, null));
+
+            }
+            else
+            {
+                //load and cache report
+                report =
+                    _cacheManager.Get(
+                        ModelCacheEventConsumer.GIA_SPECIALATTRIBUTES_WITH_PAGEs + pageValue,
+                        () => _productService.GetProductsBySpecialAttriubte(attributeName, "true", itemsCount, null, null));
+
             }
 
-            var model = new HomePageBestsellersModel()
-            {
-                UseSmallProductBox = _catalogSettings.UseSmallProductBoxOnHomePage,
-            };
-            model.Products = PrepareProductOverviewModels(products,
-                !_catalogSettings.UseSmallProductBoxOnHomePage, true, productThumbPictureSize)
-                .ToList();
-            return PartialView(model);
-        }
-
-        [ChildActionOnly]
-        public ActionResult Gia_CategorySpecialAttributes(int? productThumbPictureSize, int categoryId, string attributeName)
-        {
-            var itemsCount = 9;
-            if (_catalogSettings.NumberOfBestsellersOnHomepage != 0) itemsCount = _catalogSettings.NumberOfBestsellersOnHomepage;
-
-            try
-            {
-                itemsCount = Convert.ToInt32(ConfigurationManager.AppSettings["Gia_ItemsCountOnTab"]);
-            }
-            catch (Exception) { }
-
-            //load and cache report
-            var report = _cacheManager.Get(ModelCacheEventConsumer.CATEGORY_SPECIAL_WITH_VALUEs + categoryId + "_" + attributeName,
-                () => _productService.GetProductsBySpecialAttriubte(attributeName, true, itemsCount));
             var products = new List<Product>();
             foreach (var line in report)
             {
                 var product = _productService.GetProductById(line);
-                if (product != null)
-                {
-                    bool contains = false;
-                    foreach (var p in products)
-                    {
-                        if (p.Id == product.Id)
-                        {
-                            contains = true;
-                            break;
-                        }
-                    }
-                    if (!contains)
-                        products.Add(product);
-                }
+                products.Add(product);
             }
 
             var model = new HomePageBestsellersModel()
@@ -3236,6 +3126,13 @@ namespace Nop.Web.Controllers
 
             ViewBag.AttributeName = attributeName;
             return PartialView(model);
+        }
+        #endregion
+
+        #region Gia's Code Ultilites
+        public string GetSpecialAttributeValue(int productId, string attributeName)
+        {
+            return _productService.GetSpecialValueOfProduct(productId, attributeName);
         }
         #endregion
     }

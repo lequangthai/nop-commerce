@@ -22,6 +22,14 @@ namespace Nop.Core.Domain.Orders
         /// Gets or sets the total quantity
         /// </summary>
         public int TotalQuantity { get; set; }
+    }
 
+    [Serializable]
+    public partial class Gia_BestsellersReportLine
+    {
+        /// <summary>
+        /// Gets or sets the product variant identifier
+        /// </summary>
+        public int ProductId { get; set; }
     }
 }

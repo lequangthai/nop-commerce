@@ -8,6 +8,6 @@ namespace Nop.Core.Domain.Catalog
     [Serializable]
     public partial class ClearacneReportLine
     {
-        public int ProductVariantId { get; set; }
+        public int ProductId { get; set; }
     }
 }

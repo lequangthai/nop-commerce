@@ -1859,9 +1859,8 @@
     <Content Include="Views\ShoppingCart\_OrderReviewData.cshtml" />
     <Content Include="Views\ShoppingCart\_OrderReviewData.Mobile.cshtml" />
     <Content Include="Views\Catalog\Gia_CategoryBestSellers.cshtml" />
-    <Content Include="Views\Catalog\Gia_CategoryClearances.cshtml" />
-    <Content Include="Views\Catalog\Gia_CategorySpecialAttributes.cshtml" />
-    <Content Include="Views\Catalog\Gia_HomeClearances.cshtml" />
+    <Content Include="Views\Catalog\Gia_Clearances.cshtml" />
+    <Content Include="Views\Catalog\Gia_SpecialAttributes.cshtml" />
     <Content Include="Themes\Perfume\theme.config" />
     <Content Include="Themes\Perfume\Views\Shared\Head.cshtml" />
     <Content Include="Themes\Perfume\Views\Web.config" />

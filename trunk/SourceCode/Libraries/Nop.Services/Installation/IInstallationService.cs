@@ -3,6 +3,6 @@ namespace Nop.Services.Installation
 {
     public partial interface IInstallationService
     {
-        void InstallData(string defaultUserEmail, string defaultUserPassword, bool installSampleData = true);
+        void InstallData(string defaultUserEmail, string defaultUserPassword, bool installSampleData = true, bool keepOriginal = true);
     }
 }

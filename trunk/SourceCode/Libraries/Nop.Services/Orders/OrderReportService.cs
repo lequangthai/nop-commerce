@@ -274,85 +274,9 @@ namespace Nop.Services.Orders
             return result;
         }
 
-        public virtual IList<BestsellersReportLine> BestSellersReportWithPager(DateTime? startTime,
-            DateTime? endTime, OrderStatus? os, PaymentStatus? ps, ShippingStatus? ss,
-            int recordsToReturn = 5, int pageIndex = 1, int orderBy = 1, bool showHidden = false)
-        {
-            int? orderStatusId = null;
-            if (os.HasValue)
-                orderStatusId = (int)os.Value;
-
-            int? paymentStatusId = null;
-            if (ps.HasValue)
-                paymentStatusId = (int)ps.Value;
-
-            int? shippingStatusId = null;
-            if (ss.HasValue)
-                shippingStatusId = (int)ss.Value;
-
-
-            var query1 = from opv in _opvRepository.Table
-                         join o in _orderRepository.Table on opv.OrderId equals o.Id
-                         join pv in _productVariantRepository.Table on opv.ProductVariantId equals pv.Id
-                         join p in _productRepository.Table on pv.ProductId equals p.Id
-                         where (!startTime.HasValue || startTime.Value <= o.CreatedOnUtc) &&
-                         (!endTime.HasValue || endTime.Value >= o.CreatedOnUtc) &&
-                         (!orderStatusId.HasValue || orderStatusId == o.OrderStatusId) &&
-                         (!paymentStatusId.HasValue || paymentStatusId == o.PaymentStatusId) &&
-                         (!shippingStatusId.HasValue || shippingStatusId == o.ShippingStatusId) &&
-                         (!o.Deleted) &&
-                         (!p.Deleted) &&
-                         (!pv.Deleted) &&
-                         (showHidden || p.Published) &&
-                         (showHidden || pv.Published)
-                         select opv;
-
-            var query2 = from opv in query1
-                         group opv by opv.ProductVariantId into g
-                         select new
-                         {
-                             ProductVariantId = g.Key,
-                             TotalAmount = g.Sum(x => x.PriceExclTax),
-                             TotalQuantity = g.Sum(x => x.Quantity),
-                         };
-
-            switch (orderBy)
-            {
-                case 1:
-                    {
-                        query2 = query2.OrderByDescending(x => x.TotalQuantity);
-                    }
-                    break;
-                case 2:
-                    {
-                        query2 = query2.OrderByDescending(x => x.TotalAmount);
-                    }
-                    break;
-                default:
-                    throw new ArgumentException("Wrong orderBy parameter", "orderBy");
-            }
-
-            if (pageIndex < 1) pageIndex = 1;
-
-            if (recordsToReturn != 0 && recordsToReturn != int.MaxValue)
-                query2 = query2.Skip((pageIndex - 1) * recordsToReturn).Take(recordsToReturn);
-
-            var result = query2.ToList().Select(x =>
-            {
-                return new BestsellersReportLine()
-                {
-                    ProductVariantId = x.ProductVariantId,
-                    TotalAmount = x.TotalAmount,
-                    TotalQuantity = x.TotalQuantity
-                };
-            }).ToList();
-
-            return result;
-        }
-
         private IList<int> BuildCategoriesTree(int rootCategoryId)
         {
-            var list = new List<int> {rootCategoryId};
+            var list = new List<int> { rootCategoryId };
 
             var childrenId = from c in _categoryRepository.Table where c.ParentCategoryId == rootCategoryId select c.Id;
             foreach (var childId in childrenId)
@@ -367,7 +291,7 @@ namespace Nop.Services.Orders
         {
             categoryIds.Add(categoryId);
 
-            var childrenId = from c in _categoryRepository.Table where c.ParentCategoryId == categoryId  select c.Id;
+            var childrenId = from c in _categoryRepository.Table where c.ParentCategoryId == categoryId select c.Id;
             foreach (var childId in childrenId)
             {
                 categoryIds.Add(childId);
@@ -376,44 +300,47 @@ namespace Nop.Services.Orders
             return categoryIds.ToList();
         }
 
-        public IList<BestsellersReportLine> BestSellersReportByCategory(DateTime? startTime, DateTime? endTime, OrderStatus? os, PaymentStatus? ps, ShippingStatus? ss, int categoryId, int recordsToReturn = 5, int pageIndex = 1, int orderBy = 1, bool showHidden = false)
+        public virtual IList<Gia_BestsellersReportLine> BestSellersReportWithPager(int? categoryId,
+            int recordsToReturn = 5, int pageIndex = 1, int orderBy = 1, bool showHidden = false)
         {
-            int? orderStatusId = null;
-            if (os.HasValue)
-                orderStatusId = (int)os.Value;
+            IQueryable<OrderProductVariant> query1;
 
-            int? paymentStatusId = null;
-            if (ps.HasValue)
-                paymentStatusId = (int)ps.Value;
+            if (categoryId.HasValue)
+            {
+                var categoryIds = BuildCategoriesTree(categoryId.Value);
 
-            int? shippingStatusId = null;
-            if (ss.HasValue)
-                shippingStatusId = (int)ss.Value;
-
-            var categoryIds = BuildCategoriesTree(categoryId);
-
-            var query1 = from opv in _opvRepository.Table
+                query1 = from opv in _opvRepository.Table
+                             join o in _orderRepository.Table on opv.OrderId equals o.Id
+                             join pv in _productVariantRepository.Table on opv.ProductVariantId equals pv.Id
+                             join p in _productRepository.Table on pv.ProductId equals p.Id
+                             join pc in _productCategoryRepository.Table on p.Id equals pc.ProductId
+                             where (!o.Deleted) &&
+                             (!p.Deleted) &&
+                             (!pv.Deleted) &&
+                             (showHidden || p.Published) &&
+                             (showHidden || pv.Published) && categoryIds.Contains(pc.CategoryId)
+                             select opv;
+            }
+            else
+            {
+                query1 = from opv in _opvRepository.Table
                          join o in _orderRepository.Table on opv.OrderId equals o.Id
                          join pv in _productVariantRepository.Table on opv.ProductVariantId equals pv.Id
                          join p in _productRepository.Table on pv.ProductId equals p.Id
-                         join pc in _productCategoryRepository.Table on p.Id equals pc.ProductId
-                         where (!startTime.HasValue || startTime.Value <= o.CreatedOnUtc) &&
-                         (!endTime.HasValue || endTime.Value >= o.CreatedOnUtc) &&
-                         (!orderStatusId.HasValue || orderStatusId == o.OrderStatusId) &&
-                         (!paymentStatusId.HasValue || paymentStatusId == o.PaymentStatusId) &&
-                         (!shippingStatusId.HasValue || shippingStatusId == o.ShippingStatusId) &&
+                         where 
                          (!o.Deleted) &&
                          (!p.Deleted) &&
                          (!pv.Deleted) &&
                          (showHidden || p.Published) &&
-                         (showHidden || pv.Published) && categoryIds.Contains(pc.CategoryId)
+                         (showHidden || pv.Published)
                          select opv;
+            }
 
             var query2 = from opv in query1
-                         group opv by opv.ProductVariantId into g
+                         group opv by opv.ProductVariant.Product.Id into g
                          select new
                          {
-                             ProductVariantId = g.Key,
+                             Product = g.Key,
                              TotalAmount = g.Sum(x => x.PriceExclTax),
                              TotalQuantity = g.Sum(x => x.Quantity),
                          };
@@ -435,148 +362,80 @@ namespace Nop.Services.Orders
             }
 
             if (pageIndex < 1) pageIndex = 1;
-            if (recordsToReturn != 0 && recordsToReturn != int.MaxValue)
-                query2 = query2.Skip((pageIndex - 1)*recordsToReturn).Take(recordsToReturn);
 
-            var result = query2.ToList().Select(x =>
-            {
-                return new BestsellersReportLine()
-                {
-                    ProductVariantId = x.ProductVariantId,
-                    TotalAmount = x.TotalAmount,
-                    TotalQuantity = x.TotalQuantity
-                };
-            }).ToList();
-            
-            return result;
-        }
-
-        public IList<BestsellersReportLine> BestSellersReportByCategory(DateTime? startTime, DateTime? endTime, OrderStatus? os, PaymentStatus? ps, ShippingStatus? ss, int categoryId, ref int totalPage, int recordsToReturn = 5, int pageIndex = 1, int orderBy = 1, bool showHidden = false)
-        {
-            int? orderStatusId = null;
-            if (os.HasValue)
-                orderStatusId = (int)os.Value;
-
-            int? paymentStatusId = null;
-            if (ps.HasValue)
-                paymentStatusId = (int)ps.Value;
-
-            int? shippingStatusId = null;
-            if (ss.HasValue)
-                shippingStatusId = (int)ss.Value;
-
-            var categoryIds = BuildCategoriesTree(categoryId);
-
-            var query1 = from opv in _opvRepository.Table
-                         join o in _orderRepository.Table on opv.OrderId equals o.Id
-                         join pv in _productVariantRepository.Table on opv.ProductVariantId equals pv.Id
-                         join p in _productRepository.Table on pv.ProductId equals p.Id
-                         join pc in _productCategoryRepository.Table on p.Id equals pc.ProductId
-                         where (!startTime.HasValue || startTime.Value <= o.CreatedOnUtc) &&
-                         (!endTime.HasValue || endTime.Value >= o.CreatedOnUtc) &&
-                         (!orderStatusId.HasValue || orderStatusId == o.OrderStatusId) &&
-                         (!paymentStatusId.HasValue || paymentStatusId == o.PaymentStatusId) &&
-                         (!shippingStatusId.HasValue || shippingStatusId == o.ShippingStatusId) &&
-                         (!o.Deleted) &&
-                         (!p.Deleted) &&
-                         (!pv.Deleted) &&
-                         (showHidden || p.Published) &&
-                         (showHidden || pv.Published) && categoryIds.Contains(pc.CategoryId)
-                         select opv;
-
-            var query2 = from opv in query1
-                         group opv by opv.ProductVariantId into g
-                         select new
-                         {
-                             ProductVariantId = g.Key,
-                             TotalAmount = g.Sum(x => x.PriceExclTax),
-                             TotalQuantity = g.Sum(x => x.Quantity),
-                         };
-
-            switch (orderBy)
-            {
-                case 1:
-                    {
-                        query2 = query2.OrderByDescending(x => x.TotalQuantity);
-                    }
-                    break;
-                case 2:
-                    {
-                        query2 = query2.OrderByDescending(x => x.TotalAmount);
-                    }
-                    break;
-                default:
-                    throw new ArgumentException("Wrong orderBy parameter", "orderBy");
-            }
-
-            var totalItems = query2.Count();
-            totalPage = totalItems/recordsToReturn + (totalItems%recordsToReturn == 0 ? 0 : 1);
-
-            if (pageIndex < 1) pageIndex = 1;
             if (recordsToReturn != 0 && recordsToReturn != int.MaxValue)
                 query2 = query2.Skip((pageIndex - 1) * recordsToReturn).Take(recordsToReturn);
 
             var result = query2.ToList().Select(x =>
             {
-                return new BestsellersReportLine()
+                return new Gia_BestsellersReportLine()
                 {
-                    ProductVariantId = x.ProductVariantId,
-                    TotalAmount = x.TotalAmount,
-                    TotalQuantity = x.TotalQuantity
+                    ProductId = x.Product
                 };
             }).ToList();
 
             return result;
         }
 
-        public IList<ClearacneReportLine> ClearancesReport(int recordsToReturn = 5, int pageIndex = 9, int orderBy = 1, bool showHidden = false)
+        public int BestSellersReportWithPagerPageCount(int? categoryId, int recordsToReturn = 5, bool showHidden = false)
         {
-            var query1 = from pv in _productVariantRepository.Table
+            IQueryable<OrderProductVariant> query1;
+
+            if (categoryId.HasValue)
+            {
+                var categoryIds = BuildCategoriesTree(categoryId.Value);
+
+                query1 = from opv in _opvRepository.Table
+                         join o in _orderRepository.Table on opv.OrderId equals o.Id
+                         join pv in _productVariantRepository.Table on opv.ProductVariantId equals pv.Id
                          join p in _productRepository.Table on pv.ProductId equals p.Id
                          join pc in _productCategoryRepository.Table on p.Id equals pc.ProductId
-                         where (pv.PercentDiscount.HasValue) &&
+                         where (!o.Deleted) &&
+                         (!p.Deleted) &&
+                         (!pv.Deleted) &&
+                         (showHidden || p.Published) &&
+                         (showHidden || pv.Published) && categoryIds.Contains(pc.CategoryId)
+                         select opv;
+            }
+            else
+            {
+                query1 = from opv in _opvRepository.Table
+                         join o in _orderRepository.Table on opv.OrderId equals o.Id
+                         join pv in _productVariantRepository.Table on opv.ProductVariantId equals pv.Id
+                         join p in _productRepository.Table on pv.ProductId equals p.Id
+                         where
+                         (!o.Deleted) &&
                          (!p.Deleted) &&
                          (!pv.Deleted) &&
                          (showHidden || p.Published) &&
                          (showHidden || pv.Published)
-                         select pv;
-
-            switch (orderBy)
-            {
-                case 1:
-                    {
-                        query1 = query1.OrderByDescending(x => x.Name);
-                    }
-                    break;
-                case 2:
-                    {
-                        query1 = query1.OrderByDescending(x => x.Name);
-                    }
-                    break;
-                default:
-                    throw new ArgumentException("Wrong orderBy parameter", "orderBy");
+                         select opv;
             }
 
-            if (pageIndex < 1) pageIndex = 1;
-            if (recordsToReturn != 0 && recordsToReturn != int.MaxValue)
-                query1 = query1.Skip((pageIndex - 1) * recordsToReturn).Take(recordsToReturn);
+            var query2 = from opv in query1
+                         group opv by opv.ProductVariant.Product.Id
+                         into g
+                         select new
+                                    {
+                                        Product = g.Key
+                                    };
 
-            var result = query1.ToList().Select(x =>
-            {
-                return new ClearacneReportLine()
-                {
-                    ProductVariantId = x.Id
-                };
-            }).ToList();
+            var totalItems = query2.Count();
+            var totalPage = totalItems / recordsToReturn + (totalItems % recordsToReturn == 0 ? 0 : 1);
 
-            return result;
+            return totalPage;
         }
 
-        public IList<ClearacneReportLine> ClearancesReportByCategory(int categoryId, int recordsToReturn = 5, int pageIndex = 9, int orderBy = 1, bool showHidden = false)
+        public IList<ClearacneReportLine> ClearancesReport(int? categoryId, bool hasPager, int recordsToReturn = 5,
+            int pageIndex = 1, int orderBy = 1, bool showHidden = false)
         {
-            var categoryIds = BuildCategoriesTree(categoryId);
+            IQueryable<Product> query1; 
 
-            var query1 = from pv in _productVariantRepository.Table
+            if (categoryId.HasValue)
+            {
+                var categoryIds = BuildCategoriesTree(categoryId.Value);
+
+                query1 = from pv in _productVariantRepository.Table
                          join p in _productRepository.Table on pv.ProductId equals p.Id
                          join pc in _productCategoryRepository.Table on p.Id equals pc.ProductId
                          where (pv.PercentDiscount.HasValue) &&
@@ -584,7 +443,20 @@ namespace Nop.Services.Orders
                          (!pv.Deleted) &&
                          (showHidden || p.Published) &&
                          (showHidden || pv.Published) && categoryIds.Contains(pc.CategoryId)
-                         select pv;
+                         select p;
+            }
+            else
+            {
+                query1 = from pv in _productVariantRepository.Table
+                         join p in _productRepository.Table on pv.ProductId equals p.Id
+                         join pc in _productCategoryRepository.Table on p.Id equals pc.ProductId
+                         where (pv.PercentDiscount.HasValue) &&
+                               (!p.Deleted) &&
+                               (!pv.Deleted) &&
+                               (showHidden || p.Published) &&
+                               (showHidden || pv.Published)
+                         select p;
+            }
 
             switch (orderBy)
             {
@@ -602,26 +474,35 @@ namespace Nop.Services.Orders
                     throw new ArgumentException("Wrong orderBy parameter", "orderBy");
             }
 
-            if (pageIndex < 1) pageIndex = 1;
-            if (recordsToReturn != 0 && recordsToReturn != int.MaxValue)
-                query1 = query1.Skip((pageIndex - 1) * recordsToReturn).Take(recordsToReturn);
-
-            var result = query1.ToList().Select(x =>
+            IQueryable<int> query2 = query1.Select(c=>c.Id);
+            if (hasPager)
             {
-                return new ClearacneReportLine()
-                {
-                    ProductVariantId = x.Id
-                };
-            }).ToList();
+                if (pageIndex < 1) pageIndex = 1;
+                if (recordsToReturn != 0 && recordsToReturn != int.MaxValue)
+                    query2 = query1.Select(c=>c.Id).Distinct().Skip((pageIndex - 1) * recordsToReturn).Take(recordsToReturn);
+            }
+            else
+            {
+                query2 = query1.Select(c=>c.Id).Distinct().Take(recordsToReturn);
+            }
+
+            var result = query2.ToList().Select(x => new ClearacneReportLine()
+                                                         {
+                                                             ProductId = x
+                                                         }).ToList();
 
             return result;
         }
 
-        public IList<ClearacneReportLine> ClearancesReportByCategory(int categoryId, ref int totalPage, int recordsToReturn = 5, int pageIndex = 1, int orderBy = 1, bool showHidden = false)
+        public int ClearancesReportPageCount(int? categoryId, int recordsToReturn = 5, bool showHidden = false)
         {
-            var categoryIds = BuildCategoriesTree(categoryId);
+            IQueryable<Product> query1;
 
-            var query1 = from pv in _productVariantRepository.Table
+            if (categoryId.HasValue)
+            {
+                var categoryIds = BuildCategoriesTree(categoryId.Value);
+
+                query1 = from pv in _productVariantRepository.Table
                          join p in _productRepository.Table on pv.ProductId equals p.Id
                          join pc in _productCategoryRepository.Table on p.Id equals pc.ProductId
                          where (pv.PercentDiscount.HasValue) &&
@@ -629,40 +510,25 @@ namespace Nop.Services.Orders
                          (!pv.Deleted) &&
                          (showHidden || p.Published) &&
                          (showHidden || pv.Published) && categoryIds.Contains(pc.CategoryId)
-                         select pv;
-
-            switch (orderBy)
+                         select p;
+            }
+            else
             {
-                case 1:
-                    {
-                        query1 = query1.OrderByDescending(x => x.Name);
-                    }
-                    break;
-                case 2:
-                    {
-                        query1 = query1.OrderByDescending(x => x.Name);
-                    }
-                    break;
-                default:
-                    throw new ArgumentException("Wrong orderBy parameter", "orderBy");
+                query1 = from pv in _productVariantRepository.Table
+                         join p in _productRepository.Table on pv.ProductId equals p.Id
+                         join pc in _productCategoryRepository.Table on p.Id equals pc.ProductId
+                         where (pv.PercentDiscount.HasValue) &&
+                               (!p.Deleted) &&
+                               (!pv.Deleted) &&
+                               (showHidden || p.Published) &&
+                               (showHidden || pv.Published)
+                         select p;
             }
 
-            var totalItems = query1.Count();
-            totalPage = totalItems / recordsToReturn + (totalItems % recordsToReturn == 0 ? 0 : 1);
+            var totalItems = query1.Select(c=>c.Id).Distinct().Count();
+            var totalPage = totalItems / recordsToReturn + (totalItems % recordsToReturn == 0 ? 0 : 1);
 
-            if (pageIndex < 1) pageIndex = 1;
-            if (recordsToReturn != 0 && recordsToReturn != int.MaxValue)
-                query1 = query1.Skip((pageIndex - 1) * recordsToReturn).Take(recordsToReturn);
-
-            var result = query1.ToList().Select(x =>
-            {
-                return new ClearacneReportLine()
-                {
-                    ProductVariantId = x.Id
-                };
-            }).ToList();
-
-            return result;
+            return totalPage;
         }
 
         /// <summary>

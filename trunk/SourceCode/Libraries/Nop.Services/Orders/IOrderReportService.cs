@@ -52,41 +52,16 @@ namespace Nop.Services.Orders
             DateTime? endTime, OrderStatus? os, PaymentStatus? ps, ShippingStatus? ss,
             int recordsToReturn = 5, int orderBy = 1, bool showHidden = false);
 
-        IList<BestsellersReportLine> BestSellersReportWithPager(DateTime? startTime,
-            DateTime? endTime, OrderStatus? os, PaymentStatus? ps, ShippingStatus? ss,
+        IList<Gia_BestsellersReportLine> BestSellersReportWithPager(int? categoryId,
             int recordsToReturn = 5, int pageIndex = 1, int orderBy = 1, bool showHidden = false);
 
-        /// <summary>
-        /// Get best sellers report
-        /// </summary>
-        /// <param name="startTime">Order start time; null to load all</param>
-        /// <param name="endTime">Order end time; null to load all</param>
-        /// <param name="os">Order status; null to load all records</param>
-        /// <param name="ps">Order payment status; null to load all records</param>
-        /// <param name="ss">Shipping status; null to load all records</param>
-        /// <param name="categoryId">product best sellers of category</param>
-        /// <param name="recordsToReturn">Records to return</param>
-        /// <param name="pageIndex">page index </param>
-        /// <param name="orderBy">1 - order by quantity, 2 - order by total amount</param>
-        /// <param name="showHidden">A value indicating whether to show hidden records</param>
-        /// <returns>Result</returns>
-        IList<BestsellersReportLine> BestSellersReportByCategory(DateTime? startTime,
-            DateTime? endTime, OrderStatus? os, PaymentStatus? ps, ShippingStatus? ss, int categoryId,
-            int recordsToReturn = 5, int pageIndex = 1, int orderBy = 1, bool showHidden = false);
+        int BestSellersReportWithPagerPageCount(int? categoryId, int recordsToReturn = 5, bool showHidden = false);
 
-        IList<BestsellersReportLine> BestSellersReportByCategory(DateTime? startTime,
-            DateTime? endTime, OrderStatus? os, PaymentStatus? ps, ShippingStatus? ss, int categoryId, ref int totalPage,
-            int recordsToReturn = 5, int pageIndex = 1, int orderBy = 1, bool showHidden = false);
-
-        IList<ClearacneReportLine> ClearancesReport(int recordsToReturn = 5, 
+        IList<ClearacneReportLine> ClearancesReport(int? categoryId, bool hasPager, int recordsToReturn = 5,
             int pageIndex = 1, int orderBy = 1, bool showHidden = false);
 
-        IList<ClearacneReportLine> ClearancesReportByCategory(int categoryId,
-            int recordsToReturn = 5, int pageIndex = 1, int orderBy = 1, bool showHidden = false);
+        int ClearancesReportPageCount(int? categoryId, int recordsToReturn = 5, bool showHidden = false);
 
-        IList<ClearacneReportLine> ClearancesReportByCategory(int categoryId, ref int totalPage,
-            int recordsToReturn = 5, int pageIndex = 1, int orderBy = 1, bool showHidden = false);
-        
         /// <summary>
         /// Gets a list of products purchased by other customers who purchased the above
         /// </summary>

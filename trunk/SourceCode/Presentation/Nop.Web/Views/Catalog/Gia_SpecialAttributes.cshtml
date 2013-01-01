@@ -1,0 +1,46 @@
+﻿@model HomePageBestsellersModel
+@using Nop.Web.Models.Catalog;
+@if (Model.Products.Count > 0)
+{
+@*<div class="product-grid bestsellers">
+        <div class="title">
+            @T(ViewBag.AttributeName)
+        </div>
+        <div class="clear">
+        </div>
+        @if (Model.UseSmallProductBox)
+        {
+            @(Html.DataList<ProductOverviewModel>(Model.Products, 3,
+            @<div class="item-box">
+                @Html.Partial("_ProductSmallBox", @item)
+            </div>
+                ))
+        }
+        else
+        {
+        @(Html.DataList<ProductOverviewModel>(Model.Products, 2,
+            @<div class="item-box">
+                @Html.Partial("_ProductBox", @item)
+            </div>
+                ))
+        }
+    </div>*@
+    foreach (var p in Model.Products)
+    {
+    <div class="product-item">
+        <div align="center" class="image">
+            <a href="@Url.RouteUrl("Product", new { productId = p.Id, SeName = p.SeName })" title="@p.DefaultPictureModel.Title">
+                <img alt="@p.DefaultPictureModel.AlternateText" src="@p.DefaultPictureModel.ImageUrl"
+                                        title="@p.DefaultPictureModel.Title" /></a>
+        </div>
+        <div class="description">
+
+            <a href="@Url.RouteUrl("Product", new { productId = p.Id, SeName = p.SeName })" title="@p.DefaultPictureModel.Title">
+                <span class="name">@Html.Truncate(p.Name, 20)</span></a><br />
+            by <span class="by">@p.Manufacture</span><br />
+            for @p.ObjectToServer
+        </div>
+        <div class="price">@p.ProductPrice.Price</div>
+    </div>
+    }
+}

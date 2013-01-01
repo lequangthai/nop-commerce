@@ -45,13 +45,11 @@ namespace Nop.Services.Catalog
         /// <returns>Products</returns>
         IList<Product> GetProductsByIds(int[] productIds);
 
-        IList<int> GetProductsBySpecialAttriubte(string attributeName, bool value, int itemsCount);
+        IList<int> GetProductsBySpecialAttriubte(string attributeName, string strValue, int itemsCount, int? categoryId, int? pageIndex);
 
-        IList<int> GetProductsBySpecialAttriubte(string attributeName, bool value, int itemsCount, int pageIndex, ref int totalPage);
+        int GetProductsBySpecialAttributePageCount(string attributeName, string strValue, int itemsCount, int? categoryId);
 
-        IList<int> GetProductsByCategoryAndSpecialAttriubte(string attributeName, int categoryId, bool value, int itemsCount);
-
-        IList<int> GetProductsByCategoryAndSpecialAttriubte(string attributeName, int categoryId, bool value, int itemsCount, int pageIndex, ref int totalPage);
+        string GetSpecialValueOfProduct(int productId, string attributeName);
 
         /// <summary>
         /// Inserts a product

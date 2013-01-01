@@ -33,6 +33,7 @@ using Nop.Core.Infrastructure;
 using Nop.Core.IO;
 using Nop.Services.Common;
 using Nop.Services.Customers;
+using Nop.Services.GiaHelper;
 using Nop.Services.Helpers;
 using Nop.Services.Media;
 using Nop.Services.Localization;
@@ -4825,89 +4826,63 @@ namespace Nop.Services.Installation
                 });
         }
 
-        protected virtual void InstallSpecificationAttributes()
+        public virtual void InstallSpecificationAttributes()
         {
-            var sa1 = new SpecificationAttribute
-            {
-                Name = "Screensize",
-                DisplayOrder = 1,
-            };
-            sa1.SpecificationAttributeOptions.Add(new SpecificationAttributeOption()
-            {
-                Name = "10.0''",
-                DisplayOrder = 3,
-            });
-            sa1.SpecificationAttributeOptions.Add(new SpecificationAttributeOption()
-            {
-                Name = "14.1''",
-                DisplayOrder = 4,
-            });
-            sa1.SpecificationAttributeOptions.Add(new SpecificationAttributeOption()
-            {
-                Name = "15.4''",
-                DisplayOrder = 5,
-            });
-            sa1.SpecificationAttributeOptions.Add(new SpecificationAttributeOption()
-            {
-                Name = "16.0''",
-                DisplayOrder = 6,
-            });
-            var sa2 = new SpecificationAttribute
-            {
-                Name = "CPU Type",
-                DisplayOrder = 2,
-            };
-            sa2.SpecificationAttributeOptions.Add(new SpecificationAttributeOption()
-            {
-                Name = "AMD",
-                DisplayOrder = 1,
-            });
-            sa2.SpecificationAttributeOptions.Add(new SpecificationAttributeOption()
-            {
-                Name = "Intel",
-                DisplayOrder = 2,
-            });
-            var sa3 = new SpecificationAttribute
-            {
-                Name = "Memory",
-                DisplayOrder = 3,
-            };
-            sa3.SpecificationAttributeOptions.Add(new SpecificationAttributeOption()
-            {
-                Name = "1 GB",
-                DisplayOrder = 1,
-            });
-            sa3.SpecificationAttributeOptions.Add(new SpecificationAttributeOption()
-            {
-                Name = "3 GB",
-                DisplayOrder = 2,
-            });
-            var sa4 = new SpecificationAttribute
-            {
-                Name = "Hardrive",
-                DisplayOrder = 5,
-            };
-            sa4.SpecificationAttributeOptions.Add(new SpecificationAttributeOption()
-            {
-                Name = "320 GB",
-                DisplayOrder = 7,
-            });
-            sa4.SpecificationAttributeOptions.Add(new SpecificationAttributeOption()
-            {
-                Name = "250 GB",
-                DisplayOrder = 4,
-            });
-            sa4.SpecificationAttributeOptions.Add(new SpecificationAttributeOption()
-            {
-                Name = "160 GB",
-                DisplayOrder = 3,
-            });
+            var gsa1 = new SpecificationAttribute
+                           {
+                               Name = GiaConstance.ObjectToServiceKey,
+                               DisplayOrder = 1
+                           };
+            gsa1.SpecificationAttributeOptions.Add(new SpecificationAttributeOption()
+                                                       {
+                                                           Name = "Men",
+                                                           DisplayOrder = 1
+                                                       });
+            gsa1.SpecificationAttributeOptions.Add(new SpecificationAttributeOption()
+                                                       {
+                                                           Name = "Women",
+                                                           DisplayOrder = 2
+                                                       });
+            gsa1.SpecificationAttributeOptions.Add(new SpecificationAttributeOption()
+                                                       {
+                                                           Name = "Unisex",
+                                                           DisplayOrder = 3
+                                                       });
+            var gsa2 = new SpecificationAttribute
+                           {
+                               Name = GiaConstance.FallTrendsKey,
+                               DisplayOrder = 1
+                           };
+            gsa2.SpecificationAttributeOptions.Add(new SpecificationAttributeOption()
+                                                       {
+                                                           Name = "True",
+                                                           DisplayOrder = 1
+                                                       });
+            gsa2.SpecificationAttributeOptions.Add(new SpecificationAttributeOption()
+                                                       {
+                                                           Name = "False",
+                                                           DisplayOrder = 2
+                                                       });
+            var gsa3 = new SpecificationAttribute
+                           {
+                               Name = GiaConstance.NewArrivalsKey,
+                               DisplayOrder = 1
+                           };
+            gsa3.SpecificationAttributeOptions.Add(new SpecificationAttributeOption()
+                                                       {
+                                                           Name = "True",
+                                                           DisplayOrder = 1
+                                                       });
+            gsa3.SpecificationAttributeOptions.Add(new SpecificationAttributeOption()
+                                                       {
+                                                           Name = "False",
+                                                           DisplayOrder = 2
+                                                       });
             var specificationAttributes = new List<SpecificationAttribute>
                                 {
-                                    sa1,
-                                    sa2,
-                                    sa3,
-                                    sa4
+                                    gsa1,
+                                    gsa2,
+                                    gsa3
                                 };
             specificationAttributes.ForEach(sa => _specificationAttributeRepository.Insert(sa));
 
@@ -9442,39 +9417,46 @@ namespace Nop.Services.Installation
         #region Methods
 
         public virtual void InstallData(string defaultUserEmail,
-            string defaultUserPassword, bool installSampleData = true)
+            string defaultUserPassword, bool installSampleData = true, bool keepOriginal = true)
         {
-            InstallMeasures();
-            InstallTaxCategories();
-            InstallLanguages();
-            InstallCurrencies();
-            InstallCountriesAndStates();
-            InstallShippingMethods();
-            InstallCustomersAndUsers(defaultUserEmail, defaultUserPassword);
-            InstallEmailAccounts();
-            InstallMessageTemplates();
-            InstallTopics();
-            InstallSettings();
-            InstallLocaleResources();
-            InstallActivityLogTypes();
-            HashDefaultCustomerPassword(defaultUserEmail, defaultUserPassword);
-            InstallProductTemplates();
-            InstallCategoryTemplates();
-            InstallManufacturerTemplates();
-            InstallScheduleTasks();
+            if (keepOriginal)
+            {
+                InstallMeasures();
+                InstallTaxCategories();
+                InstallLanguages();
+                InstallCurrencies();
+                InstallCountriesAndStates();
+                InstallShippingMethods();
+                InstallCustomersAndUsers(defaultUserEmail, defaultUserPassword);
+                InstallEmailAccounts();
+                InstallMessageTemplates();
+                InstallTopics();
+                InstallSettings();
+                InstallLocaleResources();
+                InstallActivityLogTypes();
+                HashDefaultCustomerPassword(defaultUserEmail, defaultUserPassword);
+                InstallProductTemplates();
+                InstallCategoryTemplates();
+                InstallManufacturerTemplates();
+                InstallScheduleTasks();
 
-            if (installSampleData)
+                if (installSampleData)
+                {
+                    InstallSpecificationAttributes();
+                    InstallProductAttributes();
+                    InstallCategories();
+                    InstallManufacturers();
+                    InstallProducts();
+                    InstallForums();
+                    InstallDiscounts();
+                    InstallBlogPosts();
+                    InstallNews();
+                    InstallPolls();
+                }
+            }
+            else
             {
                 InstallSpecificationAttributes();
-                InstallProductAttributes();
-                InstallCategories();
-                InstallManufacturers();
-                InstallProducts();
-                InstallForums();
-                InstallDiscounts();
-                InstallBlogPosts();
-                InstallNews();
-                InstallPolls();
             }
         }
 

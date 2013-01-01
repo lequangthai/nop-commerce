@@ -409,6 +409,13 @@ namespace Nop.Web.Controllers
             return RedirectToRoute("HomePage");
         }
 
+        public ActionResult ContinueInstall()
+        {
+            var installationService = EngineContext.Current.Resolve<IInstallationService>();
+            installationService.InstallData("", "", false, false);
+
+            return RedirectToRoute("HomePage");
+        }
         #endregion
     }
 }
