@@ -38,8 +38,24 @@
         @Html.Widget("left_side_column_before")
         <div class="clear">
         </div>
-        @Html.Partial("_Navigation")
-        @*  
+        @RenderSection("Category_LetterBox", false)
+
+        if (IsSectionDefined("HomePage_TopNavigation"))
+        {
+        @RenderSection("HomePage_TopNavigation")
+        }
+        else
+        {
+        <img src="/Content/layout/beauty_logo.gif" />
+        <div class="sign_up_now">
+            SIGN UP NOW
+        </div>
+        <div class="fragrance">
+            FRAGRANCE
+        </div>
+        }
+        @Html.Partial("_Menu")
+@*  
         @Html.Action("CategoryNavigation", "Catalog", new { currentCategoryId = currentCategoryId, currentProductId = currentProductId })
         <div class="clear">
         </div>

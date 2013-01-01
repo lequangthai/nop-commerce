@@ -2,6 +2,14 @@
     ViewBag.Title = "GifSet";
     Layout = "~/Views/Shared/_ColumnsTwo.cshtml";
     ViewBag.CatTitle = "Gift sets";
+    ViewBag.LetterBoxTitle = "Gift Set's discount";
+}
+@section HomePage_TopNavigation{
+    
+}
+@section Category_LetterBox
+{
+    @Html.Partial("_Category.LetterBox")
 }
 
 @Html.Partial("_Category.Head")

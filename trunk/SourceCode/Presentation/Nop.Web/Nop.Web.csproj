@@ -1878,6 +1878,7 @@
     <Content Include="Views\Shared\_Category.Head.cshtml" />
     <Content Include="Views\Catalog\MenCologne.cshtml" />
     <Content Include="Views\Catalog\GiftSet.cshtml" />
+    <Content Include="Views\Shared\_Category.LetterBox.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

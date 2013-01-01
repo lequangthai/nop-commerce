@@ -2,6 +2,14 @@
     ViewBag.Title = "WomenPerfume";
     Layout = "~/Views/Shared/_ColumnsTwo.cshtml";
     ViewBag.CatTitle = "Women's perfume";
+    ViewBag.LetterBoxTitle = "Women's discount perfume";
+}
+@section HomePage_TopNavigation{
+    
+}
+@section Category_LetterBox
+{
+    @Html.Partial("_Category.LetterBox")
 }
 
 @Html.Partial("_Category.Head")
