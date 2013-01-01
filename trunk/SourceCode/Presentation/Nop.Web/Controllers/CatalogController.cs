@@ -775,6 +775,19 @@ namespace Nop.Web.Controllers
         #endregion
 
         #region Categories
+
+        public ActionResult WomenPerfume()
+        {
+            return View();
+        }
+        public ActionResult MenCologne()
+        {
+            return View();
+        }
+        public ActionResult GiftSet()
+        {
+            return View();
+        }
         
         [NopHttpsRequirement(SslRequirement.No)]
         public ActionResult Category(int categoryId, CatalogPagingFilteringModel command)

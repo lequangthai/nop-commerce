@@ -2,7 +2,7 @@
 /* Contributor(s): RetroViz Design */
 
 a {
-    color: #ffffff;
+    color: black;
     outline: none;
     padding-left: 3px;
     padding-right: 3px;
@@ -79,13 +79,13 @@ legend{font-weight:bold;line-height:20px;font-size:16px;}
 .master-wrapper-page{ margin: 0 auto;max-width: 930px;padding: 0 5px;}
 /*.master-wrapper-content{float:left;width:960px;margin:15px 0 0;text-align:left;background:#555 url(images/bg-container.gif) repeat-x;}*/
 /* one column master page */
-.master-wrapper-center-1{float:left;width:940px;color:#000;min-height:600px;padding:10px;background:#FFF;display:inline;border-radius:5px;}
+.master-wrapper-center-1{float:left;width:900px;color:#000;min-height:600px;padding:10px;background:#FFF;display:inline;border-radius:5px;}
 /* two column master page */
 .master-wrapper-side-2{float:left;width:240px;margin:5px;font-family:arial, helvetica, sans-serif;background-color: white;}
-.master-wrapper-center-2{float:right;width:660px;margin:5px; background-color: white;}
+.master-wrapper-center-2{float:right;width:660px;margin:5px; }
 /* three column master page */
 .master-wrapper-leftside-3{float:left;width:180px;margin:0 0 0 10px;font-family:arial, helvetica, sans-serif;display:inline;}
-.master-wrapper-center-3{float:left;width:540px;color:#000;min-height:600px;padding:10px;margin:0 0 0 10px;background:#FFF;display:inline;overflow:hidden;border-radius:5px;}
+.master-wrapper-center-3{float:left;width:500px;color:#000;min-height:600px;padding:10px;margin:0 0 0 10px;background:#FFF;display:inline;overflow:hidden;border-radius:5px;}
 .master-wrapper-rightside-3{float:right;width:180px;margin:0 10px;font-family:arial, helvetica, sans-serif;display:inline;}
 
 /* HEADER AND MENU */
@@ -149,7 +149,7 @@ header {
     #ulitybar-top a {
         padding: 5px 5px 8px 35px;
         margin-right: 5px;
-        font-weight: bold;
+        text-transform: uppercase;
     }
 
     #ulitybar-top .help {
@@ -196,12 +196,24 @@ header {
 }
 
 
+.c1 {
+            background-color: #ed1e79 !important;
+        }
+.c2 {
+            background-color: #9e1f64 !important;
+        }
 #top-cat {
     margin: 3px 0;
-    background-color: #ed1e79;
     height: 25px;
     padding-top: 5px;
     text-align: center;
+}
+
+#top-cat a {
+    color: white;
+}
+#top-cat a:hover {
+    color: black;
 }
 
     #top-cat ul {
@@ -213,9 +225,14 @@ header {
         #top-cat ul li {
             list-style: none;
             float: left;
-            width: 32%;
-            margin: 0;
-            padding: 0;
+            width: 33%;
+            margin: -5px 0 0;
+            padding: 5px 0 6px;
+
+        }
+
+        
+        #top-cat ul .active {
         }
 
     #top-cat .cnt {
@@ -228,6 +245,9 @@ header {
     background-color: #000000;
     text-align: center;
     padding-top: 5px;
+}
+#bonus-bar a {
+    color: white;
 }
 
 #banner {
@@ -263,6 +283,9 @@ header {
     text-transform: uppercase;
 }
 
+#main_left_menu a:hover {
+    color: red !important;
+}
 .mnu_active {
     background-color: #F4DCF6;
     color: #EE1D78;
@@ -321,12 +344,18 @@ header {
     #footer a {
         color: black;
     }
+    #footer a:hover {
+        color: #d31a44;
+    }
 
     #footer .wrapper {
         background-color: #f2f2f2;
         padding: 10px;
     }
-
+    .footer_text {
+        font-size: 12px;
+        margin-top: 10px;
+    }
 .top-contact-item {
     float: left;
     padding: 0 11px;
@@ -447,6 +476,7 @@ header {
 #tab-content {
     padding: 10px;
     min-height: 500px;
+    background-color: white;
 }
 
     #tab-content .tab {
@@ -494,8 +524,82 @@ header {
         color: #FE0002;
     }
 
+/* style for category */
+/*------------- women-main-right---------*/
+     .women-tophead {
+         background: url("/content/layout/women-homepage-bg.jpg");
+         position: relative;
+         height: 150px;
+     }
+    
+     .women-tophead .title {
+         position: absolute;
+         left: 75px;
+         top: 0;
+         font-size: 32px;
+         text-transform: uppercase;
+         color: #146873;
+         margin: 5px 0 10px 0;
+     }
+     .women-tophead .menu {
+         width: 300px;
+         position: absolute;
+         top: 57px;
+         left: 77px;
+     }
+     .women-tophead li {
+         width: 135px;
+         float: left;
+         background: url("/content/layout/women-menu-bg.jpg");
+         text-align: center;
+         margin: 3px 4px;
+         border: 2px solid #94d7dd;
+         border-radius: 2px;
+     }
+        .women-tophead .menu li a {
+            color: #1a6e78;
+            text-transform: uppercase;
+        }
+        .women-tophead .menu li a:hover {
+            color: #f72a93;
+        }
 
+#cat-search {
+    margin: 5px 0;
+    padding: 5px 0;
+    background-color: #e1e1e1;
+}
+#cat-search .title {
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0 5px;
+    font-size: 12px;
+}
+#brands {
+    width: 180px;
+}
+#cat-search .txtsearch {
+    width: 200px;
+    background-color: white;
 
+}
+#cat-search .btsearch {
+    width: 32px;
+    height: 32px;
+    background: url('/Content/layout/icon/btsearch.png') no-repeat;
+    border: none;
+}
+.box-title {
+    background-color: #F31789;
+    padding: 5px;
+    color: white;
+    text-transform: uppercase;
+}
+.box-content {
+    padding: 5px 10px;
+    background-color: white;
+    font-size: 12px;
+}
 /* MISC. CLASSES */
 .nobr{white-space:nowrap!important;}
 .wrap{ white-space:normal!important;}
@@ -1035,6 +1139,15 @@ a.eu-cookie-privacyinfo-tag{color:#F93 !important;text-decoration:underline;}
 .search-box .ui-autocomplete-loading{background:white url('images/ajax_loader_small.gif') right center no-repeat;}
 .search-box-text{background:#e3e3e3;width:110px;border:solid 1px #E3E3E3;vertical-align:top;font-size:12px;}
 .search-box-button {height:18px;}
+.mysearch-box{ width: 290px;}
+.mysearchtext{ background-color: white !important;width: 160px;height: 24px;margin: 5px 5px 0 0;padding-left: 2px; width: 240px;color: #696969;}
+.productSearch {
+    background: url('/Content/layout/icon/search.png') left no-repeat !important;
+    width: 32px;
+    height: 32px;
+    border: none;
+    cursor: pointer;
+}
 
 /* PASSWORD RECOVERY AND NEWSLETTER PAGES */
 .password-recovery-page,newsletter-page{}

@@ -675,6 +675,11 @@ namespace Nop.Web.Controllers
             return Json(new { stored = true });
         }
 
+        public ActionResult WomenPerfume()
+        {
+            return View();
+        }
+
         #endregion
     }
 }

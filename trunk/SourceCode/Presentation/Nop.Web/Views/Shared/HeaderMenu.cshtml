@@ -1,13 +1,13 @@
-﻿<div id="top-cat">
+﻿<div id="top-cat" class="c1">
     <ul>
-        <li>
-            <a href="#">WOMEN'S PERFUME</a>
+        <li class="women">
+            <a href="/catalog/womenperfume">WOMEN'S PERFUME</a>
         </li>
-        <li class="cnt">
-            <a href="#">MEN'S PERFUME</a>
+        <li class="cnt men">
+            <a href="/catalog/mencologne">MEN'S COLOGNE</a>
         </li>
-        <li>
-            <a href="#">GIFT SETS</a>
+        <li class="gif">
+            <a href="/catalog/giftset">GIFT SETS</a>
         </li>
     </ul>
 </div>
@@ -16,3 +16,26 @@
     <span class="red">|</span>
     <a href="#">ONLINE CLEARANCE</a>
 </div>
+
+
+<script type="text/javascript">
+    function setCatActive(classname) {
+        if (classname == 'gif') {
+            $("#top-cat").addClass('c2').removeClass('c1');
+            $("#top-cat li").each(function () {
+                $(this).addClass('c1').removeClass('c2');
+            });
+            $("#top-cat ." + classname).addClass('active');
+            $("#top-cat ." + classname).addClass('c2');
+        } else {
+            $("#top-cat").removeClass('c2').addClass('c1');
+            $("#top-cat li").each(function () {
+                $(this).removeClass('c1').removeClass('c2');
+                $(this).removeClass('active');
+            });
+            $("#top-cat ." + classname).addClass('active');
+            $("#top-cat ." + classname).addClass('c2');
+        }
+        
+    }
+</script>

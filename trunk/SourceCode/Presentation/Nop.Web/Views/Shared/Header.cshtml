@@ -1,6 +1,6 @@
 ﻿<div id="top-header">
     <div class="top">
-        <a href="#">Home</a>
+        <a href="@Url.RouteUrl("HomePage")">Home</a>
         <span>|</span>
         <a href="#">1-800 GIA Perfumes (727-3867)</a>
     </div>
@@ -14,10 +14,10 @@
                 <a href="#" class="old_status">Older Status</a>
             </li>
             <li>
-                <a href="#" class="account">My Account</a>
+                <a href="@Url.RouteUrl("CustomerInfo")" class="account">My Account</a>
             </li>
             <li>
-                <a href="#" class="cart">View Cart</a>
+                <a href="@Url.RouteUrl("ShoppingCart")" class="cart">View Cart</a>
             </li>
         </ul>
     </div>
@@ -26,8 +26,9 @@
             <span class="shopping_bag_text">1 items</span>
         </div>
         <div class="float-left">
-            <input type="text" id="search_input" value="Product Search" onclick="txtSearch_focus('Product Search');" onmouseout="txtSearch_lostfocus('Product Search');" />
-            <img src="/Content/layout/icon/search.png" style="cursor: pointer; float: left; margin-left: 5px;" />
+            @Html.Action("SearchBox", "Catalog")
+            @*<input type="text" id="search_input" value="Product Search" onclick="txtSearch_focus('Product Search');" onmouseout="txtSearch_lostfocus('Product Search');" />
+            <img src="/Content/layout/icon/search.png" style="cursor: pointer; float: left; margin-left: 5px;" />*@
         </div>
         <div class="clear-fix"></div>
     </div>

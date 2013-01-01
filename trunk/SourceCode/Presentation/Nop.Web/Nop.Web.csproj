@@ -1166,6 +1166,7 @@
     <Content Include="Content\layout\icon\account.png" />
     <Content Include="Content\layout\icon\amex.png" />
     <Content Include="Content\layout\icon\bizrate.gif" />
+    <Content Include="Content\layout\icon\btsearch.png" />
     <Content Include="Content\layout\icon\discover.png" />
     <Content Include="Content\layout\icon\document.png" />
     <Content Include="Content\layout\icon\facebook.png" />
@@ -1860,7 +1861,7 @@
     <Content Include="Views\Catalog\Gia_CategoryBestSellers.cshtml" />
     <Content Include="Views\Catalog\Gia_CategoryClearances.cshtml" />
     <Content Include="Views\Catalog\Gia_CategorySpecialAttributes.cshtml" />
-	<Content Include="Views\Catalog\Gia_HomeClearances.cshtml" />
+    <Content Include="Views\Catalog\Gia_HomeClearances.cshtml" />
     <Content Include="Themes\Perfume\theme.config" />
     <Content Include="Themes\Perfume\Views\Shared\Head.cshtml" />
     <Content Include="Themes\Perfume\Views\Web.config" />
@@ -1873,7 +1874,10 @@
     <Content Include="Views\Shared\_ProductTab.cshtml" />
     <Content Include="Views\Home\_HomeProductTab.cshtml" />
     <Content Include="Views\Catalog\ManufacturerSlideShow.cshtml" />
-
+    <Content Include="Views\Catalog\WomenPerfume.cshtml" />
+    <Content Include="Views\Shared\_Category.Head.cshtml" />
+    <Content Include="Views\Catalog\MenCologne.cshtml" />
+    <Content Include="Views\Catalog\GiftSet.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

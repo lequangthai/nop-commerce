@@ -16,8 +16,8 @@
                             </div>
                             <div class="links">
                                 <ul>
-                                    <li><a href="#">Contact Us</a></li>
-                                    <li><a href="#">Site Map</a></li>
+                                    <li><a href="@Url.RouteUrl("ContactUs")">Contact Us</a></li>
+                                    <li><a href="@Url.RouteUrl("SiteMap")">Site Map</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -29,7 +29,7 @@
                         <div>
                             <div class="links">
                                 <ul>
-                                    <li><a href="#">My Account</a></li>
+                                    <li><a href="@Url.RouteUrl("CustomerInfo")">My Account</a></li>
                                     <li><a href="#">Order Status</a></li>
                                     <li><a href="#">Reminder Club</a></li>
                                     <li>&nbsp;</li>
@@ -59,7 +59,7 @@
                             <a href="#">
                                 <img src="/Content/layout/logo.jpg" style="border: 1px solid #e1e1e1" /></a>
                         </div>
-                        <div style="margin: 10px 0 30px 0;">
+                        <div style="margin: 10px 0 0px 0;">
                             <div class="item">
                                 <iframe src="//www.facebook.com/plugins/like.php?href=http%3A%2F%2Fvietspring.net%2F&amp;send=false&amp;layout=box_count&amp;width=55&amp;show_faces=true&amp;font&amp;colorscheme=light&amp;action=like&amp;height=90" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:55px; height:90px;" allowTransparency="true"></iframe>
                             </div>
@@ -84,9 +84,20 @@
                             <div class="clear-fix"></div>
                         </div>
                         <div>
-                            <div class="item">
-                                <a href="#">
-                                    <img src="/Content/layout/icon/mcafee.gif" /></a>
+                            <div class="item" style="margin-top:4px; margin-left:-30px;">
+                                <script src="http://securityalerts.mcafee.com/mcalerts/en-us/AlertConstant.js"></script>
+<script src="http://securityalerts.mcafee.com/mcalerts/en-us/ResourceFile.js"></script>
+<script src="http://securityalerts.mcafee.com/mcalerts/AlertDisplay.js"></script>
+<script>
+    lnklogo = "http://mcafee.com";
+	dsplycur = 0;
+	dsplyrec = 0;
+	dsplyrem = 0;
+	dsplysrc = 0;
+	DisplayMcAfeeAlerts();
+</script>
+         @*                       <a href="#">
+                                    <img src="/Content/layout/icon/mcafee.gif" /></a>*@
                             </div>
                             <div class="item">
                                 <a href="#">
@@ -126,7 +137,7 @@
                                 <img src="/Content/layout/icon/paypal.png" /></a>
 
                         </div>
-                        <div>
+                        <div class="footer_text">
                             <div>
                                 <a href="#" style="float: right;">Contact GIAperfumes.com</a>
                                 <a href="#" style="float: right; border-right: 1px solid #000000; margin: 0 10px; padding-right: 12px;">Privacy Statement</a>
