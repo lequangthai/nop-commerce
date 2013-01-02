@@ -1871,7 +1871,6 @@
     <Content Include="Views\Shared\_Menu.cshtml" />
     <Content Include="Views\Shared\_Root.Footer.cshtml" />
     <Content Include="Views\Shared\_ProductTab.cshtml" />
-    <Content Include="Views\Home\_HomeProductTab.cshtml" />
     <Content Include="Views\Catalog\ManufacturerSlideShow.cshtml" />
     <Content Include="Views\Catalog\WomenPerfume.cshtml" />
     <Content Include="Views\Shared\_Category.Head.cshtml" />

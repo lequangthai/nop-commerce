@@ -7,12 +7,12 @@
     @Html.Action("JavaScriptDisabledWarning", "Common")
     <div class="master-wrapper-content">
         <script type="text/javascript">
-            AjaxCart.init(false, '.header-links .cart-qty', '.header-links .wishlist-qty', '#flyout-cart');
+            AjaxCart.init(false, '#cart-quantity', '.header-links .wishlist-qty', '#flyout-cart');
         </script>
         <header>
             @Html.Partial("Header")
             @Html.Partial("HeaderMenu")
-            @Html.Partial("HeaderBanner")
+            @*@Html.Partial("HeaderBanner")*@
         </header>
         <div id="body">
             @Html.Widget("content_before")

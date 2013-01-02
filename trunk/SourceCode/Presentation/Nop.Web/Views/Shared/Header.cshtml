@@ -23,7 +23,7 @@
     </div>
     <div id="ulitybar-bottom">
         <div class="shopping_bag float-left">
-            <span class="shopping_bag_text">1 items</span>
+            <span class="shopping_bag_text"><a href="@Url.RouteUrl("ShoppingCart")" id="cart-quantity">@Html.Action("GetShoppingCartItems", "Common") items</a></span>
         </div>
         <div class="float-left">
             @Html.Action("SearchBox", "Catalog")

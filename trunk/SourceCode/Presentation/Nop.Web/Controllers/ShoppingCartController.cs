@@ -1136,7 +1136,7 @@ namespace Nop.Web.Controllers
                         {
 
                             //display notification message and update appropriate blocks
-                            var updatetopcartsectionhtml = string.Format("({0})",
+                            var updatetopcartsectionhtml = string.Format("{0} items",
                                  _workContext
                                  .CurrentCustomer
                                  .ShoppingCartItems

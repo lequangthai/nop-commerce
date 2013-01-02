@@ -374,6 +374,14 @@ namespace Nop.Web.Controllers
             return PartialView(model);
         }
 
+        public int GetShoppingCartItems()
+        {
+            var customer = _workContext.CurrentCustomer;
+            return
+                customer.ShoppingCartItems.Where(sci => sci.ShoppingCartType == ShoppingCartType.ShoppingCart).ToList().
+                    GetTotalProducts();
+        }
+
         //footer
         [ChildActionOnly]
         public ActionResult Footer()
