@@ -3095,7 +3095,7 @@ namespace Nop.Web.Controllers
                 //load and cache report
                 report =
                     _cacheManager.Get(
-                        ModelCacheEventConsumer.GIA_SPECIALATTRIBUTES_WITH_PAGEs + pageValue + "." + categoryId.Value,
+                        ModelCacheEventConsumer.GIA_SPECIALATTRIBUTES_WITH_PAGEs + attributeName + "." + pageValue + "." + categoryId.Value,
                         () => _productService.GetProductsBySpecialAttriubte(attributeName, "true", itemsCount, categoryId.Value, null));
 
             }
@@ -3104,7 +3104,7 @@ namespace Nop.Web.Controllers
                 //load and cache report
                 report =
                     _cacheManager.Get(
-                        ModelCacheEventConsumer.GIA_SPECIALATTRIBUTES_WITH_PAGEs + pageValue,
+                        ModelCacheEventConsumer.GIA_SPECIALATTRIBUTES_WITH_PAGEs + attributeName + "." + pageValue,
                         () => _productService.GetProductsBySpecialAttriubte(attributeName, "true", itemsCount, null, null));
 
             }
