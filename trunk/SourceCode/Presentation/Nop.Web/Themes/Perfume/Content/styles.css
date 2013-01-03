@@ -278,6 +278,14 @@ header {
     font-size: 16px;
     letter-spacing: 2px;
 }
+.btsign-up {
+    color: white;
+    margin: 0;
+    padding: 0;
+}
+.btsign-up:hover {
+    color:#e1e1e1;
+}
 
 .pink-header {
     padding: 8px 17px;
@@ -321,6 +329,10 @@ header {
     height: 54px;
     float: left;
     overflow: hidden;
+}
+.menuPro_image img {
+    width: 54px;
+    height: 54px;
 }
 
 .mnuPro_des {

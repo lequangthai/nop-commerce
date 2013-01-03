@@ -1,32 +1,37 @@
 ﻿@model HomePageBestsellersModel
+@using Nop.Services.GiaHelper
 @using Nop.Web.Models.Catalog;
 @if (Model.Products.Count > 0)
 {
-@*<div class="product-grid bestsellers">
-        <div class="title">
-            @T(ViewBag.AttributeName)
-        </div>
-        <div class="clear">
-        </div>
-        @if (Model.UseSmallProductBox)
-        {
-            @(Html.DataList<ProductOverviewModel>(Model.Products, 3,
-            @<div class="item-box">
-                @Html.Partial("_ProductSmallBox", @item)
-            </div>
-                ))
-        }
-        else
-        {
-        @(Html.DataList<ProductOverviewModel>(Model.Products, 2,
-            @<div class="item-box">
-                @Html.Partial("_ProductBox", @item)
-            </div>
-                ))
-        }
-    </div>*@
-    foreach (var p in Model.Products)
+
+    if (ViewBag.ViewType == GiaConstance.MenuViewType)
     {
+        foreach (var p in Model.Products)
+        {
+    <div class="subItem">
+        <div class="menuPro_image">
+            <a href="@Url.RouteUrl("Product", new { productId = p.Id, SeName = p.SeName })" title="@p.DefaultPictureModel.Title">
+                <img alt="@p.DefaultPictureModel.AlternateText" src="@p.DefaultPictureModel.ImageUrl"
+                                        title="@p.DefaultPictureModel.Title" /></a>
+        </div>
+        <div class="mnuPro_des">
+            <a href="@Url.RouteUrl("Product", new { productId = p.Id, SeName = p.SeName })" title="@p.DefaultPictureModel.Title">
+                <span class="name">@Html.Truncate(p.ShortDescription, 30)</span></a>
+        </div>
+        <div class="clear-fix"></div>
+    </div>
+        }
+        if (Model.Products.Count >= 3)
+        {
+    <div class="viewall">
+        <a href="#">View all</a>
+    </div>
+        }
+    }
+    else
+    {
+        foreach (var p in Model.Products)
+        {
     <div class="product-item">
         <div align="center" class="image">
             <a href="@Url.RouteUrl("Product", new { productId = p.Id, SeName = p.SeName })" title="@p.DefaultPictureModel.Title">
@@ -42,5 +47,7 @@
         </div>
         <div class="price">@p.ProductPrice.Price</div>
     </div>
+        }
     }
+
 }

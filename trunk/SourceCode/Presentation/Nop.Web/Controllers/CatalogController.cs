@@ -2182,7 +2182,7 @@ namespace Nop.Web.Controllers
         }
 
         [ChildActionOnly]
-        public ActionResult HomepageBestSellers(int? productThumbPictureSize, int? pageIndex)
+        public ActionResult HomepageBestSellers(int? productThumbPictureSize, int? pageIndex, int? categoryId, string viewType, int itemsCount = 8)
         {
             var pageValue = pageIndex.HasValue ? pageIndex.Value : 1;
 
@@ -2190,8 +2190,21 @@ namespace Nop.Web.Controllers
                 return Content("");
 
             //load and cache report
-            var report = _cacheManager.Get(ModelCacheEventConsumer.HOMEPAGE_BESTSELLERS_IDS_KEY_PAGE + pageValue,
-                () => _orderReportService.BestSellersReportWithPager(null, _catalogSettings.NumberOfBestsellersOnHomepage));
+            IList<Gia_BestsellersReportLine> report;
+            if (categoryId.HasValue)
+            {
+                report = _cacheManager.Get(ModelCacheEventConsumer.HOMEPAGE_BESTSELLERS_IDS_KEY_PAGE + pageValue+"."+itemsCount+"."+categoryId.Value,
+                                           () =>
+                                           _orderReportService.BestSellersReportWithPager(categoryId.Value,
+                                                                                         itemsCount));
+            }
+            else
+            {
+                report = _cacheManager.Get(ModelCacheEventConsumer.HOMEPAGE_BESTSELLERS_IDS_KEY_PAGE + pageValue+"."+itemsCount,
+                                           () =>
+                                           _orderReportService.BestSellersReportWithPager(null,
+                                                                                          itemsCount));
+            }
 
             var products = new List<Product>();
             foreach (var line in report)
@@ -2207,6 +2220,7 @@ namespace Nop.Web.Controllers
             model.Products = PrepareProductOverviewModels(products, 
                 !_catalogSettings.UseSmallProductBoxOnHomePage, true, productThumbPictureSize)
                 .ToList();
+            ViewBag.ViewType = viewType;
             return PartialView(model);
         }
 
@@ -3027,11 +3041,9 @@ namespace Nop.Web.Controllers
 
         #region Gia's Code
         [ChildActionOnly]
-        public ActionResult Gia_Clearances(int? productThumbPictureSize, bool? hasPager, int? categoryId, int? pageIndex)
+        public ActionResult Gia_Clearances(int? productThumbPictureSize, bool? hasPager, int? categoryId, int? pageIndex, string viewType, int itemsCount=8)
         {
             var pageValue = pageIndex.HasValue ? pageIndex.Value : 1;
-
-            var itemsCount = 9;
             if (_catalogSettings.NumberOfBestsellersOnHomepage != 0) itemsCount = _catalogSettings.NumberOfBestsellersOnHomepage;
 
             try
@@ -3046,14 +3058,14 @@ namespace Nop.Web.Controllers
                 //load and cache report
                 report =
                     _cacheManager.Get(
-                        ModelCacheEventConsumer.GIA_CLEARANCE_WITH_PAGEs + pageValue + "." + categoryId.Value,
+                        ModelCacheEventConsumer.GIA_CLEARANCE_WITH_PAGEs + pageValue + "." + itemsCount + "." + categoryId.Value,
                         () => _orderReportService.ClearancesReport(categoryId, pageIndex.HasValue, itemsCount));
 
             }
             else
             {
                 //load and cache report
-                report = _cacheManager.Get(ModelCacheEventConsumer.GIA_CLEARANCE_WITH_PAGEs + pageValue,
+                report = _cacheManager.Get(ModelCacheEventConsumer.GIA_CLEARANCE_WITH_PAGEs + pageValue + "." + itemsCount,
                                            () => _orderReportService.ClearancesReport(null, false, itemsCount));
 
             }
@@ -3072,15 +3084,15 @@ namespace Nop.Web.Controllers
             model.Products = PrepareProductOverviewModels(products,
                 !_catalogSettings.UseSmallProductBoxOnHomePage, true, productThumbPictureSize)
                 .ToList();
+            ViewBag.ViewType = viewType;
             return PartialView(model);
         }
 
         [ChildActionOnly]
-        public ActionResult Gia_SpecialAttributes(int? productThumbPictureSize, string attributeName, int? categoryId, int? pageIndex)
+        public ActionResult Gia_SpecialAttributes(int? productThumbPictureSize, string attributeName, int? categoryId, int? pageIndex, string viewType,int itemsCount=8)
         {
             var pageValue = pageIndex.HasValue ? pageIndex.Value : 1;
 
-            var itemsCount = 9;
             if (_catalogSettings.NumberOfBestsellersOnHomepage != 0) itemsCount = _catalogSettings.NumberOfBestsellersOnHomepage;
 
             try
@@ -3095,7 +3107,7 @@ namespace Nop.Web.Controllers
                 //load and cache report
                 report =
                     _cacheManager.Get(
-                        ModelCacheEventConsumer.GIA_SPECIALATTRIBUTES_WITH_PAGEs + attributeName + "." + pageValue + "." + categoryId.Value,
+                        ModelCacheEventConsumer.GIA_SPECIALATTRIBUTES_WITH_PAGEs + attributeName + "." + pageValue + "." + itemsCount + "." + categoryId.Value,
                         () => _productService.GetProductsBySpecialAttriubte(attributeName, "true", itemsCount, categoryId.Value, null));
 
             }
@@ -3104,7 +3116,7 @@ namespace Nop.Web.Controllers
                 //load and cache report
                 report =
                     _cacheManager.Get(
-                        ModelCacheEventConsumer.GIA_SPECIALATTRIBUTES_WITH_PAGEs + attributeName + "." + pageValue,
+                        ModelCacheEventConsumer.GIA_SPECIALATTRIBUTES_WITH_PAGEs + attributeName + "." + pageValue + "." + itemsCount,
                         () => _productService.GetProductsBySpecialAttriubte(attributeName, "true", itemsCount, null, null));
 
             }
@@ -3125,6 +3137,7 @@ namespace Nop.Web.Controllers
                 .ToList();
 
             ViewBag.AttributeName = attributeName;
+            ViewBag.ViewType = viewType;
             return PartialView(model);
         }
         #endregion

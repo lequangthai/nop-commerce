@@ -12,5 +12,9 @@ namespace Nop.Services.GiaHelper
         public const string FallTrendsKey = "FallTrends";
 
         public const string NewArrivalsKey = "NewArrivals";
+
+        public const string MenuViewType = "MenuView";
+
+        public const string ProductViewType = "ProductView";
     }
 }
