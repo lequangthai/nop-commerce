@@ -12,7 +12,10 @@
         <header>
             @Html.Partial("Header")
             @Html.Partial("HeaderMenu")
-            @*@Html.Partial("HeaderBanner")*@
+            @if(IsSectionDefined("HomePage_HeaderBanner"))
+            {
+                @RenderSection("HomePage_HeaderBanner")
+            }
         </header>
         <div id="body">
             @Html.Widget("content_before")

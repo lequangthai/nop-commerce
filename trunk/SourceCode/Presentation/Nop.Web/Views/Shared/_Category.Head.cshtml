@@ -2,10 +2,13 @@
     Layout = null;    
 }
 <div class="women-tophead">
-    <div class="title">
+    @*<div class="title">
         @ViewBag.CatTitle
+    </div>*@
+    <div>
+        <img src="/Content/layout/womensbanner.jpg" alt="gia perfume"/>
     </div>
-    <ul class="menu">
+   @* <ul class="menu">
         <li>
             <a href="#">NEW ARRIVALS</a>
         </li>
@@ -24,7 +27,7 @@
         <li>
             <a href="#">women designs</a>
         </li>
-    </ul>
+    </ul>*@
 </div>
 <div id="cat-search">
     <span class="title">Select brand</span>
@@ -37,7 +40,7 @@
     <input type="button" class="btsearch"></input>
 </div>
 <div class="box-title">
-    Women's discount perfume
+    @ViewBag.CatTitle
 </div>
 <div class="box-content">
     <p>

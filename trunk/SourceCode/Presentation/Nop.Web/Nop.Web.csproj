@@ -1202,6 +1202,7 @@
     <Content Include="Content\layout\shopping_bag.gif" />
     <Content Include="Content\layout\women-homepage-bg.jpg" />
     <Content Include="Content\layout\women-menu-bg.jpg" />
+    <Content Include="Content\layout\womensbanner.jpg" />
     <Content Include="Content\samples\category_accessories.jpg" />
     <Content Include="Content\samples\category_accessories_apparel.jpg" />
     <Content Include="Content\samples\category_apparel_shoes.jpeg" />

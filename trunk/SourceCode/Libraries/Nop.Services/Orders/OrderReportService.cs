@@ -9,6 +9,7 @@ using Nop.Core.Domain.Orders;
 using Nop.Core.Domain.Payments;
 using Nop.Core.Domain.Shipping;
 using Nop.Services.Catalog;
+using Nop.Services.GiaHelper;
 using Nop.Services.Helpers;
 
 namespace Nop.Services.Orders
@@ -274,32 +275,6 @@ namespace Nop.Services.Orders
             return result;
         }
 
-        private IList<int> BuildCategoriesTree(int rootCategoryId)
-        {
-            var list = new List<int> { rootCategoryId };
-
-            var childrenId = from c in _categoryRepository.Table where c.ParentCategoryId == rootCategoryId select c.Id;
-            foreach (var childId in childrenId)
-            {
-                list = GetChildrenOfCategory(childId, list);
-            }
-
-            return list;
-        }
-
-        private List<int> GetChildrenOfCategory(int categoryId, IList<int> categoryIds)
-        {
-            categoryIds.Add(categoryId);
-
-            var childrenId = from c in _categoryRepository.Table where c.ParentCategoryId == categoryId select c.Id;
-            foreach (var childId in childrenId)
-            {
-                categoryIds.Add(childId);
-            }
-
-            return categoryIds.ToList();
-        }
-
         public virtual IList<Gia_BestsellersReportLine> BestSellersReportWithPager(int? categoryId,
             int recordsToReturn = 5, int pageIndex = 1, int orderBy = 1, bool showHidden = false)
         {
@@ -307,7 +282,7 @@ namespace Nop.Services.Orders
 
             if (categoryId.HasValue)
             {
-                var categoryIds = BuildCategoriesTree(categoryId.Value);
+                var categoryIds = ModelBuilder.BuildCategoriesTree(_categoryRepository, categoryId.Value);
 
                 query1 = from opv in _opvRepository.Table
                              join o in _orderRepository.Table on opv.OrderId equals o.Id
@@ -383,7 +358,7 @@ namespace Nop.Services.Orders
 
             if (categoryId.HasValue)
             {
-                var categoryIds = BuildCategoriesTree(categoryId.Value);
+                var categoryIds = ModelBuilder.BuildCategoriesTree(_categoryRepository, categoryId.Value);
 
                 query1 = from opv in _opvRepository.Table
                          join o in _orderRepository.Table on opv.OrderId equals o.Id
@@ -433,7 +408,7 @@ namespace Nop.Services.Orders
 
             if (categoryId.HasValue)
             {
-                var categoryIds = BuildCategoriesTree(categoryId.Value);
+                var categoryIds = ModelBuilder.BuildCategoriesTree(_categoryRepository, categoryId.Value);
 
                 query1 = from pv in _productVariantRepository.Table
                          join p in _productRepository.Table on pv.ProductId equals p.Id
@@ -500,7 +475,7 @@ namespace Nop.Services.Orders
 
             if (categoryId.HasValue)
             {
-                var categoryIds = BuildCategoriesTree(categoryId.Value);
+                var categoryIds = ModelBuilder.BuildCategoriesTree(_categoryRepository, categoryId.Value);
 
                 query1 = from pv in _productVariantRepository.Table
                          join p in _productRepository.Table on pv.ProductId equals p.Id

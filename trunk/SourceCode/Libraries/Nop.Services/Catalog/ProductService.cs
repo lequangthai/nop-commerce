@@ -11,6 +11,7 @@ using Nop.Core.Domain.Localization;
 using Nop.Core.Domain.Orders;
 using Nop.Data;
 using Nop.Services.Events;
+using Nop.Services.GiaHelper;
 using Nop.Services.Localization;
 using Nop.Services.Messages;
 
@@ -220,32 +221,6 @@ namespace Nop.Services.Catalog
             return sortedProducts;
         }
 
-        private IList<int> BuildCategoriesTree(int rootCategoryId)
-        {
-            var list = new List<int> { rootCategoryId };
-
-            var childrenId = from c in _categoryRepository.Table where c.ParentCategoryId == rootCategoryId select c.Id;
-            foreach (var childId in childrenId)
-            {
-                list = GetChildrenOfCategory(childId, list);
-            }
-
-            return list;
-        }
-
-        private List<int> GetChildrenOfCategory(int categoryId, IList<int> categoryIds)
-        {
-            categoryIds.Add(categoryId);
-
-            var childrenId = from c in _categoryRepository.Table where c.ParentCategoryId == categoryId select c.Id;
-            foreach (var childId in childrenId)
-            {
-                categoryIds.Add(childId);
-            }
-
-            return categoryIds.ToList();
-        }
-
         public IList<int> GetProductsBySpecialAttriubte(string attributeName, string strValue, int itemsCount, int? categoryId, int? pageIndex)
         {
             var strToCompare = strValue.Trim().ToLower();
@@ -253,7 +228,7 @@ namespace Nop.Services.Catalog
             IQueryable<Product> query1;
             if (categoryId.HasValue)
             {
-                var categoryIds = BuildCategoriesTree(categoryId.Value);
+                var categoryIds = ModelBuilder.BuildCategoriesTree(_categoryRepository, categoryId.Value);
 
                 query1 = from p in _productRepository.Table
                          join psa in _productSpecificationAttributeRepository.Table on p.Id equals psa.ProductId
@@ -302,7 +277,7 @@ namespace Nop.Services.Catalog
             IQueryable<Product> query1;
             if (categoryId.HasValue)
             {
-                var categoryIds = BuildCategoriesTree(categoryId.Value);
+                var categoryIds = ModelBuilder.BuildCategoriesTree(_categoryRepository, categoryId.Value);
 
                 query1 = from p in _productRepository.Table
                          join psa in _productSpecificationAttributeRepository.Table on p.Id equals psa.ProductId

@@ -110,5 +110,7 @@ namespace Nop.Services.Catalog
         /// </summary>
         /// <param name="productManufacturer">Product manufacturer mapping</param>
         void UpdateProductManufacturer(ProductManufacturer productManufacturer);
+
+        IList<Manufacturer> GetManufacturesByCategory(int categoryId);
     }
 }

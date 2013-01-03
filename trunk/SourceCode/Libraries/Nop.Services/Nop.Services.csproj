@@ -150,6 +150,7 @@
     <Compile Include="Events\ISubscriptionService.cs" />
     <Compile Include="Events\SubscriptionService.cs" />
     <Compile Include="Forums\ForumExtensions.cs" />
+    <Compile Include="GiaHelper\ModelBuilder.cs" />
     <Compile Include="GiaHelper\GiaConstance.cs" />
     <Compile Include="Messages\EventPublisherExtensions.cs" />
     <Compile Include="Messages\NewsLetterSubscriptionService.cs" />

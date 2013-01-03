@@ -6,6 +6,7 @@ using Nop.Core.Caching;
 using Nop.Core.Data;
 using Nop.Core.Domain.Catalog;
 using Nop.Services.Events;
+using Nop.Services.GiaHelper;
 
 namespace Nop.Services.Catalog
 {
@@ -28,6 +29,8 @@ namespace Nop.Services.Catalog
         private readonly IRepository<Manufacturer> _manufacturerRepository;
         private readonly IRepository<ProductManufacturer> _productManufacturerRepository;
         private readonly IRepository<Product> _productRepository;
+        private readonly IRepository<ProductCategory> _productCategoryRepository;
+        private readonly IRepository<Category> _categoryRepository;
         private readonly IEventPublisher _eventPublisher;
         private readonly ICacheManager _cacheManager;
         #endregion
@@ -46,12 +49,16 @@ namespace Nop.Services.Catalog
             IRepository<Manufacturer> manufacturerRepository,
             IRepository<ProductManufacturer> productManufacturerRepository,
             IRepository<Product> productRepository,
+            IRepository<ProductCategory> productCategoryRepository, 
+            IRepository<Category> categoryRepository,
             IEventPublisher eventPublisher)
         {
             _cacheManager = cacheManager;
             _manufacturerRepository = manufacturerRepository;
             _productManufacturerRepository = productManufacturerRepository;
             _productRepository = productRepository;
+            _productCategoryRepository = productCategoryRepository;
+            _categoryRepository = categoryRepository;
             _eventPublisher = eventPublisher;
         }
         #endregion
@@ -317,6 +324,17 @@ namespace Nop.Services.Catalog
 
             //event notification
             _eventPublisher.EntityUpdated(productManufacturer);
+        }
+
+        public IList<Manufacturer> GetManufacturesByCategory(int categoryId)
+        {
+            var categoryIds = ModelBuilder.BuildCategoriesTree(_categoryRepository, categoryId);
+
+            //var query = from p in _productRepository.Table
+            //            join pc in _productCategoryRepository.Table on p.Id equals pc.ProductId
+
+
+            return null;
         }
 
         #endregion
