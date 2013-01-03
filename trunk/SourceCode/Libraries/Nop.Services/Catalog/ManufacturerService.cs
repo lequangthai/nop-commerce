@@ -330,11 +330,14 @@ namespace Nop.Services.Catalog
         {
             var categoryIds = ModelBuilder.BuildCategoriesTree(_categoryRepository, categoryId);
 
-            //var query = from p in _productRepository.Table
-            //            join pc in _productCategoryRepository.Table on p.Id equals pc.ProductId
+            var query = (from p in _productRepository.Table
+                         join pc in _productCategoryRepository.Table on p.Id equals pc.ProductId
+                         join pm in _productManufacturerRepository.Table on p.Id equals pm.ProductId
+                         where categoryIds.Contains(pc.CategoryId)
+                               && !p.Deleted && p.Published
+                         select pm.Manufacturer).Distinct().OrderBy(c => c.Name);
 
-
-            return null;
+            return query.ToList();
         }
 
         #endregion
