@@ -11,6 +11,7 @@ namespace Nop.Core.Domain.Catalog
     public partial class Category : BaseEntity, ILocalizedEntity
     {
         private ICollection<Discount> _appliedDiscounts;
+        private ICollection<ProductVariant> _productVariants; 
 
         /// <summary>
         /// Gets or sets the name
@@ -123,6 +124,12 @@ namespace Nop.Core.Domain.Catalog
         {
             get { return _appliedDiscounts ?? (_appliedDiscounts = new List<Discount>()); }
             protected set { _appliedDiscounts = value; }
+        }
+
+        public virtual ICollection<ProductVariant> ProductVariants
+        {
+            get { return _productVariants ?? (_productVariants = new List<ProductVariant>()); }
+            protected set { _productVariants = value; }
         }
     }
 }

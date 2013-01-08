@@ -1,5 +1,4 @@
 ﻿@model ProductVariantModel
-
 @using Telerik.Web.Mvc.UI;
 
 @using Nop.Core.Domain.Catalog;
@@ -151,19 +150,19 @@
         var selectedManageInventoryMethodId = $("#@Html.FieldIdFor(model => model.ManageInventoryMethodId)").val();
         if (selectedManageInventoryMethodId == @(((int)ManageInventoryMethod.DontManageStock).ToString())) {
             $('#pnlStockQuantity').hide();
-            $('#pnlDisplayStockAvailability').hide();
-            $('#pnlDisplayStockQuantity').hide();
-            $('#pnlMinStockQuantity').hide();
-            $('#pnlLowStockActivity').hide();
-            $('#pnlNotifyForQuantityBelow').hide();
-            $('#pnlAllowBackInStockSubscriptions').hide();            
-            $('#pnlBackorders').hide();
-        }
-        else if (selectedManageInventoryMethodId == @(((int)ManageInventoryMethod.ManageStock).ToString())) {
-            $('#pnlStockQuantity').show();
-            $('#pnlDisplayStockAvailability').show();
+        $('#pnlDisplayStockAvailability').hide();
+        $('#pnlDisplayStockQuantity').hide();
+        $('#pnlMinStockQuantity').hide();
+        $('#pnlLowStockActivity').hide();
+        $('#pnlNotifyForQuantityBelow').hide();
+        $('#pnlAllowBackInStockSubscriptions').hide();            
+        $('#pnlBackorders').hide();
+    }
+    else if (selectedManageInventoryMethodId == @(((int)ManageInventoryMethod.ManageStock).ToString())) {
+        $('#pnlStockQuantity').show();
+        $('#pnlDisplayStockAvailability').show();
 
-            if ($('#@Html.FieldIdFor(model => model.DisplayStockAvailability)').is(':checked')) {
+        if ($('#@Html.FieldIdFor(model => model.DisplayStockAvailability)').is(':checked')) {
                 $('#pnlDisplayStockQuantity').show();
             }
             else {
@@ -178,11 +177,11 @@
             if (selectedBackorderModeId == @(((int)BackorderMode.NoBackorders).ToString())) {
                 //no backorders
                 $('#pnlAllowBackInStockSubscriptions').show();
-            }
-            else {
-                //backorders are enabled
+        }
+        else {
+        //backorders are enabled
                 $('#pnlAllowBackInStockSubscriptions').hide();
-            }
+        }
         }
         else {
             $('#pnlStockQuantity').hide();
@@ -194,24 +193,25 @@
             $('#pnlAllowBackInStockSubscriptions').hide();
             $('#pnlBackorders').hide();
         }
-    }
+        }
 </script>
-@if (Model.Id > 0) {
-<table class="adminContent">
-    <tr>
-        <td class="adminTitle">
-            @Html.NopLabelFor(model => model.Id):
-        </td>
-        <td class="adminData">
-            @Model.Id.ToString()
-            @Html.ValidationMessageFor(model => model.Id)
-        </td>
-    </tr>
-</table>
+@if (Model.Id > 0)
+{
+    <table class="adminContent">
+        <tr>
+            <td class="adminTitle">
+                @Html.NopLabelFor(model => model.Id):
+            </td>
+            <td class="adminData">
+                @Model.Id.ToString()
+                @Html.ValidationMessageFor(model => model.Id)
+            </td>
+        </tr>
+    </table>
 }
 @if (!Model.HideNameAndDescriptionProperties)
 {
-@(Html.LocalizedEditor<ProductVariantModel, ProductVariantLocalizedModel>("productvariant-info-localized",
+    @(Html.LocalizedEditor<ProductVariantModel, ProductVariantLocalizedModel>("productvariant-info-localized",
             @<table class="adminContent">
                 <tr>
                     <td class="adminTitle">
@@ -268,6 +268,16 @@
         <td class="adminData">
             @Html.EditorFor(model => model.Sku)
             @Html.ValidationMessageFor(model => model.Sku)
+        </td>
+    </tr>
+    <tr>
+        <td class="adminTitle">
+            @Html.NopLabelFor(model => model.CategoryId):
+        </td>
+        <td class="adminData">
+            @(Html.Telerik().ComboBoxFor(x => x.CategoryId).BindTo(Model.ParentCategories).Encode(true)
+                            .DataBinding(x => x.Ajax().Enabled(true).Select("AllCategories", "Category", new { selectedId = Model.CategoryId, notNone = true })))
+            @Html.ValidationMessageFor(model => model.CategoryId)
         </td>
     </tr>
     <tr>

@@ -23,6 +23,7 @@ using Nop.Services.Tax;
 using Nop.Web.Framework;
 using Nop.Web.Framework.Controllers;
 using Telerik.Web.Mvc;
+using Telerik.Web.Mvc.UI;
 
 namespace Nop.Admin.Controllers
 {
@@ -273,6 +274,7 @@ namespace Nop.Admin.Controllers
             {
                 ProductId = productId,
             };
+            model.ParentCategories = new List<DropDownItem>();
             //locales
             AddLocales(_languageService, model.Locales);
             //common
@@ -341,6 +343,16 @@ namespace Nop.Admin.Controllers
             PrepareProductAttributesMapping(model, null);
             //discounts
             PrepareDiscountModel(model, null, true);
+            //parent Id
+            model.ParentCategories = new List<DropDownItem> { new DropDownItem { Text = "[None]", Value = "0" } };
+            if (model.CategoryId > 0)
+            {
+                var parentCategory = _categoryService.GetCategoryById(model.CategoryId);
+                if (parentCategory != null && !parentCategory.Deleted)
+                    model.ParentCategories.Add(new DropDownItem { Text = parentCategory.GetCategoryBreadCrumb(_categoryService), Value = parentCategory.Id.ToString() });
+                else
+                    model.CategoryId = 0;
+            }
             return View(model);
         }
 
@@ -355,6 +367,16 @@ namespace Nop.Admin.Controllers
                 return RedirectToAction("List", "Product");
 
             var model = variant.ToModel();
+            //parent Id
+            model.ParentCategories = new List<DropDownItem> { new DropDownItem { Text = "[None]", Value = "0" } };
+            if (model.CategoryId > 0)
+            {
+                var parentCategory = _categoryService.GetCategoryById(model.CategoryId);
+                if (parentCategory != null && !parentCategory.Deleted)
+                    model.ParentCategories.Add(new DropDownItem { Text = parentCategory.GetCategoryBreadCrumb(_categoryService), Value = parentCategory.Id.ToString() });
+                else
+                    model.CategoryId = 0;
+            }
             //locales
             AddLocales(_languageService, model.Locales, (locale, languageId) =>
             {
@@ -456,6 +478,16 @@ namespace Nop.Admin.Controllers
             PrepareProductAttributesMapping(model, variant);
             //discounts
             PrepareDiscountModel(model, variant, true);
+            //parent Id
+            model.ParentCategories = new List<DropDownItem> { new DropDownItem { Text = "[None]", Value = "0" } };
+            if (model.CategoryId > 0)
+            {
+                var parentCategory = _categoryService.GetCategoryById(model.CategoryId);
+                if (parentCategory != null && !parentCategory.Deleted)
+                    model.ParentCategories.Add(new DropDownItem { Text = parentCategory.GetCategoryBreadCrumb(_categoryService), Value = parentCategory.Id.ToString() });
+                else
+                    model.CategoryId = 0;
+            }
             return View(model);
         }
         

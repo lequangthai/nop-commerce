@@ -39,11 +39,13 @@ namespace Nop.Data.Mapping.Catalog
             this.Ignore(pv => pv.ManageInventoryMethod);
             this.Ignore(pv => pv.RecurringCyclePeriod);
 
-
-            
             this.HasRequired(pv => pv.Product)
                 .WithMany(p => p.ProductVariants)
                 .HasForeignKey(pv => pv.ProductId);
+
+            this.HasRequired(pv => pv.Category)
+                .WithMany(p => p.ProductVariants)
+                .HasForeignKey(pv => pv.CategoryId);
         }
     }
 }

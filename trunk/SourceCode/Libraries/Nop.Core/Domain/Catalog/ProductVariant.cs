@@ -21,6 +21,8 @@ namespace Nop.Core.Domain.Catalog
         /// </summary>
         public virtual int ProductId { get; set; }
 
+        public virtual int CategoryId { get; set; }
+
         /// <summary>
         /// Gets or sets the name
         /// </summary>
@@ -378,7 +380,7 @@ namespace Nop.Core.Domain.Catalog
         /// </summary>
         public virtual Nullable<decimal> PercentDiscount { get; set; }
 
-
+        public virtual Category Category { get; set; }
 
 
 

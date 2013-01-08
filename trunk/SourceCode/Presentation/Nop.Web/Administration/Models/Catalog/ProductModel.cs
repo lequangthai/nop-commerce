@@ -74,8 +74,10 @@ namespace Nop.Admin.Models.Catalog
         
         [NopResourceDisplayName("Admin.Catalog.Products.Fields.Published")]
         public bool Published { get; set; }
-        
 
+        [NopResourceDisplayName("Admin.Catalog.Products.Fields.YearIntroduce")]
+        [DisplayFormat(DataFormatString = "{0:0000}", ApplyFormatInEditMode = true)]
+        public int YearIntroduce { get; set; }
 
         public IList<ProductLocalizedModel> Locales { get; set; }
 

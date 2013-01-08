@@ -1304,6 +1304,7 @@
     <Content Include="Content\smoothness\images\ui-icons_cd0a0a_256x240.png" />
     <Content Include="Content\smoothness\jquery-ui-1.8.17.custom.css" />
     <Content Include="ErrorPage.htm" />
+    <Content Include="favicon.ico" />
     <Content Include="FileNotFound.htm" />
     <Content Include="Global.asax" />
     <Content Include="license.txt" />

@@ -874,6 +874,40 @@ namespace Nop.Services.Catalog
             UpdateProduct(product);
         }
 
+        public IList<GiaProductVariantBaseOnCategoryModel> GetGiaProduct(int id)
+        {
+            var categories = from pv in _productVariantRepository.Table
+                         where pv.ProductId == id orderby pv.Category.Name
+                         select pv.Category;
+
+            var result = new List<GiaProductVariantBaseOnCategoryModel>();
+            foreach (var category in categories)
+            {
+                if (result.FirstOrDefault(c=>c.CategoryId == category.Id) == null)
+                {
+                    var model = new GiaProductVariantBaseOnCategoryModel
+                                    {
+                                        CategoryId = category.Id,
+                                        CategoryName = category.Name,
+                                        ProductVariants = new List<ProductVariant>()
+                                    };
+
+                    var query2 = (from pv in _productVariantRepository.Table
+                                  where pv.ProductId == id && pv.CategoryId == category.Id
+                                  select pv).ToList();
+
+                    foreach (var productVariant in query2)
+                    {
+                        model.ProductVariants.Add(productVariant);
+                    }
+
+                    result.Add(model);
+                }
+            }
+
+            return result;
+        }
+
         #endregion
 
         #region Product variants

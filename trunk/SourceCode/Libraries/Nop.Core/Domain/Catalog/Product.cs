@@ -122,6 +122,8 @@ namespace Nop.Core.Domain.Catalog
         /// </summary>
         public virtual int ViewCount { get; set; }
 
+        public virtual int YearIntroduce { get; set; }
+
         /// <summary>
         /// Gets or sets the product variants
         /// </summary>

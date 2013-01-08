@@ -8,6 +8,7 @@ using Nop.Core.Domain.Discounts;
 using Nop.Web.Framework;
 using Nop.Web.Framework.Localization;
 using Nop.Web.Framework.Mvc;
+using Telerik.Web.Mvc.UI;
 
 namespace Nop.Admin.Models.Catalog
 {
@@ -385,6 +386,11 @@ namespace Nop.Admin.Models.Catalog
         public bool HideNameAndDescriptionProperties { get; set; }
         public bool HidePublishedProperty { get; set; }
         public bool HideDisplayOrderProperty { get; set; }
+
+        [NopResourceDisplayName("Admin.Catalog.Categories.Fields.Parent")]
+        public int CategoryId { get; set; }
+
+        public IList<DropDownItem> ParentCategories { get; set; }
     }
 
     public partial class ProductVariantLocalizedModel : ILocalizedModelLocal

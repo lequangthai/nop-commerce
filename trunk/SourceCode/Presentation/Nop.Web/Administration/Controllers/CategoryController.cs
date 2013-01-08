@@ -207,10 +207,20 @@ namespace Nop.Admin.Controllers
         }
 
         //ajax
-        public ActionResult AllCategories(string text, int selectedId)
+        public ActionResult AllCategories(string text, int selectedId, bool? notNone)
         {
             var categories = _categoryService.GetAllCategories(true);
-            categories.Insert(0, new Category { Name = "[None]", Id = 0 });
+            if (!notNone.HasValue || !notNone.Value)
+            {
+                categories.Insert(0, new Category { Name = "[None]", Id = 0 });
+            }
+            else
+            {
+                if (selectedId == 0)
+                {
+                    if (categories.Count > 0) selectedId = categories.First().Id;
+                }
+            }
             var selectList = new List<SelectListItem>();
             foreach (var c in categories)
                 selectList.Add(new SelectListItem()

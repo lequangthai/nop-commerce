@@ -3,11 +3,11 @@
 @using Nop.Core.Infrastructure.DependencyManagement;
 @{
     var displayMiniProfiler = EngineContext.Current.Resolve<Nop.Core.Domain.StoreInformationSettings>().DisplayMiniProfilerInPublicStore;
-    
+
     //resources
     Html.AppendCssFileParts(@Url.Content("~/Content/smoothness/jquery-ui-1.8.17.custom.css"));
-    
-    
+
+
     Html.AppendScriptParts(@Url.Content("~/Scripts/public.ajaxcart.js"));
     Html.AppendScriptParts(@Url.Content("~/Scripts/public.common.js"));
     Html.AppendScriptParts(@Url.Content("~/Scripts/jquery-ui.min.js"));
@@ -33,6 +33,7 @@
     @Html.Action("RssHeaderLink", "Blog")
     @*Favicon - upload favicon.ico file to the root directory*@
     @Html.Action("Favicon", "Common")
+
     @if (displayMiniProfiler)
     {
         @StackExchange.Profiling.MiniProfiler.RenderIncludes();

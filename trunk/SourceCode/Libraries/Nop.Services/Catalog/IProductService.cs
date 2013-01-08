@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Nop.Core;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Orders;
+using Nop.Services.GiaHelper;
 
 namespace Nop.Services.Catalog
 {
@@ -127,6 +128,7 @@ namespace Nop.Services.Catalog
         /// <param name="product">Product</param>
         void UpdateProductReviewTotals(Product product);
 
+        IList<GiaProductVariantBaseOnCategoryModel> GetGiaProduct(int id);
         #endregion
 
         #region Product variants

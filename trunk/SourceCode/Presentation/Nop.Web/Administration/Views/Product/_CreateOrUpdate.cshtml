@@ -113,6 +113,15 @@
             </td>
         </tr>
         <tr>
+        <td class="adminTitle">
+            @Html.NopLabelFor(model => model.YearIntroduce):
+        </td>
+        <td class="adminData">
+            @Html.EditorFor(model => model.YearIntroduce)
+            @Html.ValidationMessageFor(model => model.YearIntroduce)
+        </td>
+    </tr>
+        <tr>
             <td class="adminTitle">
                 @Html.NopLabelFor(model => model.ShowOnHomePage):
             </td>
