@@ -1,13 +1,15 @@
-﻿<div id="top-cat" class="c1">
+﻿@using System.Configuration
+@using Nop.Services.GiaHelper
+<div id="top-cat" class="c1">
     <ul>
-        <li class="women">
-            <a href="/catalog/womenperfume">WOMEN'S PERFUME</a>
+        <li class="@GiaConstance.WomenKey.ToLower()">
+            <a href="/catalog/index?name=@GiaConstance.WomenKey">WOMEN'S PERFUME</a>
         </li>
-        <li class="cnt men">
-            <a href="/catalog/mencologne">MEN'S COLOGNE</a>
+        <li class="cnt @GiaConstance.MenKey.ToLower()">
+            <a href="/catalog/index?name=@GiaConstance.MenKey">MEN'S COLOGNE</a>
         </li>
-        <li class="gif">
-            <a href="/catalog/giftset">GIFT SETS</a>
+        <li class="@GiaConstance.Giftkey.ToLower()">
+            <a href="/catalog/index?name=@GiaConstance.Giftkey">GIFT SETS</a>
         </li>
     </ul>
 </div>
@@ -20,7 +22,7 @@
 
 <script type="text/javascript">
     function setCatActive(classname) {
-        if (classname == 'gif') {
+        if (classname == 'gift') {
             $("#top-cat").addClass('c2').removeClass('c1');
             $("#top-cat li").each(function () {
                 $(this).addClass('c1').removeClass('c2');

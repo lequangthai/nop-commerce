@@ -198,15 +198,3 @@
         @Html.Widget("categorydetails_bottom")
     </div>
 </div>
-
-@Html.Action("Gia_CategoryBestSellers", "Catalog", new { categoryId = Model.Id })
-<div class="clear">
-</div>
-
-@Html.Action("Gia_CategoryClearances", "Catalog", new { categoryId = Model.Id })
-<div class="clear">
-</div>
-
-@Html.Action("Gia_CategorySpecialAttributes", "Catalog", new { categoryId = Model.Id, attributeName = "Fall Trends" })
-<div class="clear">
-</div>

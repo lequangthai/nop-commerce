@@ -1,0 +1,12 @@
+﻿@{
+    Layout = "~/Views/Shared/_ColumnsTwo.cshtml";
+    ViewBag.Title = "BestSeller";
+    ViewBag.CurrentCategoryId = ViewBag.CategoryId;
+    ViewBag.CurrentTab = 1;
+    ViewBag.CurrentPageIndex = ViewBag.PageIndex;
+}
+@section Define_HomePage_HeaderBanner
+{
+    @Html.Partial("HeaderBanner")
+}
+@Html.Partial("_ProductTab")

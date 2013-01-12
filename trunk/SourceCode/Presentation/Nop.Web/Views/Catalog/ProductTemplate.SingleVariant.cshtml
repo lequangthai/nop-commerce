@@ -22,10 +22,17 @@
 @{
     var defaultProductVariant = Model.ProductVariantModels.Count > 0 ? Model.ProductVariantModels[0] : null;
 }
+
+@section Category_LetterBox
+{
+    @Html.Partial("_Category.LetterBox")
+}
+
+
 <!--product breadcrumb-->
-@Html.Action("ProductBreadcrumb", "Catalog", new { productId = Model.Id })
+@*@Html.Action("ProductBreadcrumb", "Catalog", new { productId = Model.Id })
 <div class="clear">
-</div>
+</div>*@
 <div class="page product-details-page">
     <div class="page-body">
         @Html.Widget("productdetails_top")
@@ -112,9 +119,9 @@
                 @Html.Action("ProductSpecifications", "Catalog", new { productId = Model.Id })
                 <div class="clear">
                 </div>
-                @Html.Action("ProductTags", "Catalog", new { productId = Model.Id })
+               @* @Html.Action("ProductTags", "Catalog", new { productId = Model.Id })
                 <div class="clear">
-                </div>
+                </div>*@
                 @Html.Action("ProductsAlsoPurchased", "Catalog", new { productId = Model.Id })
                 <div class="clear">
                 </div>

@@ -1,8 +1,10 @@
-﻿@{
+﻿@using System.Configuration
+@{
     ViewBag.Title = "MenCologne";
     Layout = "~/Views/Shared/_ColumnsTwo.cshtml";
     ViewBag.CatTitle = "Men's cologne";
     ViewBag.LetterBoxTitle = "Men's cologne";
+    ViewBag.CurrentCategoryId = ConfigurationManager.AppSettings["Gia_MenCatId"];
 }
 @section HomePage_TopNavigation{
     

@@ -34,12 +34,13 @@ using Nop.Web.Infrastructure.Cache;
 using Nop.Web.Models.Catalog;
 using Nop.Web.Models.Media;
 using Nop.Services.Logging;
+using Nop.Services.GiaHelper;
 
 namespace Nop.Web.Controllers
 {
     public partial class CatalogController : BaseNopController
     {
-		#region Fields
+        #region Fields
 
         private readonly ICategoryService _categoryService;
         private readonly IManufacturerService _manufacturerService;
@@ -80,17 +81,17 @@ namespace Nop.Web.Controllers
         private readonly CustomerSettings _customerSettings;
         private readonly ICacheManager _cacheManager;
         private readonly CaptchaSettings _captchaSettings;
-        
+
         #endregion
 
-		#region Constructors
+        #region Constructors
 
-        public CatalogController(ICategoryService categoryService, 
-            IManufacturerService manufacturerService, IProductService productService, 
+        public CatalogController(ICategoryService categoryService,
+            IManufacturerService manufacturerService, IProductService productService,
             IProductTemplateService productTemplateService,
             ICategoryTemplateService categoryTemplateService,
             IManufacturerTemplateService manufacturerTemplateService,
-            IProductAttributeService productAttributeService, IProductAttributeParser productAttributeParser, 
+            IProductAttributeService productAttributeService, IProductAttributeParser productAttributeParser,
             IWorkContext workContext, ITaxService taxService, ICurrencyService currencyService,
             IPictureService pictureService, ILocalizationService localizationService,
             IPriceCalculationService priceCalculationService, IPriceFormatter priceFormatter,
@@ -105,7 +106,7 @@ namespace Nop.Web.Controllers
             ICustomerActivityService customerActivityService,
             MediaSettings mediaSettings, CatalogSettings catalogSettings,
             ShoppingCartSettings shoppingCartSettings, StoreInformationSettings storeInformationSettings,
-            LocalizationSettings localizationSettings, CustomerSettings customerSettings, 
+            LocalizationSettings localizationSettings, CustomerSettings customerSettings,
             CaptchaSettings captchaSettings,
             ICacheManager cacheManager)
         {
@@ -173,7 +174,7 @@ namespace Nop.Web.Controllers
             });
             return cacheModel;
         }
-        
+
         [NonAction]
         protected IList<Category> GetCategoryBreadCrumb(Category category)
         {
@@ -181,7 +182,7 @@ namespace Nop.Web.Controllers
                 throw new ArgumentNullException("category");
 
             var breadCrumb = new List<Category>();
-            
+
             while (category != null && //category is not null
                 !category.Deleted && //category is not deleted
                 category.Published) //category is published
@@ -192,9 +193,9 @@ namespace Nop.Web.Controllers
             breadCrumb.Reverse();
             return breadCrumb;
         }
-        
+
         [NonAction]
-        protected IEnumerable<ProductOverviewModel> PrepareProductOverviewModels(IEnumerable<Product> products, 
+        protected IEnumerable<ProductOverviewModel> PrepareProductOverviewModels(IEnumerable<Product> products,
             bool preparePriceModel = true, bool preparePictureModel = true,
             int? productThumbPictureSize = null, bool prepareSpecificationAttributes = false,
             bool forceRedirectionAfterAddingToCart = false)
@@ -402,7 +403,7 @@ namespace Nop.Web.Controllers
         {
             if (product == null)
                 throw new ArgumentNullException("product");
-            
+
             string cacheKey = string.Format(ModelCacheEventConsumer.PRODUCT_SPECS_MODEL_KEY, product.Id, _workContext.WorkingLanguage.Id);
             return _cacheManager.Get(cacheKey, () =>
             {
@@ -419,7 +420,7 @@ namespace Nop.Web.Controllers
                 return model;
             });
         }
-        
+
         [NonAction]
         protected IList<CategoryNavigationModel> GetChildCategoryNavigationModel(IList<Category> breadCrumb, int rootCategoryId, Category currentCategory, int level)
         {
@@ -460,13 +461,13 @@ namespace Nop.Web.Controllers
 
             return result;
         }
-        
+
         [NonAction]
         protected ProductDetailsModel PrepareProductDetailsPageModel(Product product)
         {
             if (product == null)
                 throw new ArgumentNullException("product");
-            
+
             var model = new ProductDetailsModel()
             {
                 Id = product.Id,
@@ -573,7 +574,7 @@ namespace Nop.Web.Controllers
             model.AddProductReview.CanCurrentCustomerLeaveReview = _catalogSettings.AllowAnonymousUsersToReviewProduct || !_workContext.CurrentCustomer.IsGuest();
             model.AddProductReview.DisplayCaptcha = _captchaSettings.Enabled && _captchaSettings.ShowOnProductReviewPage;
         }
-        
+
         [NonAction]
         protected ProductDetailsModel.ProductVariantModel PrepareProductVariantModel(ProductDetailsModel.ProductVariantModel model, ProductVariant productVariant)
         {
@@ -703,8 +704,8 @@ namespace Nop.Web.Controllers
                 });
             }
 
-            #endregion 
-            
+            #endregion
+
             #region Gift card
 
             model.GiftCard.IsGiftCard = productVariant.IsGiftCard;
@@ -718,7 +719,7 @@ namespace Nop.Web.Controllers
             #endregion
 
             #region Product attributes
-            
+
             var productVariantAttributes = _productAttributeService.GetProductVariantAttributesByProductVariantId(productVariant.Id);
             foreach (var attribute in productVariantAttributes)
             {
@@ -744,11 +745,11 @@ namespace Nop.Web.Controllers
                         var pvaValueModel = new ProductDetailsModel.ProductVariantModel.ProductVariantAttributeValueModel()
                         {
                             Id = pvaValue.Id,
-                            Name = pvaValue.GetLocalized(x=>x.Name),
+                            Name = pvaValue.GetLocalized(x => x.Name),
                             IsPreSelected = pvaValue.IsPreSelected,
                         };
                         pvaModel.Values.Add(pvaValueModel);
-                        
+
                         //display price if allowed
                         if (_permissionService.Authorize(StandardPermissionProvider.DisplayPrices))
                         {
@@ -768,28 +769,15 @@ namespace Nop.Web.Controllers
                 model.ProductVariantAttributes.Add(pvaModel);
             }
 
-            #endregion 
+            #endregion
 
             return model;
         }
-        
+
         #endregion
 
         #region Categories
 
-        public ActionResult WomenPerfume()
-        {
-            return View();
-        }
-        public ActionResult MenCologne()
-        {
-            return View();
-        }
-        public ActionResult GiftSet()
-        {
-            return View();
-        }
-        
         [NopHttpsRequirement(SslRequirement.No)]
         public ActionResult Category(int categoryId, CatalogPagingFilteringModel command)
         {
@@ -808,7 +796,7 @@ namespace Nop.Web.Controllers
             if (command.PageNumber <= 0) command.PageNumber = 1;
 
             var model = category.ToModel();
-            
+
 
 
 
@@ -820,7 +808,7 @@ namespace Nop.Web.Controllers
                 {
                     var currentPageUrl = _webHelper.GetThisPageUrl(true);
                     var sortUrl = _webHelper.ModifyQueryString(currentPageUrl, "orderby=" + ((int)enumValue).ToString(), null);
-                    
+
                     var sortValue = enumValue.GetLocalizedEnum(_localizationService, _workContext);
                     model.PagingFilteringContext.AvailableSortOptions.Add(new SelectListItem()
                         {
@@ -835,7 +823,7 @@ namespace Nop.Web.Controllers
 
             //view mode
             model.PagingFilteringContext.AllowProductViewModeChanging = _catalogSettings.AllowProductViewModeChanging;
-            var viewMode = !string.IsNullOrEmpty(command.ViewMode) 
+            var viewMode = !string.IsNullOrEmpty(command.ViewMode)
                 ? command.ViewMode
                 : _catalogSettings.DefaultViewMode;
             if (model.PagingFilteringContext.AllowProductViewModeChanging)
@@ -856,7 +844,7 @@ namespace Nop.Web.Controllers
                     Selected = viewMode == "list"
                 });
             }
-                        
+
             //page size
             model.PagingFilteringContext.AllowCustomersToSelectPageSize = false;
             if (category.AllowCustomersToSelectPageSize && category.PageSizeOptions != null)
@@ -1021,8 +1009,8 @@ namespace Nop.Web.Controllers
             //products
             IList<int> alreadyFilteredSpecOptionIds = model.PagingFilteringContext.SpecificationFilter.GetAlreadyFilteredSpecOptionIds(_webHelper);
             IList<int> filterableSpecificationAttributeOptionIds = null;
-            var products = _productService.SearchProducts(categoryIds, 0, 
-                _catalogSettings.IncludeFeaturedProductsInNormalLists ? null : (bool?)false, 
+            var products = _productService.SearchProducts(categoryIds, 0,
+                _catalogSettings.IncludeFeaturedProductsInNormalLists ? null : (bool?)false,
                 minPriceConverted, maxPriceConverted,
                 0, string.Empty, false, false, _workContext.WorkingLanguage.Id, alreadyFilteredSpecOptionIds,
                 (ProductSortingEnum)command.OrderBy, command.PageNumber - 1, command.PageSize,
@@ -1034,9 +1022,9 @@ namespace Nop.Web.Controllers
 
             //specs
             model.PagingFilteringContext.SpecificationFilter.PrepareSpecsFilters(alreadyFilteredSpecOptionIds,
-                filterableSpecificationAttributeOptionIds, 
+                filterableSpecificationAttributeOptionIds,
                 _specificationAttributeService, _webHelper, _workContext);
-            
+
 
             //template
             var templateCacheKey = string.Format(ModelCacheEventConsumer.CATEGORY_TEMPLATE_MODEL_KEY, category.CategoryTemplateId);
@@ -1177,7 +1165,7 @@ namespace Nop.Web.Controllers
                     Selected = viewMode == "list"
                 });
             }
-                        
+
             //page size
             model.PagingFilteringContext.AllowCustomersToSelectPageSize = false;
             if (manufacturer.AllowCustomersToSelectPageSize && manufacturer.PageSizeOptions != null)
@@ -1261,7 +1249,7 @@ namespace Nop.Web.Controllers
                     maxPriceConverted = _currencyService.ConvertToPrimaryStoreCurrency(selectedPriceRange.To.Value, _workContext.WorkingCurrency);
             }
 
-            
+
 
 
             //featured products
@@ -1282,8 +1270,8 @@ namespace Nop.Web.Controllers
 
             //products
             IList<int> filterableSpecificationAttributeOptionIds = null;
-            var products = _productService.SearchProducts(0, manufacturer.Id, 
-                _catalogSettings.IncludeFeaturedProductsInNormalLists ? null : (bool?)false, 
+            var products = _productService.SearchProducts(0, manufacturer.Id,
+                _catalogSettings.IncludeFeaturedProductsInNormalLists ? null : (bool?)false,
                 minPriceConverted, maxPriceConverted,
                 0, string.Empty, false, false, _workContext.WorkingLanguage.Id, null,
                 (ProductSortingEnum)command.OrderBy, command.PageNumber - 1, command.PageSize,
@@ -1310,7 +1298,7 @@ namespace Nop.Web.Controllers
             return View(templateViewPath, model);
         }
 
-         [NopHttpsRequirement(SslRequirement.No)]
+        [NopHttpsRequirement(SslRequirement.No)]
         [ChildActionOnly]
         public ActionResult ManufacturerSlideShow()
         {
@@ -1348,7 +1336,7 @@ namespace Nop.Web.Controllers
             foreach (var manufacturer in manufacturers)
             {
                 var modelMan = manufacturer.ToModel();
-                
+
                 //prepare picture model
                 int pictureSize = _mediaSettings.ManufacturerThumbPictureSize;
                 var manufacturerPictureCacheKey = string.Format(ModelCacheEventConsumer.MANUFACTURER_PICTURE_MODEL_KEY, manufacturer.Id, pictureSize, true, _workContext.WorkingLanguage.Id, _webHelper.IsCurrentConnectionSecured());
@@ -1424,7 +1412,7 @@ namespace Nop.Web.Controllers
             //check whether we have at leat one variant
             if (model.ProductVariantModels.Count == 0)
                 return RedirectToRoute("HomePage");
-            
+
             //increa viewcount
             product.ViewCount++;
             _productService.UpdateProduct(product);
@@ -1539,7 +1527,7 @@ namespace Nop.Web.Controllers
                             {
                                 foreach (var item in cblAttributes.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
                                 {
-                                    int selectedAttributeId =  int.Parse(item);
+                                    int selectedAttributeId = int.Parse(item);
                                     if (selectedAttributeId > 0)
                                         selectedAttributes = _productAttributeParser.AddProductAttribute(selectedAttributes,
                                             attribute, selectedAttributeId.ToString());
@@ -1579,7 +1567,7 @@ namespace Nop.Web.Controllers
                             {
                                 selectedDate = new DateTime(Int32.Parse(year), Int32.Parse(month), Int32.Parse(day));
                             }
-                            catch {}
+                            catch { }
                             if (selectedDate.HasValue)
                             {
                                 selectedAttributes = _productAttributeParser.AddProductAttribute(selectedAttributes,
@@ -1679,7 +1667,7 @@ namespace Nop.Web.Controllers
 
             //set already entered values (quantity, customer entered price, gift card attributes, product attributes
             //we do it manually because views do not use HTML helpers for rendering controls
-            
+
             Action<ProductDetailsModel> setEnteredValues = (productModel) =>
                 {
                     //find product variant model
@@ -1808,7 +1796,7 @@ namespace Nop.Web.Controllers
                                             .Select(x => x)
                                             .Where(y => y.Id == attribute.Id)
                                             .FirstOrDefault();
-                                        
+
                                         if (pvaModel != null)
                                             pvaModel.TextValue = txtAttribute;
                                     }
@@ -1938,26 +1926,26 @@ namespace Nop.Web.Controllers
                             ProductName = product.GetLocalized(x => x.Name),
                             ProductSeName = product.GetSeName()
                         };
-                        var productCategories = _categoryService.GetProductCategoriesByProductId(product.Id);
-                        if (productCategories.Count > 0)
+                    var productCategories = _categoryService.GetProductCategoriesByProductId(product.Id);
+                    if (productCategories.Count > 0)
+                    {
+                        var category = productCategories[0].Category;
+                        if (category != null)
                         {
-                            var category = productCategories[0].Category;
-                            if (category != null)
+                            foreach (var catBr in GetCategoryBreadCrumb(category))
                             {
-                                foreach (var catBr in GetCategoryBreadCrumb(category))
+                                model.CategoryBreadcrumb.Add(new CategoryModel()
                                 {
-                                    model.CategoryBreadcrumb.Add(new CategoryModel()
-                                    {
-                                        Id = catBr.Id,
-                                        Name = catBr.GetLocalized(x => x.Name),
-                                        SeName = catBr.GetSeName()
-                                    });
-                                }
+                                    Id = catBr.Id,
+                                    Name = catBr.GetLocalized(x => x.Name),
+                                    SeName = catBr.GetSeName()
+                                });
                             }
                         }
+                    }
                     return model;
                 });
-            
+
             return PartialView(cacheModel);
         }
 
@@ -2036,7 +2024,7 @@ namespace Nop.Web.Controllers
                                 };
                                 decimal taxRate = decimal.Zero;
                                 decimal priceBase = _taxService.GetProductPrice(variant, _priceCalculationService.GetFinalPrice(variant, _workContext.CurrentCustomer, decimal.Zero, _catalogSettings.DisplayTierPricesWithDiscounts, tierPrice.Quantity), out taxRate);
-                                    //_taxService.GetProductPrice(variant, tierPrice.Price, out taxRate);
+                                //_taxService.GetProductPrice(variant, tierPrice.Price, out taxRate);
                                 decimal price = _currencyService.ConvertFromPrimaryStoreCurrency(priceBase, _workContext.WorkingCurrency);
                                 m.Price = _priceFormatter.FormatPrice(price, false, false);
                                 return m;
@@ -2059,7 +2047,7 @@ namespace Nop.Web.Controllers
                     products.Add(product);
             }
             var model = PrepareProductOverviewModels(products, true, true, productThumbPictureSize).ToList();
-            
+
             return PartialView(model);
         }
 
@@ -2105,7 +2093,7 @@ namespace Nop.Web.Controllers
             //We know that the entire shopping cart page is not refresh
             //even if "ShoppingCartSettings.DisplayCartAfterAddingProduct" setting  is enabled.
             //That's why we force page refresh (redirect) in this case
-            var model = PrepareProductOverviewModels(products,  
+            var model = PrepareProductOverviewModels(products,
                 productThumbPictureSize: productThumbPictureSize, forceRedirectionAfterAddingToCart: true)
                 .ToList();
 
@@ -2182,8 +2170,17 @@ namespace Nop.Web.Controllers
         }
 
         [ChildActionOnly]
-        public ActionResult HomepageBestSellers(int? productThumbPictureSize, int? pageIndex, int? categoryId, string viewType, int itemsCount = 8)
+        public ActionResult HomepageBestSellers(int? productThumbPictureSize, int? pageIndex, int? categoryId, string categoryName, string viewType, int itemsCount = 8)
         {
+            if (!String.IsNullOrEmpty(categoryName))
+            {
+                try
+                {
+                    categoryId = int.Parse(ConfigurationManager.AppSettings[categoryName]);
+                }
+                catch (Exception e) { }
+            }
+
             var pageValue = pageIndex.HasValue ? pageIndex.Value : 1;
 
             if (!_catalogSettings.ShowBestsellersOnHomepage || _catalogSettings.NumberOfBestsellersOnHomepage == 0)
@@ -2191,19 +2188,29 @@ namespace Nop.Web.Controllers
 
             //load and cache report
             IList<Gia_BestsellersReportLine> report;
+            int totalPages;
             if (categoryId.HasValue)
             {
-                report = _cacheManager.Get(ModelCacheEventConsumer.HOMEPAGE_BESTSELLERS_IDS_KEY_PAGE + pageValue+"."+itemsCount+"."+categoryId.Value,
+                report = _cacheManager.Get(ModelCacheEventConsumer.HOMEPAGE_BESTSELLERS_IDS_KEY_PAGE + pageValue + "." + itemsCount + "." + categoryId.Value,
                                            () =>
                                            _orderReportService.BestSellersReportWithPager(categoryId.Value,
-                                                                                         itemsCount));
+                                                                                         itemsCount, pageValue));
+                totalPages =
+                    _cacheManager.Get(
+                        ModelCacheEventConsumer.HOMEPAGE_BESTSELLERS_IDS_KEY_TOTAL_PAGES + categoryId.Value,
+                        () =>
+                        _orderReportService.BestSellersReportWithPagerPageCount(categoryId.Value, itemsCount, false));
             }
             else
             {
-                report = _cacheManager.Get(ModelCacheEventConsumer.HOMEPAGE_BESTSELLERS_IDS_KEY_PAGE + pageValue+"."+itemsCount,
+                report = _cacheManager.Get(ModelCacheEventConsumer.HOMEPAGE_BESTSELLERS_IDS_KEY_PAGE + pageValue + "." + itemsCount,
                                            () =>
                                            _orderReportService.BestSellersReportWithPager(null,
-                                                                                          itemsCount));
+                                                                                          itemsCount, pageValue));
+                totalPages = _cacheManager.Get(ModelCacheEventConsumer.HOMEPAGE_BESTSELLERS_IDS_KEY_TOTAL_PAGES,
+                                               () =>
+                                               _orderReportService.BestSellersReportWithPagerPageCount(null, itemsCount,
+                                                                                                       false));
             }
 
             var products = new List<Product>();
@@ -2217,10 +2224,12 @@ namespace Nop.Web.Controllers
             {
                 UseSmallProductBox = _catalogSettings.UseSmallProductBoxOnHomePage,
             };
-            model.Products = PrepareProductOverviewModels(products, 
+            model.Products = PrepareProductOverviewModels(products,
                 !_catalogSettings.UseSmallProductBoxOnHomePage, true, productThumbPictureSize)
                 .ToList();
+            model.Paging = new GiaPagingModel(totalPages, pageValue);
             ViewBag.ViewType = viewType;
+            ViewBag.CategoryName = string.IsNullOrEmpty(categoryName)?"":categoryName.ToLower().Trim();
             return PartialView(model);
         }
 
@@ -2231,7 +2240,7 @@ namespace Nop.Web.Controllers
             {
                 UseSmallProductBox = _catalogSettings.UseSmallProductBoxOnHomePage
             };
-            model.Products = PrepareProductOverviewModels(_productService.GetAllProductsDisplayedOnHomePage(), 
+            model.Products = PrepareProductOverviewModels(_productService.GetAllProductsDisplayedOnHomePage(),
                 !_catalogSettings.UseSmallProductBoxOnHomePage, true, productThumbPictureSize)
                 .ToList();
 
@@ -2275,7 +2284,7 @@ namespace Nop.Web.Controllers
 
             if (!_workContext.CurrentCustomer.IsRegistered())
                 return Content(_localizationService.GetResource("BackInStockSubscriptions.OnlyRegistered"));
-            
+
             if (variant.ManageInventoryMethod == ManageInventoryMethod.ManageStock &&
                 variant.BackorderMode == BackorderMode.NoBackorders &&
                 variant.AllowBackInStockSubscriptions &&
@@ -2294,7 +2303,7 @@ namespace Nop.Web.Controllers
                 {
                     if (_backInStockSubscriptionService.GetAllSubscriptionsByCustomerId(_workContext.CurrentCustomer.Id, 0, 1).TotalCount >= _catalogSettings.MaximumBackInStockSubscriptions)
                         return Content(string.Format(_localizationService.GetResource("BackInStockSubscriptions.MaxSubscriptions"), _catalogSettings.MaximumBackInStockSubscriptions));
-            
+
                     //subscribe   
                     subscription = new BackInStockSubscription()
                     {
@@ -2305,7 +2314,7 @@ namespace Nop.Web.Controllers
                     _backInStockSubscriptionService.InsertSubscription(subscription);
                     return Content("Subscribed");
                 }
-                
+
             }
             else
             {
@@ -2316,7 +2325,7 @@ namespace Nop.Web.Controllers
         #endregion
 
         #region Product tags
-        
+
         //Product tags
         [ChildActionOnly]
         public ActionResult ProductTags(int productId)
@@ -2368,7 +2377,7 @@ namespace Nop.Web.Controllers
                 tags = tags.OrderBy(x => x.GetLocalized(y => y.Name)).ToList();
 
                 model.TotalTags = allTags.Count;
-                
+
                 foreach (var tag in tags)
                     model.Tags.Add(new ProductTagModel()
                     {
@@ -2389,7 +2398,7 @@ namespace Nop.Web.Controllers
             var productTag = _productTagService.GetProductById(productTagId);
             if (productTag == null)
                 return RedirectToRoute("HomePage");
-                        
+
             if (command.PageNumber <= 0) command.PageNumber = 1;
 
             var model = new ProductsByTagModel()
@@ -2765,7 +2774,7 @@ namespace Nop.Web.Controllers
                 //email
                 _workflowMessageService.SendProductEmailAFriendMessage(_workContext.CurrentCustomer,
                         _workContext.WorkingLanguage.Id, product,
-                        model.YourEmailAddress, model.FriendEmail, 
+                        model.YourEmailAddress, model.FriendEmail,
                         Core.Html.HtmlHelper.FormatText(model.PersonalMessage, false, true, false, false, false, false));
 
                 model.ProductId = product.Id;
@@ -2887,8 +2896,8 @@ namespace Nop.Web.Controllers
                 //first empty entry
                 model.AvailableCategories.Add(new SelectListItem()
                     {
-                         Value = "0",
-                         Text = _localizationService.GetResource("Common.All")
+                        Value = "0",
+                        Text = _localizationService.GetResource("Common.All")
                     });
                 //all other categories
                 foreach (var c in categories)
@@ -2902,7 +2911,7 @@ namespace Nop.Web.Controllers
                         if (i != breadcrumb.Count - 1)
                             fullCategoryBreadcrumbName += " >> ";
                     }
-                    
+
                     model.AvailableCategories.Add(new SelectListItem()
                     {
                         Value = c.Id.ToString(),
@@ -2978,7 +2987,7 @@ namespace Nop.Web.Controllers
 
                         searchInDescriptions = model.Sid;
                     }
-                    
+
                     //var searchInProductTags = false;
                     var searchInProductTags = searchInDescriptions;
 
@@ -2991,7 +3000,7 @@ namespace Nop.Web.Controllers
                         false, out filterableSpecificationAttributeOptionIds);
                     model.Products = PrepareProductOverviewModels(products).ToList();
 
-                    model.NoResults = !model.Products.Any();                    
+                    model.NoResults = !model.Products.Any();
                 }
             }
 
@@ -3020,12 +3029,12 @@ namespace Nop.Web.Controllers
             var productNumber = _catalogSettings.ProductSearchAutoCompleteNumberOfProducts > 0 ?
                 _catalogSettings.ProductSearchAutoCompleteNumberOfProducts : 10;
             IList<int> filterableSpecificationAttributeOptionIds = null;
-            var products = _productService.SearchProducts(null,0 , null,
+            var products = _productService.SearchProducts(null, 0, null,
                 null, null, 0,
                 term, false, false, _workContext.WorkingLanguage.Id, null,
                 ProductSortingEnum.Position, 0, productNumber,
                 false, out filterableSpecificationAttributeOptionIds);
-            var models =  PrepareProductOverviewModels(products, false, _catalogSettings.ShowProductImagesInSearchAutoComplete, _mediaSettings.AutoCompleteSearchThumbPictureSize).ToList();
+            var models = PrepareProductOverviewModels(products, false, _catalogSettings.ShowProductImagesInSearchAutoComplete, _mediaSettings.AutoCompleteSearchThumbPictureSize).ToList();
             var result = (from p in models
                           select new
                           {
@@ -3040,33 +3049,95 @@ namespace Nop.Web.Controllers
         #endregion
 
         #region Gia's Code
-        [ChildActionOnly]
-        public ActionResult Gia_Clearances(int? productThumbPictureSize, bool? hasPager, int? categoryId, int? pageIndex, string viewType, int itemsCount=8)
+
+        public ActionResult Index(string name, string type, int? page)
         {
+            var pageValue = page.HasValue ? page.Value : 1;
+            var isHomePage = string.IsNullOrEmpty(name) || name.ToLower() != GiaConstance.WomenKey.ToLower() &&
+                             name.ToLower() != GiaConstance.MenKey.ToLower() &&
+                             name.ToLower() != GiaConstance.Giftkey.ToLower();
+            name = isHomePage ? "" : name;
+            type = (string.IsNullOrEmpty(type) ||
+                   type.ToLower() != GiaConstance.FallTrendsKey.ToLower() &&
+                   type.ToLower() != GiaConstance.BestSellersKey.ToLower() &&
+                   type.ToLower() != GiaConstance.ClearanceKey.ToLower() &&
+                   type.ToLower() != GiaConstance.NewArrivalsKey.ToLower()) ? GiaConstance.BestSellersKey : type;
+
+            int itemsPerPage = 8;
+            int.TryParse(ConfigurationManager.AppSettings["Gia_ItemsCountOnTab"], out itemsPerPage);
+            var model = new CatalogIndexModel()
+                            {
+                                catName = name,
+                                catType = type,
+                                pageIndex = pageValue,
+                                pageItems = itemsPerPage,
+                                isHomePage = isHomePage,
+
+                            };
+            return View(model);
+        }
+
+        public ActionResult WomenPerfume(string type)
+        {
+            ViewBag.Type = type;
+
+            return View();
+        }
+        public ActionResult MenCologne(string type)
+        {
+            return View();
+        }
+        public ActionResult GiftSet(string type)
+        {
+            return View();
+        }
+
+        public ActionResult BestSeller(int? categoryId, int? pageIndex, int itemsCount = 8)
+        {
+            var pageValue = pageIndex.HasValue ? pageIndex.Value : 1;
+            ViewBag.CategoryId = categoryId;
+            ViewBag.PageIndex = pageValue;
+            return View();
+        }
+
+        [ChildActionOnly]
+        public ActionResult Gia_Clearances(int? productThumbPictureSize, bool? hasPager, int? categoryId, int? pageIndex, string categoryName, string viewType, int itemsCount = 8)
+        {
+            if (!String.IsNullOrEmpty(categoryName))
+            {
+                try
+                {
+                    categoryId = int.Parse(ConfigurationManager.AppSettings[categoryName]);
+                }
+                catch (Exception e) { }
+            }
+
             var pageValue = pageIndex.HasValue ? pageIndex.Value : 1;
             if (_catalogSettings.NumberOfBestsellersOnHomepage != 0) itemsCount = _catalogSettings.NumberOfBestsellersOnHomepage;
 
-            try
-            {
-                itemsCount = Convert.ToInt32(ConfigurationManager.AppSettings["Gia_ItemsCountOnTab"]);
-            }
-            catch (Exception) { }
-
             IList<ClearacneReportLine> report;
+            int totalPage;
             if (categoryId.HasValue)
             {
                 //load and cache report
                 report =
                     _cacheManager.Get(
                         ModelCacheEventConsumer.GIA_CLEARANCE_WITH_PAGEs + pageValue + "." + itemsCount + "." + categoryId.Value,
-                        () => _orderReportService.ClearancesReport(categoryId, pageIndex.HasValue, itemsCount));
+                        () => _orderReportService.ClearancesReport(categoryId, pageIndex.HasValue, itemsCount, pageValue));
 
+                totalPage = _cacheManager.Get(
+                    ModelCacheEventConsumer.GIA_CLEARANCE_TOTAL_PAGEs + categoryId.Value,
+                    () => _orderReportService.ClearancesReportPageCount(categoryId, itemsCount, false));
             }
             else
             {
                 //load and cache report
                 report = _cacheManager.Get(ModelCacheEventConsumer.GIA_CLEARANCE_WITH_PAGEs + pageValue + "." + itemsCount,
-                                           () => _orderReportService.ClearancesReport(null, false, itemsCount));
+                                           () => _orderReportService.ClearancesReport(null, true, itemsCount, pageValue));
+
+                totalPage = _cacheManager.Get(
+                    ModelCacheEventConsumer.GIA_CLEARANCE_TOTAL_PAGEs,
+                    () => _orderReportService.ClearancesReportPageCount(null, itemsCount, false));
 
             }
 
@@ -3084,22 +3155,25 @@ namespace Nop.Web.Controllers
             model.Products = PrepareProductOverviewModels(products,
                 !_catalogSettings.UseSmallProductBoxOnHomePage, true, productThumbPictureSize)
                 .ToList();
+            model.Paging = new GiaPagingModel(totalPage, pageValue);
             ViewBag.ViewType = viewType;
+            ViewBag.CategoryName = categoryName;
             return PartialView(model);
         }
 
         [ChildActionOnly]
-        public ActionResult Gia_SpecialAttributes(int? productThumbPictureSize, string attributeName, int? categoryId, int? pageIndex, string viewType,int itemsCount=8)
+        public ActionResult Gia_SpecialAttributes(int? productThumbPictureSize, string attributeName, int? categoryId, int? pageIndex, string categoryName, string viewType, int itemsCount = 8)
         {
+            if(!String.IsNullOrEmpty(categoryName))
+            {
+                try
+                {
+                    categoryId = int.Parse(ConfigurationManager.AppSettings[categoryName]);
+                }catch(Exception e){}
+            }
             var pageValue = pageIndex.HasValue ? pageIndex.Value : 1;
 
             if (_catalogSettings.NumberOfBestsellersOnHomepage != 0) itemsCount = _catalogSettings.NumberOfBestsellersOnHomepage;
-
-            try
-            {
-                itemsCount = Convert.ToInt32(ConfigurationManager.AppSettings["Gia_ItemsCountOnTab"]);
-            }
-            catch (Exception) { }
 
             IList<int> report;
             if (categoryId.HasValue)
@@ -3108,7 +3182,7 @@ namespace Nop.Web.Controllers
                 report =
                     _cacheManager.Get(
                         ModelCacheEventConsumer.GIA_SPECIALATTRIBUTES_WITH_PAGEs + attributeName + "." + pageValue + "." + itemsCount + "." + categoryId.Value,
-                        () => _productService.GetProductsBySpecialAttriubte(attributeName, "true", itemsCount, categoryId.Value, null));
+                        () => _productService.GetProductsBySpecialAttriubte(attributeName, "true", itemsCount, categoryId.Value, pageValue));
 
             }
             else
@@ -3117,7 +3191,7 @@ namespace Nop.Web.Controllers
                 report =
                     _cacheManager.Get(
                         ModelCacheEventConsumer.GIA_SPECIALATTRIBUTES_WITH_PAGEs + attributeName + "." + pageValue + "." + itemsCount,
-                        () => _productService.GetProductsBySpecialAttriubte(attributeName, "true", itemsCount, null, null));
+                        () => _productService.GetProductsBySpecialAttriubte(attributeName, "true", itemsCount, null, pageValue));
 
             }
 
@@ -3138,6 +3212,8 @@ namespace Nop.Web.Controllers
 
             ViewBag.AttributeName = attributeName;
             ViewBag.ViewType = viewType;
+            ViewBag.CategoryName = categoryName;
+            ViewBag.AttributeName = attributeName;
             return PartialView(model);
         }
         #endregion

@@ -51,16 +51,7 @@
         {
         @RenderSection("HomePage_TopNavigation")
         }
-        else
-        {
-        <img src="/Content/layout/beauty_logo.gif" />
-        <div class="sign_up_now">
-            <a class="btsign-up" href="#">SIGN UP NOW</a>
-        </div>
-        <div class="fragrance">
-            FRAGRANCE
-        </div>
-        }
+        
         @Html.Partial("_Menu")
 @*  
         @Html.Action("CategoryNavigation", "Catalog", new { currentCategoryId = currentCategoryId, currentProductId = currentProductId })

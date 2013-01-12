@@ -348,10 +348,32 @@ header {
     margin-right: 15px;
 }
 
-    .viewall a {
-        color: #585858 !important;
+    .viewall span {
+        color: #FE0002 !important;
+        cursor: pointer;
+    }
+    .view-all span:hover {
+        color: #FE0002 !important;
     }
 
+    /* -----------------  gia-paging ------------------*/
+    .gia_paging {
+        text-align: right;
+        margin-right: 5px;
+        float: right;
+    }
+    .gia_paging .item {
+        float: left;
+        margin: 2px;
+        color: #F8359B;
+        font-weight: bold;
+    }
+    .gia_paging .item:hover {
+        color: red;
+    }
+    .current {
+        color: red !important;
+    }
 
 /* FOOTER */
 #footer {
@@ -1322,7 +1344,7 @@ a.eu-cookie-privacyinfo-tag{color:#F93 !important;text-decoration:underline;}
 .return-request-page .buttons{}
 
 /* PRODUCT DETAILS PAGE */
-.product-details-page{border:1px solid #d3d3d3;margin-top:10px;padding:10px;}
+.product-details-page{border:1px solid #d3d3d3;margin-top:0px;padding:10px;}
 .product-collateral{margin-top:10px;margin-bottom:10px;clear:both;}
 .product-essential{}
 .product-details-page{}
@@ -1375,7 +1397,7 @@ a.eu-cookie-privacyinfo-tag{color:#F93 !important;text-decoration:underline;}
 .related-products-grid,.also-purchased-products-grid{}
 .related-products-grid .title,.also-purchased-products-grid .title{padding:10px 10px 10px 0;font-weight:700;text-transform:uppercase;clear:both;font-size:1.1em;color:#f93;}
 .related-products-grid .item-box,.also-purchased-products-grid .item-box{padding-bottom:10px;text-align:center;vertical-align:text-top;}
-.related-products-grid .item,.also-purchased-products-grid .item{text-align:center;margin:10px;border:solid 1px #d3d3d3;width:200px;height:200px;}
+.related-products-grid .item,.also-purchased-products-grid .item{text-align:center;margin:10px;border:solid 1px #d3d3d3;width:185px;height:185px;}
 .related-products-grid .item .product-title,.also-purchased-products-grid .item .product-title{margin-bottom:5px;margin-top:5px;text-align:center;font-weight:700;text-transform:none;font-size:1em;padding:0;}
 .related-products-grid .item .picture,.also-purchased-products-grid .item .picture{text-align:center;}
 .product-specs-box{}

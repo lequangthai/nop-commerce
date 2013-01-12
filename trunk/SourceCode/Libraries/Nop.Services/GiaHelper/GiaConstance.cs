@@ -13,8 +13,19 @@ namespace Nop.Services.GiaHelper
 
         public const string NewArrivalsKey = "NewArrivals";
 
+        public const string BestSellersKey = "BestSellers";
+
+        public const string ClearanceKey = "Clearance";
+
+        public const string WomenKey = "Women";
+
+        public const string MenKey = "Men";
+
+        public const string Giftkey = "Gift";
+
         public const string MenuViewType = "MenuView";
 
         public const string ProductViewType = "ProductView";
+
     }
 }

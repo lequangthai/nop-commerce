@@ -449,12 +449,12 @@ namespace Nop.Services.Orders
                     throw new ArgumentException("Wrong orderBy parameter", "orderBy");
             }
 
-            IQueryable<int> query2 = query1.Select(c=>c.Id);
+            IQueryable<int> query2 = query1.Select(c => c.Id);
             if (hasPager)
             {
                 if (pageIndex < 1) pageIndex = 1;
                 if (recordsToReturn != 0 && recordsToReturn != int.MaxValue)
-                    query2 = query1.Select(c=>c.Id).Distinct().Skip((pageIndex - 1) * recordsToReturn).Take(recordsToReturn);
+                    query2 = query1.Select(c=>c.Id).Distinct().OrderBy(c=>c).Skip((pageIndex - 1) * recordsToReturn).Take(recordsToReturn);
             }
             else
             {

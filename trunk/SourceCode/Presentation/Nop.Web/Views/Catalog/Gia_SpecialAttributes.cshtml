@@ -16,7 +16,7 @@
         </div>
         <div class="mnuPro_des">
             <a href="@Url.RouteUrl("Product", new { productId = p.Id, SeName = p.SeName })" title="@p.DefaultPictureModel.Title">
-                <span class="name">@Html.Truncate(p.ShortDescription, 30)</span></a>
+                <span class="name">@Html.Truncate(p.Name, 30)</span></a>
         </div>
         <div class="clear-fix"></div>
     </div>
@@ -24,7 +24,7 @@
         if (Model.Products.Count >= 3)
         {
     <div class="viewall">
-        <a href="#">View all</a>
+        <span onclick="tab_click(3);" style="cursor: pointer;">View all</span>
     </div>
         }
     }
@@ -48,6 +48,10 @@
         <div class="price">@p.ProductPrice.Price</div>
     </div>
         }
+
+        Model.Paging.BaseUrl = "/catalog/index?name=" + ViewBag.CategoryName + "&type=" + ViewBag.AttributeName + "&page=";
+        Model.Paging.BaseUrl = Model.Paging.BaseUrl.ToLower().Replace("name=&", "").Replace("type=&", "");
+        @Html.Partial("_GiaPaging", Model.Paging)
     }
 
 }

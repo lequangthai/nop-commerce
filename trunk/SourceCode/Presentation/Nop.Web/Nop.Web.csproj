@@ -210,7 +210,9 @@
     <Compile Include="Models\Boards\SearchModel.cs" />
     <Compile Include="Models\Boards\TopicMoveModel.cs" />
     <Compile Include="Models\Catalog\BackInStockSubscribeModel.cs" />
+    <Compile Include="Models\Catalog\CatalogIndexModel.cs" />
     <Compile Include="Models\Catalog\CompareProductsModel.cs" />
+    <Compile Include="Models\Catalog\GiaPagingModel.cs" />
     <Compile Include="Models\Catalog\ProductOverviewModel.cs" />
     <Compile Include="Models\Catalog\SearchBoxModel.cs" />
     <Compile Include="Models\Catalog\HomePageBestsellersModel.cs" />
@@ -1350,6 +1352,7 @@
     <Content Include="Scripts\jquery.fancybox-1.3.4.pack.js" />
     <Content Include="Scripts\public.onepagecheckout.js" />
     <Content Include="Scripts\public.common.js" />
+    <Content Include="Scripts\site.js" />
     <Content Include="Scripts\slimbox2.js" />
     <Content Include="Scripts\verticalmenu.js" />
     <Content Include="StoreClosed.htm" />
@@ -1879,6 +1882,10 @@
     <Content Include="Views\Catalog\MenCologne.cshtml" />
     <Content Include="Views\Catalog\GiftSet.cshtml" />
     <Content Include="Views\Shared\_Category.LetterBox.cshtml" />
+    <Content Include="Views\Shared\_GiaPaging.cshtml" />
+    <Content Include="Views\Catalog\BestSeller.cshtml" />
+    <Content Include="Views\Catalog\Index.cshtml" />
+    <Content Include="Views\Shared\_GiaTopNavigation.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

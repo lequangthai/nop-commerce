@@ -240,12 +240,16 @@ namespace Nop.Web.Infrastructure.Cache
         /// Key for bestsellers identifiers displayed on the home page
         /// </summary>
         public const string HOMEPAGE_BESTSELLERS_IDS_KEY_PAGE = "nop.pres.bestsellers.homepage.page.";
-        public const string HOMEPAGE_BESTSELLERS_IDS_PATTERN_KEY = "nop.pres.bestsellers.homepage";
+        public const string HOMEPAGE_BESTSELLERS_IDS_KEY_TOTAL_PAGES = "nop.pres.bestsellers.homepage.totalpages.";
+        public const string HOMEPAGE_BESTSELLERS_IDS_PATTERN_KEY = "nop.pres.bestsellers.homepage.";
+        public const string HOMEPAGE_BESTSELLERS_IDS_PATTERN_KEY_TOTAL_PAGES = "nop.pres.bestsellers.totalpages.";
 
         public const string CATEGORY_BESTSELLERS_WITH_IDs = "gia.nop.category.bestsellers.ids.";
 
         public const string GIA_CLEARANCE_WITH_PAGEs = "gia.nop.clearance.pages.";
+        public const string GIA_CLEARANCE_TOTAL_PAGEs = "gia.nop.clearance.totalpages.";
         public const string GIA_SPECIALATTRIBUTES_WITH_PAGEs = "gia.nop.specialAttributes.pages.";
+        public const string GIA_SPECIALATTRIBUTES_TOTAL_PAGES = "gia.nop.specialAttributes.totalpages.";
 
         /// <summary>
         /// Key for default product picture caching
