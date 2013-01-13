@@ -27,6 +27,9 @@ nav, section {
     float: right;
 }
 
+.pointer {
+    cursor: pointer;
+}
 .clear-fix:after {
     content: ".";
     clear: both;

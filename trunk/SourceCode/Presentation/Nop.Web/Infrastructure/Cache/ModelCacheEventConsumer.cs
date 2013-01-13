@@ -251,6 +251,8 @@ namespace Nop.Web.Infrastructure.Cache
         public const string GIA_SPECIALATTRIBUTES_WITH_PAGEs = "gia.nop.specialAttributes.pages.";
         public const string GIA_SPECIALATTRIBUTES_TOTAL_PAGES = "gia.nop.specialAttributes.totalpages.";
 
+        public const string GIA_MANUFACTURES_BY_CATEGORYID = "gia.nop.manufactures";
+
         /// <summary>
         /// Key for default product picture caching
         /// </summary>

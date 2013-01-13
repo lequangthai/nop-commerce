@@ -1886,6 +1886,7 @@
     <Content Include="Views\Catalog\BestSeller.cshtml" />
     <Content Include="Views\Catalog\Index.cshtml" />
     <Content Include="Views\Shared\_GiaTopNavigation.cshtml" />
+    <Content Include="Views\Catalog\Gia_Manufactures.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -3216,6 +3216,25 @@ namespace Nop.Web.Controllers
             ViewBag.AttributeName = attributeName;
             return PartialView(model);
         }
+
+        [ChildActionOnly]
+        public ActionResult Gia_Manufactures(int categoryId)
+        {
+            IList<Manufacturer> manufacturers;
+            if(categoryId == 0)
+            {
+                manufacturers = _cacheManager.Get(ModelCacheEventConsumer.GIA_MANUFACTURES_BY_CATEGORYID + "." + categoryId,
+                                  () => _manufacturerService.GetAllManufacturers());
+            }else
+            {
+                manufacturers =
+                _cacheManager.Get(ModelCacheEventConsumer.GIA_MANUFACTURES_BY_CATEGORYID + "." + categoryId,
+                                  () => _manufacturerService.GetManufacturesByCategory(categoryId));   
+            }
+            return View(manufacturers);
+        }
+
+
         #endregion
 
         #region Gia's Code Ultilites

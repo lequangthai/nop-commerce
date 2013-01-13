@@ -1,0 +1,15 @@
+﻿@model IList<Nop.Core.Domain.Catalog.Manufacturer>
+@if (Model != null)
+{
+    <ul>
+        @foreach (var manufacturer in Model)
+        {
+            var className = manufacturer.Name.ToUpper()[0];
+            if(className < 'A' && className > 'Z' )
+            {
+                className = '#';
+            }
+            <li class="@className"><a href="@Url.RouteUrl("Manufacturer", new { manufacturerId = manufacturer.Id, SeName = manufacturer.SeName })">@manufacturer.Name</a></li>
+        }
+    </ul>
+}
