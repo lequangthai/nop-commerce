@@ -115,7 +115,7 @@ namespace Nop.Services.Messages
         
         #endregion
 
-        #region Newsletter workflow
+        #region Newsletter workflow 
 
         /// <summary>
         /// Sends a newsletter subscription activation message
@@ -125,6 +125,9 @@ namespace Nop.Services.Messages
         /// <returns>Queued email identifier</returns>
         int SendNewsLetterSubscriptionActivationMessage(NewsLetterSubscription subscription,
             int languageId);
+
+        int SendNewsLetterSubscriptionActivationMessageAndCouponCode(NewsLetterSubscription subscription,
+                                                                     int languageId);
 
         /// <summary>
         /// Sends a newsletter subscription deactivation message

@@ -1,4 +1,5 @@
-﻿<div id="footer">
+﻿@using Nop.Web.Controllers
+<div id="footer">
     <div class="wrapper">
         <div>
             <div class="top-contact-item">
@@ -8,10 +9,10 @@
                 <div>
                     <div class="links">
                         <ul>
-                            <li><a href="#">About Us</a></li>
-                            <li><a href="#">Shipping</a></li>
-                            <li><a href="#">Returns & Exchanges</a></li>
-                            <li><a href="#">FAQ</a></li>
+                            <li><a href="/article/AboutUs">About Us</a></li>
+                            <li><a href="/article/ShippingInfo">Shipping</a></li>
+                            <li><a href="/article/Returns&Exchanges">Returns & Exchanges</a></li>
+                            <li><a href="/article/FAQ">FAQ</a></li>
                         </ul>
                     </div>
                     <div class="links">
@@ -28,12 +29,22 @@
                 </div>
                 <div>
                     <div class="links">
-                        <ul>
-                            <li><a href="@Url.RouteUrl("CustomerInfo")">My Account</a></li>
-                            <li><a href="#">Order Status</a></li>
-                            <li><a href="#">Reminder Club</a></li>
-                            <li>&nbsp;</li>
-                        </ul>
+                        @if (Html.Action("CheckAuthencation", "Common").Equals("True"))
+                        {
+                            <ul>
+                                <li><a href="@Url.RouteUrl("CustomerInfo")">My Account</a></li>
+                                <li><a href="#">Order Status</a></li>
+                                <li>&nbsp;</li>
+                                <li>&nbsp;</li>
+                            </ul>
+                        }
+                        else
+                        {
+                            <ul>
+                                <li>Please <a href="@Url.RouteUrl("Login")">login</a> or <a href="@Url.RouteUrl("Register")">register</a> for we may service you better.
+                                </li>
+                            </ul>
+                        }
                     </div>
                 </div>
             </div>
@@ -44,9 +55,9 @@
                 <div>
                     <div class="links">
                         <ul>
-                            <li><a href="#">About GIA perfumes</a></li>
-                            <li><a href="#">Security & Privacy</a></li>
-                            <li><a href="#">Affiliates</a></li>
+                            <li><a href="/article/AboutUs">About GIA perfumes</a></li>
+                            <li><a href="/article/PrivacyInfo">Security & Privacy</a></li>
+                            <li><a href="/article/Affiliates">Affiliates</a></li>
                         </ul>
                     </div>
                 </div>
@@ -123,7 +134,8 @@
                         <div class="box">
                             <span style="font-weight: bold;">Join our mailing list</span><br />
                             <span>and save 10% on the next order</span><br />
-                            <input type="text" id="signup" value="SIGN UP" style="width: 100%; margin-top: 5px;" />
+                            @*<input type="text" id="signup" value="SIGN UP" style="width: 100%; margin-top: 5px;" />*@
+                            @Html.Action("NewsletterBox", "Newsletter")
                         </div>
                     </div>
                     <div class="clear-fix"></div>

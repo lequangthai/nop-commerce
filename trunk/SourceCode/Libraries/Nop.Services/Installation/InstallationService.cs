@@ -4231,6 +4231,14 @@ namespace Nop.Services.Installation
                                            IsActive = true,
                                            EmailAccountId = eaGeneral.Id,
                                        },
+                                       new MessageTemplate
+                                       {
+                                           Name = "NewsLetterSubscription.ActivationMessageAndCouponCode",
+                                           Subject = "%Store.Name%. Subscription activation message and coupon code.",
+                                           Body = "<p>Conguration!</p><p>You got the coupon discount 10% on <a href=\"%Store.Url%\">%Store.Name%</a>, the code of coupon is: <strong>Gia-Discount-10-GSPX</strong></p><p>To can use this coupon, please click link below to confirm subscription to our list, then use this email to create an account on <a href=\"%Store.Url%\">%Store.Name%</a> and use it to buy products, you will can use the coupon for first order.</p><p><a href=\"%NewsLetterSubscription.ActivationUrl%\">Click here to confirm your subscription to our list.</a></p><p>If you received this email by mistake, simply delete it.</p><p>Best regards,</p>",
+                                           IsActive = true,
+                                           EmailAccountId = eaGeneral.Id,
+                                       },
                                    new MessageTemplate
                                        {
                                            Name = "NewsLetterSubscription.DeactivationMessage",

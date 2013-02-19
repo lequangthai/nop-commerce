@@ -566,7 +566,7 @@ namespace Nop.Web.Infrastructure
 
             //topics
             routes.MapLocalizedRoute("Topic",
-                            "t/{SystemName}",
+                            "article/{SystemName}",
                             new { controller = "Topic", action = "TopicDetails" },
                             new[] { "Nop.Web.Controllers" });
             routes.MapLocalizedRoute("TopicPopup",

@@ -704,6 +704,31 @@ namespace Nop.Services.Messages
                 toEmail, toName);
         }
 
+        public virtual int SendNewsLetterSubscriptionActivationMessageAndCouponCode(NewsLetterSubscription subscription,
+            int languageId)
+        {
+            if (subscription == null)
+                throw new ArgumentNullException("subscription");
+
+            languageId = EnsureLanguageIsActive(languageId);
+
+            var messageTemplate = GetLocalizedActiveMessageTemplate("NewsLetterSubscription.ActivationMessageAndCouponCode", languageId);
+            if (messageTemplate == null)
+                return 0;
+
+            var orderTokens = GenerateTokens(subscription);
+
+            //event notification
+            _eventPublisher.MessageTokensAdded(messageTemplate, orderTokens);
+
+            var emailAccount = GetEmailAccountOfMessageTemplate(messageTemplate, languageId);
+            var toEmail = subscription.Email;
+            var toName = "";
+            return SendNotification(messageTemplate, emailAccount,
+                languageId, orderTokens,
+                toEmail, toName);
+        }
+
         /// <summary>
         /// Sends a newsletter subscription deactivation message
         /// </summary>

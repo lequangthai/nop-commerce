@@ -20,6 +20,7 @@ using Nop.Services.Common;
 using Nop.Services.Customers;
 using Nop.Services.Directory;
 using Nop.Services.Forums;
+using Nop.Services.GiaHelper;
 using Nop.Services.Helpers;
 using Nop.Services.Localization;
 using Nop.Services.Media;
@@ -601,6 +602,27 @@ namespace Nop.Web.Controllers
                                     Active = true,
                                     CreatedOnUtc = DateTime.UtcNow
                                 });
+                            }
+                        }
+
+                        var newsletterRegisteredRole = _customerService.GetCustomerRoleBySystemName(GiaConstance.NewsLetterRegisterdRoleName);
+                        if (newsletterRegisteredRole == null)
+                        {
+                            newsletterRegisteredRole = new CustomerRole
+                            {
+                                Name = GiaConstance.NewsLetterRegisterdRoleName,
+                                SystemName = GiaConstance.NewsLetterRegisterdRoleName,
+                                Active = true
+                            };
+
+                            _customerService.InsertCustomerRole(newsletterRegisteredRole);
+                        }
+
+                        if (customer != null)
+                        {
+                            if (customer.CustomerRoles.FirstOrDefault(c => c.Id == newsletterRegisteredRole.Id) == null)
+                            {
+                                customer.CustomerRoles.Add(newsletterRegisteredRole);
                             }
                         }
                     }

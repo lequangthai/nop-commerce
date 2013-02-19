@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Linq;
 using System.Web.Mvc;
 using Nop.Core;
 using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Messages;
+using Nop.Core.Domain.Security;
+using Nop.Services.Customers;
+using Nop.Services.GiaHelper;
 using Nop.Services.Localization;
 using Nop.Services.Messages;
+using Nop.Services.Security;
 using Nop.Web.Models.Newsletter;
 
 namespace Nop.Web.Controllers
@@ -14,17 +19,19 @@ namespace Nop.Web.Controllers
         private readonly ILocalizationService _localizationService;
         private readonly IWorkContext _workContext;
         private readonly INewsLetterSubscriptionService _newsLetterSubscriptionService;
+        private readonly ICustomerService _customerService;
         private readonly IWorkflowMessageService _workflowMessageService;
 
         private readonly CustomerSettings _customerSettings;
 
         public NewsletterController(ILocalizationService localizationService,
-            IWorkContext workContext, INewsLetterSubscriptionService newsLetterSubscriptionService,
+            IWorkContext workContext, INewsLetterSubscriptionService newsLetterSubscriptionService, ICustomerService customerService,
             IWorkflowMessageService workflowMessageService, CustomerSettings customerSettings)
         {
             this._localizationService = localizationService;
             this._workContext = workContext;
             this._newsLetterSubscriptionService = newsLetterSubscriptionService;
+            this._customerService = customerService;
             this._workflowMessageService = workflowMessageService;
 
             this._customerSettings = customerSettings;
@@ -83,7 +90,7 @@ namespace Nop.Web.Controllers
                         CreatedOnUtc = DateTime.UtcNow
                     };
                     _newsLetterSubscriptionService.InsertNewsLetterSubscription(subscription);
-                    _workflowMessageService.SendNewsLetterSubscriptionActivationMessage(subscription, _workContext.WorkingLanguage.Id);
+                    _workflowMessageService.SendNewsLetterSubscriptionActivationMessageAndCouponCode(subscription, _workContext.WorkingLanguage.Id);
 
                     result = _localizationService.GetResource("Newsletter.SubscribeEmailSent");
                 }
@@ -113,9 +120,37 @@ namespace Nop.Web.Controllers
             {
                 subscription.Active = active;
                 _newsLetterSubscriptionService.UpdateNewsLetterSubscription(subscription);
+
+
+                var newsletterRegisteredRole = _customerService.GetCustomerRoleBySystemName(GiaConstance.NewsLetterRegisterdRoleName);
+                if (newsletterRegisteredRole == null)
+                {
+                    newsletterRegisteredRole = new CustomerRole
+                                                   {
+                                                       Name = GiaConstance.NewsLetterRegisterdRoleName,
+                                                       SystemName = GiaConstance.NewsLetterRegisterdRoleName,
+                                                       Active = true
+                                                   };
+
+                    _customerService.InsertCustomerRole(newsletterRegisteredRole);
+                }
+
+                var customer = _customerService.GetCustomerByEmail(subscription.Email);
+                if (customer != null)
+                {
+                    if (customer.CustomerRoles.FirstOrDefault(c => c.Id == newsletterRegisteredRole.Id) == null)
+                    {
+                        customer.CustomerRoles.Add(newsletterRegisteredRole);
+                    }
+                }
             }
             else
-                _newsLetterSubscriptionService.DeleteNewsLetterSubscription(subscription);
+            {
+                //_newsLetterSubscriptionService.DeleteNewsLetterSubscription(subscription);
+
+                subscription.Active = false;
+                _newsLetterSubscriptionService.UpdateNewsLetterSubscription(subscription);
+            }
 
             if (active)
                 model.Result = _localizationService.GetResource("Newsletter.ResultActivated");

@@ -5,22 +5,7 @@
         <a href="#">1-800 GIA Perfumes (727-3867)</a>
     </div>
     <a href="@Url.RouteUrl("HomePage")"><img class="mainlogo" src="/Content/layout/logo.jpg" /></a>
-    <div id="ulitybar-top">
-        <ul>
-            <li>
-                <a href="#" class="help">Help</a>
-            </li>
-            <li>
-                <a href="#" class="old_status">Older Status</a>
-            </li>
-            <li>
-                <a href="@Url.RouteUrl("CustomerInfo")" class="account">My Account</a>
-            </li>
-            <li>
-                <a href="@Url.RouteUrl("ShoppingCart")" class="cart">View Cart</a>
-            </li>
-        </ul>
-    </div>
+    @Html.Action("HeaderLinks", "Common")
     <div id="ulitybar-bottom">
         <div class="shopping_bag float-left">
             <span class="shopping_bag_text"><a href="@Url.RouteUrl("ShoppingCart")" id="cart-quantity">@Html.Action("GetShoppingCartItems", "Common") items</a></span>

@@ -1,4 +1,4 @@
-﻿@model HeaderLinksModel
+﻿@*@model HeaderLinksModel
 @using Nop.Web.Models.Common;
 <div class="header-links">
     <ul>
@@ -68,4 +68,35 @@
             });
         </script>
     }
+</div>*@
+<div id="ulitybar-top">
+    <ul>
+        <li>
+            <a href="#" class="help">Help</a>
+        </li>
+        @if (Model.IsAuthenticated)
+        {
+            <li>
+                <a href="/customer/orders" class="old_status">Older Status</a>
+            </li>
+            <li>
+                <a href="@Url.RouteUrl("CustomerInfo")" class="account">My Account</a>
+            </li>
+            <li>
+                <a href="@Url.RouteUrl("Logout")" class="logout">@T("Account.Logout")</a>
+            </li>
+        }
+        else
+        {
+            <li>
+                <a href="@Url.RouteUrl("Register")" class="account">@T("Account.Register")</a>
+            </li>
+            <li>
+                <a href="@Url.RouteUrl("Login")" class="logout">@T("Account.Login")</a>
+            </li>
+        }
+        <li>
+            <a href="@Url.RouteUrl("ShoppingCart")" class="cart">View Cart</a>
+        </li>
+    </ul>
 </div>

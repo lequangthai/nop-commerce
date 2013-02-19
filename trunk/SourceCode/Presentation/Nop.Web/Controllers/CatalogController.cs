@@ -1102,6 +1102,8 @@ namespace Nop.Web.Controllers
         [NopHttpsRequirement(SslRequirement.No)]
         public ActionResult Manufacturer(int manufacturerId, CatalogPagingFilteringModel command)
         {
+            command.PageSize = 8;
+
             var manufacturer = _manufacturerService.GetManufacturerById(manufacturerId);
             if (manufacturer == null || manufacturer.Deleted)
                 return RedirectToRoute("HomePage");

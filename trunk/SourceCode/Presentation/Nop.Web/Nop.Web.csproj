@@ -1174,6 +1174,7 @@
     <Content Include="Content\layout\icon\facebook.png" />
     <Content Include="Content\layout\icon\help.png" />
     <Content Include="Content\layout\icon\jcb.png" />
+    <Content Include="Content\layout\icon\logout.png" />
     <Content Include="Content\layout\icon\mastercard.png" />
     <Content Include="Content\layout\icon\mcafee.gif" />
     <Content Include="Content\layout\icon\payment_bug.gif" />

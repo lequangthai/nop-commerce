@@ -27,5 +27,6 @@ namespace Nop.Services.GiaHelper
 
         public const string ProductViewType = "ProductView";
 
+        public const string NewsLetterRegisterdRoleName = "NewsletterRegisteredRole";
     }
 }

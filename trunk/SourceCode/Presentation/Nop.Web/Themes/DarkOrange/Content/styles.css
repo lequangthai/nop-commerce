@@ -32,7 +32,7 @@ legend{font-weight:bold;line-height:20px;font-size:16px;}
 .header .icon{vertical-align:bottom;}
 .header .ico-register{background:url(images/ico-register.gif) no-repeat;padding-left:20px;}
 .header .ico-login{background:url(images/ico-login.gif) no-repeat;padding-left:20px;}
-.header .ico-logout{background:url(images/ico-logout.gif) no-repeat;padding-left:20px;}
+.header .ico-logout{background:url(/content/layout/icon/account.png) no-repeat;padding-left:20px;}
 .header .ico-inbox{background:url(images/ico-inbox.gif) no-repeat;padding-left:20px;}
 .header .ico-cart{background:url(images/ico-cart.gif) no-repeat;padding-left:20px;}
 .header .ico-wishlist{background:url(images/ico-wishlist.gif) no-repeat;padding-left:20px;}

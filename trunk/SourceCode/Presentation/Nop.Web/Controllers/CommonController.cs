@@ -374,6 +374,17 @@ namespace Nop.Web.Controllers
             return PartialView(model);
         }
 
+        public bool CheckAuthencation()
+        {
+            var customer = _workContext.CurrentCustomer;
+
+            if (customer != null)
+            {
+                return customer.IsRegistered();
+            }
+            return false;
+        }
+
         public int GetShoppingCartItems()
         {
             var customer = _workContext.CurrentCustomer;

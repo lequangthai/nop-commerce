@@ -1,6 +1,6 @@
 ﻿@model ManufacturerModel
 @{
-    Layout = "~/Views/Shared/_ColumnsThree.cshtml";
+    Layout = "~/Views/Shared/_ColumnsOne.cshtml";
     Html.AddTitleParts(!String.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : Model.Name);
     Html.AddMetaDescriptionParts(Model.MetaDescription);
     Html.AddMetaKeywordParts(Model.MetaKeywords);
@@ -12,6 +12,11 @@
         Html.AddCanonicalUrlParts(manufacturerUrl);
     }
 }
+<style type="text/css">
+    .product-item {
+        width: 154px;
+    }
+</style>
 @using Nop.Core;
 @using Nop.Core.Domain.Common;
 @using Nop.Core.Infrastructure;
@@ -39,16 +44,29 @@
         @*featured products*@
         @if (Model.FeaturedProducts.Count > 0)
         {
-            <div class="product-grid featured-product-grid">
-                <div class="title">
+            <div>
+                <div style="clear: both; color: #FF9933; font-weight: 700; text-transform: uppercase; padding: 11px 5px 11px 10px; background-color: #EFEEEF; width: 99%; float: left; margin-top: 15px; margin-right: 10px; margin-bottom: 10px;">
                     @T("Products.FeaturedProducts")
                 </div>
-                <div>
-                    @(Html.DataList<ProductOverviewModel>(Model.FeaturedProducts, 2,
-                    @<div class="item-box">
-                        @Html.Partial("_ProductBox", @item)
-                    </div>
-                ))
+                <div style="background-color: white; padding: 10px;">
+                    @foreach (var p in Model.FeaturedProducts)
+                    {
+                        <div class="product-item">
+                            <div align="center" class="image">
+                                <a href="@Url.RouteUrl("Product", new { productId = p.Id, SeName = p.SeName })" title="@p.DefaultPictureModel.Title">
+                                    <img alt="@p.DefaultPictureModel.AlternateText" src="@p.DefaultPictureModel.ImageUrl"
+                                 title="@p.DefaultPictureModel.Title" /></a>
+                            </div>
+                            <div class="description">
+
+                                <a href="@Url.RouteUrl("Product", new { productId = p.Id, SeName = p.SeName })" title="@p.DefaultPictureModel.Title">
+                                    <span class="name">@Html.Truncate(p.Name, 20)</span></a><br />
+                                by <span class="by">@p.Manufacture</span><br />
+                                for @p.ObjectToServer
+                            </div>
+                            <div class="price">@p.ProductPrice.Price</div>
+                        </div>
+                    }
                 </div>
             </div>
             <div class="clear">
@@ -56,32 +74,36 @@
         }
         @Html.Widget("manufacturerdetails_after_featured_products")
         @*view mode*@
-        @if (Model.PagingFilteringContext.AllowProductViewModeChanging && Model.Products.Count > 0)
+        @*@if (Model.PagingFilteringContext.AllowProductViewModeChanging && Model.Products.Count > 0)
         {
             <div class="product-viewmode">
                 <span>@T("Categories.ViewMode")</span>
                 @Html.DropDownList("products-viewmode", Model.PagingFilteringContext.AvailableViewModes, new { onchange = "setLocation(this.value);" })
             </div>
-        }
+        }*@
+
         @*sorting*@
         @if (Model.PagingFilteringContext.AllowProductSorting && Model.Products.Count > 0)
         {
-            <div class="product-sorting">
-                <span>@T("Categories.OrderBy")</span>
-                @Html.DropDownList("products-orderby", Model.PagingFilteringContext.AvailableSortOptions, new { onchange = "setLocation(this.value);" })
+            <div style="background-color: #EFEEEF; width: 100%; float: left; padding-top: 11px; margin-top: 15px; padding-bottom: 11px; margin-right: 10px; padding-right: 5px;">
+                <div style="float: right;">
+                    <span>@T("Categories.OrderBy")</span>
+                    @Html.DropDownList("products-orderby", Model.PagingFilteringContext.AvailableSortOptions, new { onchange = "setLocation(this.value);" })
+                </div>
             </div>
         }
     
-        @*page size*@
-        @if (Model.PagingFilteringContext.AllowCustomersToSelectPageSize && Model.Products.Count > 0)
+@*page size*@
+@*@if (Model.PagingFilteringContext.AllowCustomersToSelectPageSize && Model.Products.Count > 0)
         {
             <div class="product-page-size">
                 <span>@T("Manufacturers.PageSize")</span> <span>@Html.DropDownList("products-pagesize", Model.PagingFilteringContext.PageSizeOptions, new { onchange = "setLocation(this.value);" })</span>
                 <span>@T("Manufacturers.PageSize.PerPage")</span>
             </div>
-        }
+        }*@
         <div class="clear">
         </div>
+
         @Html.Widget("manufacturerdetails_before_filters")
         @*filtering*@
         @if (Model.PagingFilteringContext.PriceRangeFilter.Enabled)
@@ -101,9 +123,8 @@
         @*product list*@
         @if (Model.Products.Count > 0)
         {
-            if (Model.PagingFilteringContext.ViewMode == "list")
+@*if (Model.PagingFilteringContext.ViewMode == "list")
             {
-            @*list mode*@
             <div class="product-list">
                 @foreach (var product in Model.Products)
                 {
@@ -115,7 +136,6 @@
             }
             else
             {
-            @*grid mode*@
             <div class="product-grid">
                 @(Html.DataList<ProductOverviewModel>(Model.Products, 2,
                         @<div class="item-box">
@@ -123,7 +143,27 @@
                         </div>
                     ))
             </div>
-            }
+            }*@
+            <div id="tab-content">
+                @foreach (var p in Model.Products)
+                {
+                    <div class="product-item">
+                        <div align="center" class="image">
+                            <a href="@Url.RouteUrl("Product", new { productId = p.Id, SeName = p.SeName })" title="@p.DefaultPictureModel.Title">
+                                <img alt="@p.DefaultPictureModel.AlternateText" src="@p.DefaultPictureModel.ImageUrl"
+                                 title="@p.DefaultPictureModel.Title" /></a>
+                        </div>
+                        <div class="description">
+
+                            <a href="@Url.RouteUrl("Product", new { productId = p.Id, SeName = p.SeName })" title="@p.DefaultPictureModel.Title">
+                                <span class="name">@Html.Truncate(p.Name, 20)</span></a><br />
+                            by <span class="by">@p.Manufacture</span><br />
+                            for @p.ObjectToServer
+                        </div>
+                        <div class="price">@p.ProductPrice.Price</div>
+                    </div>
+                }
+            </div>
         }
         <div class="clear">
         </div>
