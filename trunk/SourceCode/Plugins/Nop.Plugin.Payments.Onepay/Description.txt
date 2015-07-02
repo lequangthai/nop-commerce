@@ -1,0 +1,8 @@
+﻿Group: Payment methods
+FriendlyName: Onepay
+SystemName: Payments.Onepay
+Version: 1.00
+SupportedVersions: 3.60
+Author: anhtran
+DisplayOrder: 1
+FileName: Nop.Plugin.Payments.Onepay.dll
