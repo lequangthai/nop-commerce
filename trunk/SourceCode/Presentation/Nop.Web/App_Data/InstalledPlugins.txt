@@ -6,9 +6,11 @@ CurrencyExchange.MoneyConverter
 ExternalAuth.Facebook
 Misc.FacebookShop
 Payments.CheckMoneyOrder
-Payments.Manual
-Payments.PayPalDirect
 Payments.AuthorizeNet
+Payments.PayPalDirect
+Payments.Manual
+Payments.Moneris
+Payments.Onepay
 Payments.PayPalStandard
 Payments.PurchaseOrder
 PromotionFeed.Froogle
@@ -24,5 +26,3 @@ Tax.FixedRate
 Tax.CountryStateZip
 Widgets.GoogleAnalytics
 Widgets.NivoSlider
-Payments.Onepay
-Payments.Moneris
