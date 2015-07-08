@@ -1,0 +1,30 @@
+﻿@{
+    Layout = "";
+}
+@model Nop.Plugin.Widgets.IkBanner.Models.BannerModel
+@using Nop.Web.Framework;
+@using Nop.Core.Html;
+@if (!Model.IsStatic)
+{ 
+<div class="slide-banner-container">
+    <div class="slide-inner">
+        <ul class="slides">               
+            @foreach (var banner in Model.AvailableBanners)
+                {
+                <li>
+                    <div class="slide-banner">                           
+                    @Html.Raw(banner.BannerHtml)
+                    </div>
+                </li>
+                }
+        </ul>
+    </div>
+</div>
+}
+else
+{
+foreach (var banner in Model.AvailableBanners)
+{
+    @Html.Raw(banner.BannerHtml)
+}
+}

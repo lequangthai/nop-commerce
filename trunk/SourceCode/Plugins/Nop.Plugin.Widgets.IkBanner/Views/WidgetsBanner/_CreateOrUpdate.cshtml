@@ -1,0 +1,52 @@
+﻿@model Nop.Plugin.Widgets.IkBanner.Models.BannerInfoModel
+@using Nop.Web.Framework;
+@Html.ValidationSummary(false)
+@Html.HiddenFor(model => model.Id)
+
+@if (ViewBag.RefreshPage == true)
+{
+    <script type="text/javascript">
+        try {window.opener.document.forms['@(ViewBag.formId)'].@(ViewBag.btnId).click();}
+        catch (e){} 
+        window.close();
+    </script>
+}
+
+<table class="adminContent">
+    <tr>
+        <td class="adminTitle">
+            @Html.NopLabelFor(model => model.StoreId):
+        </td>
+        <td class="adminData">
+            @Html.DropDownListFor(model => model.StoreId, Model.AvailableStores)
+            @Html.ValidationMessageFor(model => model.StoreId)
+        </td>
+    </tr>
+    <tr>
+        <td class="adminTitle">
+            @Html.NopLabelFor(model => model.CategoryId):
+        </td>
+        <td class="adminData">
+            @Html.DropDownListFor(model => model.CategoryId, Model.AvailableCategories)
+            @Html.ValidationMessageFor(model => model.CategoryId)
+        </td>
+    </tr>
+    <tr>
+        <td class="adminTitle">
+            @Html.NopLabelFor(model => model.WidgetzoneId):
+        </td>
+        <td class="adminData">
+            @Html.DropDownListFor(model => model.WidgetzoneId, Model.AvailableWidgetZones)
+            @Html.ValidationMessageFor(model => model.WidgetzoneId)
+        </td>
+    </tr>
+    <tr>
+        <td class="adminTitle">
+            @*@Html.OverrideStoreCheckboxFor(model => model.TransactModeId_OverrideForStore, model => model.TransactModeId, Model.ActiveStoreScopeConfiguration)*@
+            @Html.NopLabelFor(model => model.BannerHtml):
+        </td>
+        <td class="adminData">
+            @Html.EditorFor(model => model.BannerHtml, "RichEditor")
+        </td>
+    </tr>
+</table>
