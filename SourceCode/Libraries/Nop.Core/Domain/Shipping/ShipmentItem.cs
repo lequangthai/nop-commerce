@@ -16,6 +16,8 @@ namespace Nop.Core.Domain.Shipping
         /// </summary>
         public int OrderItemId { get; set; }
 
+        public int OrderShippingItemId { get; set; }
+
         /// <summary>
         /// Gets or sets the quantity
         /// </summary>

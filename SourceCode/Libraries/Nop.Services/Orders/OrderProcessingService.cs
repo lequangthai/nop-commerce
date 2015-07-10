@@ -1591,7 +1591,13 @@ namespace Nop.Services.Orders
 
                 //Adjust inventory for already shipped shipments
                 //only products with "use multiple warehouses"
-                foreach (var shipment in order.Shipments)
+                //shipments
+                var shipments = new List<Shipment>();
+                shipments = order.OrderShippings.Aggregate(shipments,
+                    (current, orderShipping) =>
+                        current.Union(orderShipping.Shipments).ToList());
+
+                foreach (var shipment in shipments)
                 {
                     foreach (var shipmentItem in shipment.ShipmentItems)
                     {
@@ -1821,7 +1827,7 @@ namespace Nop.Services.Orders
             if (shipment == null)
                 throw new ArgumentNullException("shipment");
 
-            var order = _orderService.GetOrderById(shipment.OrderId);
+            var order = _orderService.GetOrderById(shipment.OrderShipping.OrderId);
             if (order == null)
                 throw new Exception("Order cannot be loaded");
 
@@ -1887,7 +1893,7 @@ namespace Nop.Services.Orders
             if (shipment == null)
                 throw new ArgumentNullException("shipment");
 
-            var order = shipment.Order;
+            var order = shipment.OrderShipping != null ? shipment.OrderShipping.Order : null;
             if (order == null)
                 throw new Exception("Order cannot be loaded");
 
@@ -1989,7 +1995,12 @@ namespace Nop.Services.Orders
 
             //Adjust inventory for already shipped shipments
             //only products with "use multiple warehouses"
-            foreach (var shipment in order.Shipments)
+            //shipments
+            var shipments = new List<Shipment>();
+            shipments = order.OrderShippings.Aggregate(shipments,
+                (current, orderShipping) => current.Union(orderShipping.Shipments).ToList());
+
+            foreach (var shipment in shipments)
             {
                 foreach (var shipmentItem in shipment.ShipmentItems)
                 {

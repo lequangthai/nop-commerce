@@ -91,18 +91,20 @@ namespace Nop.Services.Shipping
             if (!String.IsNullOrEmpty(trackingNumber))
                 query = query.Where(s => s.TrackingNumber.Contains(trackingNumber));
             if (shippingCountryId > 0)
-                query = query.Where(s => s.Order.ShippingAddress.CountryId == shippingCountryId);
+                query = query.Where(s => s.OrderShipping.ShippingAddress.CountryId == shippingCountryId);
             if (shippingStateId > 0)
-                query = query.Where(s => s.Order.ShippingAddress.StateProvinceId == shippingStateId);
+                query = query.Where(s => s.OrderShipping.ShippingAddress.StateProvinceId == shippingStateId);
             if (!String.IsNullOrWhiteSpace(shippingCity))
-                query = query.Where(s => s.Order.ShippingAddress.City.Contains(shippingCity));
+                query = query.Where(s => s.OrderShipping.ShippingAddress.City.Contains(shippingCity));
             if (loadNotShipped)
                 query = query.Where(s => !s.ShippedDateUtc.HasValue);
             if (createdFromUtc.HasValue)
                 query = query.Where(s => createdFromUtc.Value <= s.CreatedOnUtc);
             if (createdToUtc.HasValue)
                 query = query.Where(s => createdToUtc.Value >= s.CreatedOnUtc);
-            query = query.Where(s => s.Order != null && !s.Order.Deleted);
+            query =
+                query.Where(
+                    s => s.OrderShipping != null && s.OrderShipping.Order != null && !s.OrderShipping.Order.Deleted);
             if (vendorId > 0)
             {
                 var queryVendorOrderItems = from orderItem in _orderItemRepository.Table
@@ -280,8 +282,8 @@ namespace Nop.Services.Shipping
 
 
             var query = _siRepository.Table;
-            query = query.Where(si => !si.Shipment.Order.Deleted);
-            query = query.Where(si => si.Shipment.Order.OrderStatusId != cancelledOrderStatusId);
+            query = query.Where(si => !si.Shipment.OrderShipping.Order.Deleted);
+            query = query.Where(si => si.Shipment.OrderShipping.Order.OrderStatusId != cancelledOrderStatusId);
             if (warehouseId > 0)
                 query = query.Where(si => si.WarehouseId == warehouseId);
             if (ignoreShipped)

@@ -486,7 +486,7 @@ namespace Nop.Admin.Controllers
             model.BillingAddress.FaxEnabled = _addressSettings.FaxEnabled;
             model.BillingAddress.FaxRequired = _addressSettings.FaxRequired;
 
-            model.ShippingStatus = order.ShippingStatus.GetLocalizedEnum(_localizationService, _workContext); ;
+            model.ShippingStatus = order.ShippingStatus.GetLocalizedEnum(_localizationService, _workContext);
             if (order.ShippingStatus != ShippingStatus.ShippingNotRequired)
             {
                 model.IsShippable = true;
@@ -690,7 +690,7 @@ namespace Nop.Admin.Controllers
             var model = new ShipmentModel
             {
                 Id = shipment.Id,
-                OrderId = shipment.OrderId,
+                OrderId = shipment.OrderShipping.OrderId,
                 TrackingNumber = shipment.TrackingNumber,
                 TotalWeight = shipment.TotalWeight.HasValue ? string.Format("{0:F2} [{1}]", shipment.TotalWeight, baseWeightIn) : "",
                 ShippedDate = shipment.ShippedDateUtc.HasValue ? _dateTimeHelper.ConvertToUserTime(shipment.ShippedDateUtc.Value, DateTimeKind.Utc).ToString() : _localizationService.GetResource("Admin.Orders.Shipments.ShippedDate.NotYet"),
@@ -749,7 +749,7 @@ namespace Nop.Admin.Controllers
 
             if (prepareShipmentEvent && !String.IsNullOrEmpty(shipment.TrackingNumber))
             {
-                var order = shipment.Order;
+                var order = shipment.OrderShipping != null ? shipment.OrderShipping.Order : null;
                 var srcm = _shippingService.LoadShippingRateComputationMethodBySystemName(order.ShippingRateComputationMethodSystemName);
                 if (srcm != null &&
                     srcm.PluginDescriptor.Installed &&
@@ -2776,11 +2776,13 @@ namespace Nop.Admin.Controllers
 
             //shipments
             var shipmentModels = new List<ShipmentModel>();
-            var shipments = order.Shipments
-                //a vendor should have access only to his products
-                .Where(s => _workContext.CurrentVendor == null || HasAccessToShipment(s))
-                .OrderBy(s => s.CreatedOnUtc)
-                .ToList();
+            //shipments
+            var shipments = new List<Shipment>();
+            shipments = order.OrderShippings.Aggregate(shipments,
+                (current, orderShipping) => current.Union(
+                        orderShipping.Shipments.Where(s => _workContext.CurrentVendor == null || HasAccessToShipment(s)))
+                        .OrderBy(x => x.CreatedOnUtc).ToList());
+
             foreach (var shipment in shipments)
                 shipmentModels.Add(PrepareShipmentModel(shipment, false));
 
@@ -2808,7 +2810,7 @@ namespace Nop.Admin.Controllers
             if (_workContext.CurrentVendor != null && !HasAccessToShipment(shipment))
                 return Content("");
 
-            var order = _orderService.GetOrderById(shipment.OrderId);
+            var order = _orderService.GetOrderById(shipment.OrderShipping.OrderId);
             if (order == null)
                 throw new ArgumentException("No order found with the specified id");
 
@@ -3033,7 +3035,8 @@ namespace Nop.Admin.Controllers
                     var adminComment = form["AdminComment"];
                     shipment = new Shipment
                     {
-                        OrderId = order.Id,
+                        //TODO: add OrderShipping
+                        OrderShippingId = order.Id,
                         TrackingNumber = trackingNumber,
                         TotalWeight = null,
                         ShippedDateUtc = null,
@@ -3119,7 +3122,7 @@ namespace Nop.Admin.Controllers
                 _productService.ReverseBookedInventory(orderItem.Product, shipmentItem);
             }
 
-            var orderId = shipment.OrderId;
+            var orderId = shipment.OrderShipping.OrderId;
             _shipmentService.DeleteShipment(shipment);
 
             var order = _orderService.GetOrderById(orderId);

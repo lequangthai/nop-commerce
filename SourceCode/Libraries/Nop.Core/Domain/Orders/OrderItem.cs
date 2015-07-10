@@ -125,5 +125,13 @@ namespace Nop.Core.Domain.Orders
             get { return _associatedGiftCards ?? (_associatedGiftCards = new List<GiftCard>()); }
             protected set { _associatedGiftCards = value; }
         }
+
+        private ICollection<OrderShippingItem> _orderShippingItems { get; set; }
+
+        public ICollection<OrderShippingItem> OrderShippingItems
+        {
+            get { return _orderShippingItems ?? (new List<OrderShippingItem>()); }
+            set { _orderShippingItems = value; }
+        }
     }
 }

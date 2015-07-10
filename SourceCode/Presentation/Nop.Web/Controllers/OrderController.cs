@@ -198,7 +198,13 @@ namespace Nop.Web.Controllers
    
 
                 //shipments (only already shipped)
-                var shipments = order.Shipments.Where(x => x.ShippedDateUtc.HasValue).OrderBy(x => x.CreatedOnUtc).ToList();
+                //shipments
+                var shipments = new List<Shipment>();
+                shipments = order.OrderShippings.Aggregate(shipments,
+                    (current, orderShipping) =>
+                        current.Union(orderShipping.Shipments.Where(x => x.ShippedDateUtc.HasValue))
+                            .OrderBy(x => x.CreatedOnUtc).ToList());
+
                 foreach (var shipment in shipments)
                 {
                     var shipmentModel = new OrderDetailsModel.ShipmentBriefModel
@@ -432,7 +438,7 @@ namespace Nop.Web.Controllers
             if (shipment == null)
                 throw new ArgumentNullException("shipment");
 
-            var order = shipment.Order;
+            var order = shipment.OrderShipping != null ? shipment.OrderShipping.Order : null;
             if (order == null)
                 throw new Exception("order cannot be loaded");
             var model = new ShipmentDetailsModel();
@@ -696,7 +702,7 @@ namespace Nop.Web.Controllers
             if (shipment == null)
                 return new HttpUnauthorizedResult();
 
-            var order = shipment.Order;
+            var order = shipment.OrderShipping != null ? shipment.OrderShipping.Order : null;
             if (order == null || order.Deleted || _workContext.CurrentCustomer.Id != order.CustomerId)
                 return new HttpUnauthorizedResult();
 

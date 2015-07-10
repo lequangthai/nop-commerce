@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -11,6 +12,7 @@ using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Directory;
 using Nop.Core.Domain.Messages;
 using Nop.Core.Domain.Orders;
+using Nop.Core.Domain.Shipping;
 using Nop.Services.Catalog;
 using Nop.Services.Common;
 using Nop.Services.Media;
@@ -1053,7 +1055,11 @@ namespace Nop.Services.ExportImport
                 }
 
                 //shipments
-                var shipments = order.Shipments.OrderBy(x => x.CreatedOnUtc).ToList();
+                var shipments = new List<Shipment>();
+                shipments = order.OrderShippings.Aggregate(shipments,
+                    (current, orderShipping) =>
+                        current.Union(orderShipping.Shipments).OrderBy(x => x.CreatedOnUtc).ToList());
+                
                 if (shipments.Count > 0)
                 {
                     xmlWriter.WriteStartElement("Shipments");
