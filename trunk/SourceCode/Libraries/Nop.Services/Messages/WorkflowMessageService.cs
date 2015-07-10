@@ -560,7 +560,7 @@ namespace Nop.Services.Messages
             if (shipment == null)
                 throw new ArgumentNullException("shipment");
 
-            var order = shipment.Order;
+            var order = shipment.OrderShipping.Order;
             if (order == null)
                 throw new Exception("Order cannot be loaded");
 
@@ -578,8 +578,8 @@ namespace Nop.Services.Messages
             var tokens = new List<Token>();
             _messageTokenProvider.AddStoreTokens(tokens, store, emailAccount);
             _messageTokenProvider.AddShipmentTokens(tokens, shipment, languageId);
-            _messageTokenProvider.AddOrderTokens(tokens, shipment.Order, languageId);
-            _messageTokenProvider.AddCustomerTokens(tokens, shipment.Order.Customer);
+            _messageTokenProvider.AddOrderTokens(tokens, shipment.OrderShipping.Order, languageId);
+            _messageTokenProvider.AddCustomerTokens(tokens, shipment.OrderShipping.Order.Customer);
             
             //event notification
             _eventPublisher.MessageTokensAdded(messageTemplate, tokens);
@@ -602,7 +602,7 @@ namespace Nop.Services.Messages
             if (shipment == null)
                 throw new ArgumentNullException("shipment");
 
-            var order = shipment.Order;
+            var order = shipment.OrderShipping != null ? shipment.OrderShipping.Order : null;
             if (order == null)
                 throw new Exception("Order cannot be loaded");
 
@@ -620,8 +620,8 @@ namespace Nop.Services.Messages
             var tokens = new List<Token>();
             _messageTokenProvider.AddStoreTokens(tokens, store, emailAccount);
             _messageTokenProvider.AddShipmentTokens(tokens, shipment, languageId);
-            _messageTokenProvider.AddOrderTokens(tokens, shipment.Order, languageId);
-            _messageTokenProvider.AddCustomerTokens(tokens, shipment.Order.Customer);
+            _messageTokenProvider.AddOrderTokens(tokens, shipment.OrderShipping.Order, languageId);
+            _messageTokenProvider.AddCustomerTokens(tokens, shipment.OrderShipping.Order.Customer);
 
             //event notification
             _eventPublisher.MessageTokensAdded(messageTemplate, tokens);

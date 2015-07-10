@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Nop.Core.Domain.Orders;
+using Nop.Core.Domain.Shipping;
 using Nop.Core.Html;
 
 namespace Nop.Services.Orders
@@ -38,7 +40,9 @@ namespace Nop.Services.Orders
                 throw new ArgumentNullException("orderItem");
 
             var totalInShipments = 0;
-            var shipments = orderItem.Order.Shipments.ToList();
+            var shipments = new List<Shipment>();
+            shipments = orderItem.Order.OrderShippings.Aggregate(shipments,
+                (current, orderShipping) => current.Union(orderShipping.Shipments).ToList());
             for (int i = 0; i < shipments.Count; i++)
             {
                 var shipment = shipments[i];
@@ -83,7 +87,9 @@ namespace Nop.Services.Orders
                 throw new ArgumentNullException("orderItem");
 
             var result = 0;
-            var shipments = orderItem.Order.Shipments.ToList();
+            var shipments = new List<Shipment>();
+            shipments = orderItem.Order.OrderShippings.Aggregate(shipments,
+                (current, orderShipping) => current.Union(orderShipping.Shipments).ToList());
             for (int i = 0; i < shipments.Count; i++)
             {
                 var shipment = shipments[i];
@@ -113,7 +119,9 @@ namespace Nop.Services.Orders
                 throw new ArgumentNullException("orderItem");
 
             var result = 0;
-            var shipments = orderItem.Order.Shipments.ToList();
+            var shipments = new List<Shipment>();
+            shipments = orderItem.Order.OrderShippings.Aggregate(shipments,
+                (current, orderShipping) => current.Union(orderShipping.Shipments).ToList());
             for (int i = 0; i < shipments.Count; i++)
             {
                 var shipment = shipments[i];
@@ -143,7 +151,9 @@ namespace Nop.Services.Orders
                 throw new ArgumentNullException("orderItem");
 
             var result = 0;
-            var shipments = orderItem.Order.Shipments.ToList();
+            var shipments = new List<Shipment>();
+            shipments = orderItem.Order.OrderShippings.Aggregate(shipments,
+                (current, orderShipping) => current.Union(orderShipping.Shipments).ToList());
             for (int i = 0; i < shipments.Count; i++)
             {
                 var shipment = shipments[i];

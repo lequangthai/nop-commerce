@@ -21,8 +21,8 @@ namespace Nop.Core.Domain.Orders
         private ICollection<GiftCardUsageHistory> _giftCardUsageHistory;
         private ICollection<OrderNote> _orderNotes;
         private ICollection<OrderItem> _orderItems;
-        private ICollection<Shipment> _shipments;
-
+        private ICollection<OrderShipping> _orderShippings;
+        
         #region Utilities
 
         protected virtual SortedDictionary<decimal, decimal> ParseTaxRates(string taxRatesStr)
@@ -392,10 +392,10 @@ namespace Nop.Core.Domain.Orders
         /// <summary>
         /// Gets or sets shipments
         /// </summary>
-        public virtual ICollection<Shipment> Shipments
+        public virtual ICollection<OrderShipping> OrderShippings
         {
-            get { return _shipments ?? (_shipments = new List<Shipment>()); }
-            protected set { _shipments = value; }
+            get { return _orderShippings ?? (_orderShippings = new List<OrderShipping>()); }
+            protected set { _orderShippings = value; }
         }
 
         #endregion

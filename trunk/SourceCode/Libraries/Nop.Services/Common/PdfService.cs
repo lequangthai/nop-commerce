@@ -980,7 +980,7 @@ namespace Nop.Services.Common
 
             foreach (var shipment in shipments)
             {
-                var order = shipment.Order;
+                var order = shipment.OrderShipping.Order;
 
                 if (languageId == 0)
                 {

@@ -14,7 +14,7 @@ namespace Nop.Core.Domain.Shipping
         /// <summary>
         /// Gets or sets the order identifier
         /// </summary>
-        public int OrderId { get; set; }
+        public int OrderShippingId { get; set; }
         
         /// <summary>
         /// Gets or sets the tracking number of this shipment
@@ -50,7 +50,7 @@ namespace Nop.Core.Domain.Shipping
         /// <summary>
         /// Gets the order
         /// </summary>
-        public virtual Order Order { get; set; }
+        public virtual OrderShipping OrderShipping { get; set; }
 
         /// <summary>
         /// Gets or sets the shipment items

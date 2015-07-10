@@ -11,9 +11,9 @@ namespace Nop.Data.Mapping.Shipping
 
             this.Property(s => s.TotalWeight).HasPrecision(18, 4);
             
-            this.HasRequired(s => s.Order)
+            this.HasRequired(s => s.OrderShipping)
                 .WithMany(o => o.Shipments)
-                .HasForeignKey(s => s.OrderId);
+                .HasForeignKey(s => s.OrderShippingId);
         }
     }
 }

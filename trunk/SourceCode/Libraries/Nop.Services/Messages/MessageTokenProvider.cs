@@ -643,7 +643,9 @@ namespace Nop.Services.Messages
             tokens.Add(new Token("Shipment.ShipmentNumber", shipment.Id.ToString()));
             tokens.Add(new Token("Shipment.TrackingNumber", shipment.TrackingNumber));
             tokens.Add(new Token("Shipment.Product(s)", ProductListToHtmlTable(shipment, languageId), true));
-            tokens.Add(new Token("Shipment.URLForCustomer", string.Format("{0}orderdetails/shipment/{1}", GetStoreUrl(shipment.Order.StoreId), shipment.Id), true));
+            tokens.Add(new Token("Shipment.URLForCustomer",
+                string.Format("{0}orderdetails/shipment/{1}", GetStoreUrl(shipment.OrderShipping.Order.StoreId),
+                    shipment.Id), true));
 
             //event notification
             _eventPublisher.EntityTokensAdded(shipment, tokens);
