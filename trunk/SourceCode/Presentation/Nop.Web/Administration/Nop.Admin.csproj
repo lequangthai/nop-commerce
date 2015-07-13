@@ -388,6 +388,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\images\ajax_loader_small.gif" />
+    <Content Include="Content\images\bullet1.gif" />
+    <Content Include="Content\images\bullet2.gif" />
+    <Content Include="Content\images\leftmenu_arrow_gray.png" />
+    <Content Include="Content\images\leftmenu_arrow_red.gif" />
     <Content Include="Content\styles.rtl.css" />
     <Content Include="Content\images\1pix.gif" />
     <Content Include="Content\images\admin-gvw-bg.gif" />

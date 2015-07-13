@@ -3,7 +3,6 @@
 */
 
 
-
 function OpenWindow(query, w, h, scroll) {
     var l = (screen.width - w) / 2;
     var t = (screen.height - h) / 2;
@@ -115,3 +114,32 @@ function htmlEncode(value) {
 function htmlDecode(value) {
     return $('<div/>').html(value).text();
 }
+
+// menu left click
+$(document).on("click",".submenu.dropdown > a", function (e) {
+    e.preventDefault();
+    var parent = $(e.target).parent();
+    if (parent.hasClass("active")) {
+        parent.find("ul:first").slideUp();
+        parent.removeClass("active");
+    }
+    else {
+        parent.find('ul:first').slideDown();
+        parent.addClass('active');
+    }
+    return false;
+});
+
+// menu left subchild click
+$(".subchildmenu.dropdown > a").click(function (e) {
+    e.preventDefault();
+    var parent = $(this).parent();
+    if (parent.hasClass("active")) {
+        parent.find("ul:first").slideUp();
+        parent.removeClass("active");
+    }
+    else {
+        parent.find('ul:first').slideDown();
+        parent.addClass('active');
+    }
+});

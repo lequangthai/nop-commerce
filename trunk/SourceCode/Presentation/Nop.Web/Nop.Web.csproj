@@ -455,7 +455,6 @@
     <Content Include="Content\farbtastic\wheel.png" />
     <Content Include="Content\files\ExportImport\Index.htm" />
     <Content Include="Content\files\Index.htm" />
-    <Content Include="Content\Images\default-image.png" />
     <Content Include="Content\kendo\2014.1.318\Black\editor.png" />
     <Content Include="Content\kendo\2014.1.318\Black\imagebrowser.png" />
     <Content Include="Content\kendo\2014.1.318\Black\indeterminate.gif" />
@@ -1613,6 +1612,8 @@
     <Content Include="Themes\DefaultClean\Content\css\styles.rtl.css" />
     <Content Include="Themes\DefaultClean\Content\images\ajax-loader-small.gif" />
     <Content Include="Themes\DefaultClean\Content\images\back-button.png" />
+    <Content Include="Themes\DefaultClean\Content\images\bullet1.gif" />
+    <Content Include="Themes\DefaultClean\Content\images\bullet2.gif" />
     <Content Include="Themes\DefaultClean\Content\images\calendar-next.png" />
     <Content Include="Themes\DefaultClean\Content\images\calendar-prev.png" />
     <Content Include="Themes\DefaultClean\Content\images\close.png" />
@@ -1625,6 +1626,8 @@
     <Content Include="Themes\DefaultClean\Content\images\first.png" />
     <Content Include="Themes\DefaultClean\Content\images\ie_warning.jpg" />
     <Content Include="Themes\DefaultClean\Content\images\last.png" />
+    <Content Include="Themes\DefaultClean\Content\images\leftmenu_arrow_gray.png" />
+    <Content Include="Themes\DefaultClean\Content\images\leftmenu_arrow_red.gif" />
     <Content Include="Themes\DefaultClean\Content\images\loading.gif" />
     <Content Include="Themes\DefaultClean\Content\images\logo.png" />
     <Content Include="Themes\DefaultClean\Content\images\menu-icon.png" />
@@ -1655,7 +1658,6 @@
     <Content Include="Themes\DefaultClean\Content\images\watch.png" />
     <Content Include="Themes\DefaultClean\Content\images\wishlist-button.png" />
     <Content Include="Themes\DefaultClean\preview.jpg" />
-    <Content Include="Content\Images\default-avatar.jpg" />
     <Content Include="Content\Images\flags\ad.png" />
     <Content Include="Content\Images\flags\ae.png" />
     <Content Include="Content\Images\flags\af.png" />
@@ -1903,7 +1905,6 @@
     <Content Include="Content\Images\flags\za.png" />
     <Content Include="Content\Images\flags\zm.png" />
     <Content Include="Content\Images\flags\zw.png" />
-    <Content Include="Content\Images\default-image.gif" />
     <Content Include="Content\install\images\install-synchronizing.gif" />
     <Content Include="Content\Images\uploaded\placeholder.txt" />
     <Content Include="Content\install\images\bg.gif" />
@@ -1979,6 +1980,7 @@
     <Content Include="Views\Product\_DeliveryInfo.cshtml" />
     <Content Include="Views\Product\_Availability.cshtml" />
     <Content Include="Views\Catalog\_CatalogSelectors.cshtml" />
+    <Content Include="Views\Catalog\CategoryNavigation.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Plugins\bin\" />
@@ -2037,7 +2039,7 @@
     <Content Include="Views\Order\CustomerRewardPoints.cshtml" />
     <Content Include="Views\Customer\ChangePassword.cshtml" />
     <Content Include="Views\Customer\Avatar.cshtml" />
-    <Content Include="Views\Catalog\CategoryNavigation.cshtml" />
+    <Content Include="Views\Catalog\CategoryTreeView.cshtml" />
     <Content Include="Views\Catalog\_FilterPriceBox.cshtml" />
     <Content Include="Views\Catalog\_FilterSpecsBox.cshtml" />
     <Content Include="Views\Catalog\ManufacturerNavigation.cshtml" />
