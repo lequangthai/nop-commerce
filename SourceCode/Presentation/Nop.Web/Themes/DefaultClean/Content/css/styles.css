@@ -6526,3 +6526,61 @@ pre {
 }
 
 }
+
+
+/* CUSTOM BY THANH */
+.leftnav{padding:0; margin:0; list-style:none;}
+.leftnav a{display:block; color:#333;}
+.leftnav ul{display:none;} 
+.leftnav > li > a{font-size:14px; padding:15px 13px 13px 10px; border-bottom:1px #e0dfdf solid; border-top:1px #fafafa solid;}
+.leftnav > li.active > a, .leftnav > li.active > a:hover{background-color:#f7f7f7; color:#ed1c24; border-bottom-color:#e4171e;}
+.leftnav > li.dropdown > a{ background:url(/content/images/leftmenu_arrow_gray.png) no-repeat 188px center;}
+.leftnav > li.dropdown.active > a{background:url(/content/images/leftmenu_arrow_red.gif) no-repeat 188px center #f7f7f7;}
+.leftnav > li > a:hover{background-color:#f7f7f7;}
+.leftnav > li ul{margin:0; padding:0; list-style:none;}
+.leftnav .submenu > a{font-size:12px; font-weight:700; padding:15px 15px 13px 20px; border-bottom:1px #e0dfdf dashed; color:#333; background:url(/content/images/bullet1.gif) 10px 21px no-repeat;}
+.leftnav > li li a:hover{background:url(/content/images/bullet2.gif) 10px 21px no-repeat; color: #E4171E;}
+.leftnav .submenu.active > a{background:url(/content/images/bullet2.gif) 10px 21px no-repeat; color: #ED1C24;}
+.leftmenu{padding:0; margin:0; list-style:none;background-color: #FFFFFF;}
+.leftmenu a{display:block; color:#333;}
+.leftmenu > li > a{font-size:14px; padding:9px 0 9px 10px; border:1px #e0dfdf solid; border-top:none;}
+.leftmenu > li:first-child a{padding:15px 0 13px 10px;}
+.leftnav .submenu.dropdown{ background :url("/content/images/leftmenu_arrow_gray.png") no-repeat scroll 188px 20px;}
+.leftnav .submenu li{padding-left: 10px;}
+.leftnav .submenu.dropdown.active{background: url("/content/images/leftmenu_arrow_red.gif") no-repeat scroll 188px 20px;}
+.leftnav .submenu li > a{
+	background: url("/content/images/bullet1.gif") no-repeat scroll 10px 21px;
+    border-bottom: 1px dashed #E0DFDF;
+    color: #333333;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 15px 13px 13px 20px;
+}
+
+.leftnav .submenu >  li.active a
+{
+	background: url("/content/images/bullet2.gif") no-repeat scroll 10px 21px;
+	color: #ED1C24;
+}
+.leftnav .subchildmenu.dropdown
+{
+	 background :url("/content/images/leftmenu_arrow_gray.png") no-repeat scroll 188px 20px;
+}
+
+.leftnav .subchildmenu li{padding-left: 10px;}
+.leftnav .subchildmenu.active{background: url("/content/images/leftmenu_arrow_red.gif") no-repeat scroll 188px 20px;}
+.leftnav .subchildmenu  li.active a
+{
+	background: url("/content/images/bullet2.gif") no-repeat scroll 10px 21px;
+	color: #ED1C24;
+}
+
+.leftnav .subchildmenu li > a{
+	background: url("/content/images/bullet1.gif") no-repeat scroll 10px 21px;
+    border-bottom: 1px dashed #E0DFDF;
+    color: #333333;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 15px 0 13px 20px;
+}
+.leftnav li.active ul{ display: block;}

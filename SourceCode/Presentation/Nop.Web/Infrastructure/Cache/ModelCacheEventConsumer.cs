@@ -180,6 +180,7 @@ namespace Nop.Web.Infrastructure.Cache
         /// {2} : current store ID
         /// </remarks>
         public const string CATEGORY_NAVIGATION_MODEL_KEY = "Nop.pres.category.navigation-{0}-{1}-{2}";
+        public const string CATEGORY_NAVIGATION_TREE_MODEL_KEY = "Nop.pres.category.navigation-tree-{0}-{1}-{2}";
         public const string CATEGORY_NAVIGATION_PATTERN_KEY = "Nop.pres.category.navigation";
 
         /// <summary>
