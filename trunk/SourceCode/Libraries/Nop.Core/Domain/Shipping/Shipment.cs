@@ -11,10 +11,9 @@ namespace Nop.Core.Domain.Shipping
     {
         private ICollection<ShipmentItem> _shipmentItems;
 
-        /// <summary>
-        /// Gets or sets the order identifier
-        /// </summary>
         public int OrderShippingId { get; set; }
+
+        public virtual OrderShipping OrderShipping { get; set; }
         
         /// <summary>
         /// Gets or sets the tracking number of this shipment
@@ -46,11 +45,6 @@ namespace Nop.Core.Domain.Shipping
         /// Gets or sets the entity creation date
         /// </summary>
         public DateTime CreatedOnUtc { get; set; }
-
-        /// <summary>
-        /// Gets the order
-        /// </summary>
-        public virtual OrderShipping OrderShipping { get; set; }
 
         /// <summary>
         /// Gets or sets the shipment items

@@ -231,6 +231,7 @@ namespace Nop.Web.Framework
             builder.RegisterType<CheckoutAttributeService>().As<ICheckoutAttributeService>().InstancePerLifetimeScope();
             builder.RegisterType<GiftCardService>().As<IGiftCardService>().InstancePerLifetimeScope();
             builder.RegisterType<OrderService>().As<IOrderService>().InstancePerLifetimeScope();
+            builder.RegisterType<OrderShippingService>().As<IOrderShippingService>().InstancePerLifetimeScope();
             builder.RegisterType<OrderReportService>().As<IOrderReportService>().InstancePerLifetimeScope();
             builder.RegisterType<OrderProcessingService>().As<IOrderProcessingService>().InstancePerLifetimeScope();
             builder.RegisterType<OrderTotalCalculationService>().As<IOrderTotalCalculationService>().InstancePerLifetimeScope();

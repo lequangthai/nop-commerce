@@ -9,15 +9,13 @@ namespace Nop.Data.Mapping.Orders
             this.ToTable("OrderShipping_OrderItem_Mapping");
             this.HasKey(o => o.Id);
 
-            this.HasRequired(osi => osi.OrderItem)
-                .WithMany(oi=>oi.OrderShippingItems)
-                .HasForeignKey(osi => osi.OrderItemId)
-                .WillCascadeOnDelete(false);
+            this.HasRequired(s => s.OrderShipping)
+                .WithMany(o => o.OrderShippingItems)
+                .HasForeignKey(s => s.OrderShippingId);
 
-            this.HasRequired(osi => osi.OrderShipping)
-                .WithMany(os => os.OrderShippingItems)
-                .HasForeignKey(osi => osi.OrderShippingId)
-                .WillCascadeOnDelete(false);
+            this.HasRequired(osi => osi.OrderItem)
+                .WithMany()
+                .HasForeignKey(osi => osi.OrderItemId);
         }
     }
 }

@@ -19,6 +19,7 @@ namespace Nop.Admin.Models.Orders
             GiftCards = new List<GiftCard>();
             Items = new List<OrderItemModel>();
             UsedDiscounts = new List<UsedDiscountModel>();
+            OrderShippings = new List<OrderShippingModel>();
         }
 
         public bool IsLoggedInAsVendor { get; set; }
@@ -165,16 +166,12 @@ namespace Nop.Admin.Models.Orders
         public string SubscriptionTransactionId { get; set; }
 
         //shipping info
-        public bool IsShippable { get; set; }
-        public bool PickUpInStore { get; set; }
         [NopResourceDisplayName("Admin.Orders.Fields.ShippingStatus")]
         public string ShippingStatus { get; set; }
-        [NopResourceDisplayName("Admin.Orders.Fields.ShippingAddress")]
-        public AddressModel ShippingAddress { get; set; }
-        [NopResourceDisplayName("Admin.Orders.Fields.ShippingMethod")]
-        public string ShippingMethod { get; set; }
-        public string ShippingAddressGoogleMapsUrl { get; set; }
-        public bool CanAddNewShipments { get; set; }
+        public IList<OrderShippingModel> OrderShippings { get; set; }
+        public string OrderShippingIdsJson { get; set; }
+        public int CurrentOrderShippingIdEdit { get; set; }
+        public string CurrentShippingMethodEdit { get; set; }
 
         //billing info
         [NopResourceDisplayName("Admin.Orders.Fields.BillingAddress")]
@@ -446,6 +443,28 @@ namespace Nop.Admin.Models.Orders
         {
             public int DiscountId { get; set; }
             public string DiscountName { get; set; }
+        }
+
+        public partial class OrderShippingModel : BaseNopEntityModel
+        {
+            public OrderShippingModel()
+            {
+                OrderItems = new List<OrderItemModel>();
+            }
+
+            public bool IsShippable { get; set; }
+            public bool PickUpInStore { get; set; }
+            [NopResourceDisplayName("Admin.Orders.Fields.ShippingStatus")]
+            public string ShippingStatus { get; set; }
+            [NopResourceDisplayName("Admin.Orders.Fields.ShippingAddress")]
+            public AddressModel ShippingAddress { get; set; }
+            [NopResourceDisplayName("Admin.Orders.Fields.ShippingMethod")]
+            public string ShippingMethod { get; set; }
+            public string ShippingAddressGoogleMapsUrl { get; set; }
+            public bool CanAddNewShipments { get; set; }
+            public bool IsLoggedInAsVendor { get; set; }
+            
+            public IList<OrderItemModel> OrderItems { get; set; } 
         }
 
         #endregion
