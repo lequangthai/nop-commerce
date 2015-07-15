@@ -37,6 +37,13 @@ namespace Nop.Core.Domain.Orders
 
         public string ShippingRateComputationMethodSystemName { get; set; }
 
+        private ICollection<OrderShippingItem> _orderShippingItems;
+        public virtual ICollection<OrderShippingItem> OrderShippingItems
+        {
+            get { return _orderShippingItems ?? ( _orderShippingItems = new List<OrderShippingItem>()); }
+            protected set { _orderShippingItems = value; }
+        }
+
         private ICollection<Shipment> _shipments;
         public virtual ICollection<Shipment> Shipments
         {
@@ -47,13 +54,5 @@ namespace Nop.Core.Domain.Orders
         public DateTime? ExpectedDeliveryDate { get; set; }
 
         public string RecipientName { get; set; }
-
-        private ICollection<OrderShippingItem> _orderShippingItems { get; set; }
-
-        public ICollection<OrderShippingItem> OrderShippingItems
-        {
-            get { return _orderShippingItems ?? (new List<OrderShippingItem>()); }
-            set { _orderShippingItems = value; }
-        }
     }
 }

@@ -16,6 +16,8 @@ namespace Nop.Admin.Models.Orders
         public override int Id { get; set; }
         [NopResourceDisplayName("Admin.Orders.Shipments.OrderID")]
         public int OrderId { get; set; }
+        [NopResourceDisplayName("Admin.Orders.Shipments.OrderShippingID")]
+        public int OrderShippingId { get; set; }
         [NopResourceDisplayName("Admin.Orders.Shipments.TotalWeight")]
         public string TotalWeight { get; set; }
         [NopResourceDisplayName("Admin.Orders.Shipments.TrackingNumber")]
@@ -48,6 +50,7 @@ namespace Nop.Admin.Models.Orders
                 AvailableWarehouses = new List<WarehouseInfo>();
             }
 
+            public int OrderShippingItemId { get; set; }
             public int OrderItemId { get; set; }
             public int ProductId { get; set; }
             [NopResourceDisplayName("Admin.Orders.Shipments.Products.ProductName")]

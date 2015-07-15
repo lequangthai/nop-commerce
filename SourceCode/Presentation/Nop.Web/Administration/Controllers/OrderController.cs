@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
+using Newtonsoft.Json;
 using Nop.Admin.Extensions;
 using Nop.Admin.Models.Orders;
 using Nop.Core;
@@ -81,6 +82,7 @@ namespace Nop.Admin.Controllers
 	    private readonly IAddressAttributeFormatter _addressAttributeFormatter;
 	    private readonly IAffiliateService _affiliateService;
 	    private readonly IPictureService _pictureService;
+	    private readonly IOrderShippingService _orderShippingService;
 
         private readonly CurrencySettings _currencySettings;
         private readonly TaxSettings _taxSettings;
@@ -125,6 +127,7 @@ namespace Nop.Admin.Controllers
             IShippingService shippingService,
             IStoreService storeService,
             IVendorService vendorService,
+            IOrderShippingService orderShippingService,
             IAddressAttributeParser addressAttributeParser,
             IAddressAttributeService addressAttributeService,
             IAddressAttributeFormatter addressAttributeFormatter,
@@ -169,6 +172,7 @@ namespace Nop.Admin.Controllers
             this._shippingService = shippingService;
             this._storeService = storeService;
             this._vendorService = vendorService;
+            this._orderShippingService = orderShippingService;
             this._addressAttributeParser = addressAttributeParser;
             this._addressAttributeService = addressAttributeService;
             this._addressAttributeFormatter = addressAttributeFormatter;
@@ -486,46 +490,6 @@ namespace Nop.Admin.Controllers
             model.BillingAddress.FaxEnabled = _addressSettings.FaxEnabled;
             model.BillingAddress.FaxRequired = _addressSettings.FaxRequired;
 
-            model.ShippingStatus = order.ShippingStatus.GetLocalizedEnum(_localizationService, _workContext);
-            if (order.ShippingStatus != ShippingStatus.ShippingNotRequired)
-            {
-                model.IsShippable = true;
-
-                model.PickUpInStore = order.PickUpInStore;
-                if (!order.PickUpInStore)
-                {
-                    model.ShippingAddress = order.ShippingAddress.ToModel();
-                    model.ShippingAddress.FormattedCustomAddressAttributes = _addressAttributeFormatter.FormatAttributes(order.ShippingAddress.CustomAttributes);
-                    model.ShippingAddress.FirstNameEnabled = true;
-                    model.ShippingAddress.FirstNameRequired = true;
-                    model.ShippingAddress.LastNameEnabled = true;
-                    model.ShippingAddress.LastNameRequired = true;
-                    model.ShippingAddress.EmailEnabled = true;
-                    model.ShippingAddress.EmailRequired = true;
-                    model.ShippingAddress.CompanyEnabled = _addressSettings.CompanyEnabled;
-                    model.ShippingAddress.CompanyRequired = _addressSettings.CompanyRequired;
-                    model.ShippingAddress.CountryEnabled = _addressSettings.CountryEnabled;
-                    model.ShippingAddress.StateProvinceEnabled = _addressSettings.StateProvinceEnabled;
-                    model.ShippingAddress.CityEnabled = _addressSettings.CityEnabled;
-                    model.ShippingAddress.CityRequired = _addressSettings.CityRequired;
-                    model.ShippingAddress.StreetAddressEnabled = _addressSettings.StreetAddressEnabled;
-                    model.ShippingAddress.StreetAddressRequired = _addressSettings.StreetAddressRequired;
-                    model.ShippingAddress.StreetAddress2Enabled = _addressSettings.StreetAddress2Enabled;
-                    model.ShippingAddress.StreetAddress2Required = _addressSettings.StreetAddress2Required;
-                    model.ShippingAddress.ZipPostalCodeEnabled = _addressSettings.ZipPostalCodeEnabled;
-                    model.ShippingAddress.ZipPostalCodeRequired = _addressSettings.ZipPostalCodeRequired;
-                    model.ShippingAddress.PhoneEnabled = _addressSettings.PhoneEnabled;
-                    model.ShippingAddress.PhoneRequired = _addressSettings.PhoneRequired;
-                    model.ShippingAddress.FaxEnabled = _addressSettings.FaxEnabled;
-                    model.ShippingAddress.FaxRequired = _addressSettings.FaxRequired;
-                    
-                    model.ShippingAddressGoogleMapsUrl = string.Format("http://maps.google.com/maps?f=q&hl=en&ie=UTF8&oe=UTF8&geocode=&q={0}", Server.UrlEncode(order.ShippingAddress.Address1 + " " + order.ShippingAddress.ZipPostalCode + " " + order.ShippingAddress.City + " " + (order.ShippingAddress.Country != null ? order.ShippingAddress.Country.Name : "")));
-                }
-                model.ShippingMethod = order.ShippingMethod;
-
-                model.CanAddNewShipments = order.HasItemsToAddToShipment();
-            }
-
             #endregion
 
             #region Products
@@ -613,6 +577,69 @@ namespace Nop.Admin.Controllers
             }
             model.HasDownloadableProducts = hasDownloadableItems;
             #endregion
+
+            #region OrderShipping
+
+            foreach (var orderShipping in order.OrderShippings)
+            {
+                var orderShippingModel = new OrderModel.OrderShippingModel();
+                orderShippingModel.Id = orderShipping.Id;
+                orderShippingModel.ShippingStatus = orderShipping.ShippingStatus.GetLocalizedEnum(_localizationService, _workContext);
+                if (orderShipping.ShippingStatus != ShippingStatus.ShippingNotRequired)
+                {
+                    orderShippingModel.IsShippable = true;
+
+                    orderShippingModel.PickUpInStore = orderShipping.PickUpInStore;
+                    if (!orderShipping.PickUpInStore)
+                    {
+                        orderShippingModel.ShippingAddress = orderShipping.ShippingAddress.ToModel();
+                        orderShippingModel.ShippingAddress.FormattedCustomAddressAttributes = _addressAttributeFormatter.FormatAttributes(orderShipping.ShippingAddress.CustomAttributes);
+                        orderShippingModel.ShippingAddress.FirstNameEnabled = true;
+                        orderShippingModel.ShippingAddress.FirstNameRequired = true;
+                        orderShippingModel.ShippingAddress.LastNameEnabled = true;
+                        orderShippingModel.ShippingAddress.LastNameRequired = true;
+                        orderShippingModel.ShippingAddress.EmailEnabled = true;
+                        orderShippingModel.ShippingAddress.EmailRequired = true;
+                        orderShippingModel.ShippingAddress.CompanyEnabled = _addressSettings.CompanyEnabled;
+                        orderShippingModel.ShippingAddress.CompanyRequired = _addressSettings.CompanyRequired;
+                        orderShippingModel.ShippingAddress.CountryEnabled = _addressSettings.CountryEnabled;
+                        orderShippingModel.ShippingAddress.StateProvinceEnabled = _addressSettings.StateProvinceEnabled;
+                        orderShippingModel.ShippingAddress.CityEnabled = _addressSettings.CityEnabled;
+                        orderShippingModel.ShippingAddress.CityRequired = _addressSettings.CityRequired;
+                        orderShippingModel.ShippingAddress.StreetAddressEnabled = _addressSettings.StreetAddressEnabled;
+                        orderShippingModel.ShippingAddress.StreetAddressRequired = _addressSettings.StreetAddressRequired;
+                        orderShippingModel.ShippingAddress.StreetAddress2Enabled = _addressSettings.StreetAddress2Enabled;
+                        orderShippingModel.ShippingAddress.StreetAddress2Required = _addressSettings.StreetAddress2Required;
+                        orderShippingModel.ShippingAddress.ZipPostalCodeEnabled = _addressSettings.ZipPostalCodeEnabled;
+                        orderShippingModel.ShippingAddress.ZipPostalCodeRequired = _addressSettings.ZipPostalCodeRequired;
+                        orderShippingModel.ShippingAddress.PhoneEnabled = _addressSettings.PhoneEnabled;
+                        orderShippingModel.ShippingAddress.PhoneRequired = _addressSettings.PhoneRequired;
+                        orderShippingModel.ShippingAddress.FaxEnabled = _addressSettings.FaxEnabled;
+                        orderShippingModel.ShippingAddress.FaxRequired = _addressSettings.FaxRequired;
+
+                        orderShippingModel.ShippingAddressGoogleMapsUrl = string.Format("http://maps.google.com/maps?f=q&hl=en&ie=UTF8&oe=UTF8&geocode=&q={0}", Server.UrlEncode(orderShipping.ShippingAddress.Address1 + " " + orderShipping.ShippingAddress.ZipPostalCode + " " + orderShipping.ShippingAddress.City + " " + (orderShipping.ShippingAddress.Country != null ? orderShipping.ShippingAddress.Country.Name : "")));
+                    }
+                    orderShippingModel.ShippingMethod = orderShipping.ShippingMethod;
+                    orderShippingModel.CanAddNewShipments = order.HasItemsToAddToShipment();
+                    orderShippingModel.IsLoggedInAsVendor = _workContext.CurrentVendor != null;
+
+                    foreach (var orderShippingItem in orderShipping.OrderShippingItems)
+                    {
+                        var orderItem = model.Items.FirstOrDefault(c => c.Id == orderShippingItem.OrderItem.Id);
+                        if (orderItem != null)
+                        {
+                            orderShippingModel.OrderItems.Add(orderItem);
+                        }
+                    }
+
+                    model.OrderShippings.Add(orderShippingModel);
+                }
+            }
+            //serialize OrderShippingId
+            var orderShippingIds = model.OrderShippings.Select(c => c.Id).ToList();
+            model.OrderShippingIdsJson = JsonConvert.SerializeObject(orderShippingIds);
+            
+            #endregion
         }
 
         [NonAction]
@@ -675,113 +702,6 @@ namespace Nop.Admin.Controllers
             }
             //rental
             model.IsRental = product.IsRental;
-            return model;
-        }
-
-        [NonAction]
-        protected virtual ShipmentModel PrepareShipmentModel(Shipment shipment, bool prepareProducts, bool prepareShipmentEvent = false)
-        {
-            //measures
-            var baseWeight = _measureService.GetMeasureWeightById(_measureSettings.BaseWeightId);
-            var baseWeightIn = baseWeight != null ? baseWeight.Name : "";
-            var baseDimension = _measureService.GetMeasureDimensionById(_measureSettings.BaseDimensionId);
-            var baseDimensionIn = baseDimension != null ? baseDimension.Name : "";
-
-            var model = new ShipmentModel
-            {
-                Id = shipment.Id,
-                OrderId = shipment.OrderShipping.OrderId,
-                TrackingNumber = shipment.TrackingNumber,
-                TotalWeight = shipment.TotalWeight.HasValue ? string.Format("{0:F2} [{1}]", shipment.TotalWeight, baseWeightIn) : "",
-                ShippedDate = shipment.ShippedDateUtc.HasValue ? _dateTimeHelper.ConvertToUserTime(shipment.ShippedDateUtc.Value, DateTimeKind.Utc).ToString() : _localizationService.GetResource("Admin.Orders.Shipments.ShippedDate.NotYet"),
-                ShippedDateUtc = shipment.ShippedDateUtc,
-                CanShip = !shipment.ShippedDateUtc.HasValue,
-                DeliveryDate = shipment.DeliveryDateUtc.HasValue ? _dateTimeHelper.ConvertToUserTime(shipment.DeliveryDateUtc.Value, DateTimeKind.Utc).ToString() : _localizationService.GetResource("Admin.Orders.Shipments.DeliveryDate.NotYet"),
-                DeliveryDateUtc = shipment.DeliveryDateUtc,
-                CanDeliver = shipment.ShippedDateUtc.HasValue && !shipment.DeliveryDateUtc.HasValue,
-                AdminComment = shipment.AdminComment,
-            };
-
-            if (prepareProducts)
-            {
-                foreach (var shipmentItem in shipment.ShipmentItems)
-                {
-                    var orderItem = _orderService.GetOrderItemById(shipmentItem.OrderItemId);
-                    if (orderItem == null)
-                        continue;
-
-                    //quantities
-                    var qtyInThisShipment = shipmentItem.Quantity;
-                    var maxQtyToAdd = orderItem.GetTotalNumberOfItemsCanBeAddedToShipment();
-                    var qtyOrdered = orderItem.Quantity;
-                    var qtyInAllShipments = orderItem.GetTotalNumberOfItemsInAllShipment();
-
-                    var warehouse = _shippingService.GetWarehouseById(shipmentItem.WarehouseId);
-                    var shipmentItemModel = new ShipmentModel.ShipmentItemModel
-                    {
-                        Id = shipmentItem.Id,
-                        OrderItemId = orderItem.Id,
-                        ProductId = orderItem.ProductId,
-                        ProductName = orderItem.Product.Name,
-                        Sku = orderItem.Product.FormatSku(orderItem.AttributesXml, _productAttributeParser),
-                        AttributeInfo = orderItem.AttributeDescription,
-                        ShippedFromWarehouse = warehouse != null ? warehouse.Name : null,
-                        ShipSeparately = orderItem.Product.ShipSeparately,
-                        ItemWeight = orderItem.ItemWeight.HasValue ? string.Format("{0:F2} [{1}]", orderItem.ItemWeight, baseWeightIn) : "",
-                        ItemDimensions = string.Format("{0:F2} x {1:F2} x {2:F2} [{3}]", orderItem.Product.Length, orderItem.Product.Width, orderItem.Product.Height, baseDimensionIn),
-                        QuantityOrdered = qtyOrdered,
-                        QuantityInThisShipment = qtyInThisShipment,
-                        QuantityInAllShipments = qtyInAllShipments,
-                        QuantityToAdd = maxQtyToAdd,
-                    };
-                    //rental info
-                    if (orderItem.Product.IsRental)
-                    {
-                        var rentalStartDate = orderItem.RentalStartDateUtc.HasValue ? orderItem.Product.FormatRentalDate(orderItem.RentalStartDateUtc.Value) : "";
-                        var rentalEndDate = orderItem.RentalEndDateUtc.HasValue ? orderItem.Product.FormatRentalDate(orderItem.RentalEndDateUtc.Value) : "";
-                        shipmentItemModel.RentalInfo = string.Format(_localizationService.GetResource("Order.Rental.FormattedDate"),
-                            rentalStartDate, rentalEndDate);
-                    }
-
-                    model.Items.Add(shipmentItemModel);
-                }
-            }
-
-            if (prepareShipmentEvent && !String.IsNullOrEmpty(shipment.TrackingNumber))
-            {
-                var order = shipment.OrderShipping != null ? shipment.OrderShipping.Order : null;
-                var srcm = _shippingService.LoadShippingRateComputationMethodBySystemName(order.ShippingRateComputationMethodSystemName);
-                if (srcm != null &&
-                    srcm.PluginDescriptor.Installed &&
-                    srcm.IsShippingRateComputationMethodActive(_shippingSettings))
-                {
-                    var shipmentTracker = srcm.ShipmentTracker;
-                    if (shipmentTracker != null)
-                    {
-                        model.TrackingNumberUrl = shipmentTracker.GetUrl(shipment.TrackingNumber);
-                        if (_shippingSettings.DisplayShipmentEventsToStoreOwner)
-                        {
-                            var shipmentEvents = shipmentTracker.GetShipmentEvents(shipment.TrackingNumber);
-                            if (shipmentEvents != null)
-                            {
-                                foreach (var shipmentEvent in shipmentEvents)
-                                {
-                                    var shipmentStatusEventModel = new ShipmentModel.ShipmentStatusEventModel();
-                                    var shipmentEventCountry = _countryService.GetCountryByTwoLetterIsoCode(shipmentEvent.CountryCode);
-                                    shipmentStatusEventModel.Country = shipmentEventCountry != null
-                                        ? shipmentEventCountry.GetLocalized(x => x.Name)
-                                        : shipmentEvent.CountryCode;
-                                    shipmentStatusEventModel.Date = shipmentEvent.Date;
-                                    shipmentStatusEventModel.EventName = shipmentEvent.EventName;
-                                    shipmentStatusEventModel.Location = shipmentEvent.Location;
-                                    model.ShipmentStatusEvents.Add(shipmentStatusEventModel);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
             return model;
         }
 
@@ -1801,42 +1721,6 @@ namespace Nop.Admin.Controllers
         }
 
         [HttpPost, ActionName("Edit")]
-        [FormValueRequired("save-shipping-method")]
-        public ActionResult EditShippingMethod(int id, OrderModel model)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageOrders))
-                return AccessDeniedView();
-
-            var order = _orderService.GetOrderById(id);
-            if (order == null)
-                //No order found with the specified id
-                return RedirectToAction("List");
-
-            //a vendor does not have access to this functionality
-            if (_workContext.CurrentVendor != null)
-                return RedirectToAction("Edit", "Order", new { id = id });
-
-            order.ShippingMethod = model.ShippingMethod;
-            _orderService.UpdateOrder(order);
-
-            //add a note
-            order.OrderNotes.Add(new OrderNote
-            {
-                Note = "Shipping method has been edited",
-                DisplayToCustomer = false,
-                CreatedOnUtc = DateTime.UtcNow
-            });
-            _orderService.UpdateOrder(order);
-
-            PrepareOrderDetailsModel(model, order);
-
-            //selected tab
-            SaveSelectedTabIndex(persistForTheNextRequest: false);
-
-            return View(model);
-        }
-        
-        [HttpPost, ActionName("Edit")]
         [FormValueRequired(FormValueRequirement.StartsWith, "btnSaveOrderItem")]
         [ValidateInput(false)]
         public ActionResult EditOrderItem(int id, FormCollection form)
@@ -2845,7 +2729,7 @@ namespace Nop.Admin.Controllers
 
             var model = new ShipmentModel
             {
-                OrderId = order.Id,
+                OrderId = orderId
             };
 
             //measures
@@ -3078,236 +2962,6 @@ namespace Nop.Admin.Controllers
             
             ErrorNotification(_localizationService.GetResource("Admin.Orders.Shipments.NoProductsSelected"));
             return RedirectToAction("AddShipment", new { orderId = orderId });
-        }
-
-        public ActionResult ShipmentDetails(int id)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageOrders))
-                return AccessDeniedView();
-
-            var shipment = _shipmentService.GetShipmentById(id);
-            if (shipment == null)
-                //No shipment found with the specified id
-                return RedirectToAction("List");
-
-            //a vendor should have access only to his products
-            if (_workContext.CurrentVendor != null && !HasAccessToShipment(shipment))
-                return RedirectToAction("List");
-
-            var model = PrepareShipmentModel(shipment, true, true);
-            return View(model);
-        }
-
-        [HttpPost]
-        public ActionResult DeleteShipment(int id)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageOrders))
-                return AccessDeniedView();
-
-            var shipment = _shipmentService.GetShipmentById(id);
-            if (shipment == null)
-                //No shipment found with the specified id
-                return RedirectToAction("List");
-
-            //a vendor should have access only to his products
-            if (_workContext.CurrentVendor != null && !HasAccessToShipment(shipment))
-                return RedirectToAction("List");
-
-            foreach (var shipmentItem in shipment.ShipmentItems)
-            {
-                var orderItem = _orderService.GetOrderItemById(shipmentItem.OrderItemId);
-                if (orderItem == null)
-                    continue;
-
-                _productService.ReverseBookedInventory(orderItem.Product, shipmentItem);
-            }
-
-            var orderId = shipment.OrderShipping.OrderId;
-            _shipmentService.DeleteShipment(shipment);
-
-            var order = _orderService.GetOrderById(orderId);
-            //add a note
-            order.OrderNotes.Add(new OrderNote
-            {
-                Note = "A shipment has been deleted",
-                DisplayToCustomer = false,
-                CreatedOnUtc = DateTime.UtcNow
-            });
-            _orderService.UpdateOrder(order);
-
-            SuccessNotification(_localizationService.GetResource("Admin.Orders.Shipments.Deleted"));
-            return RedirectToAction("Edit", new { id = orderId });
-        }
-
-        [HttpPost, ActionName("ShipmentDetails")]
-        [FormValueRequired("settrackingnumber")]
-        public ActionResult SetTrackingNumber(ShipmentModel model)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageOrders))
-                return AccessDeniedView();
-
-            var shipment = _shipmentService.GetShipmentById(model.Id);
-            if (shipment == null)
-                //No shipment found with the specified id
-                return RedirectToAction("List");
-
-            //a vendor should have access only to his products
-            if (_workContext.CurrentVendor != null && !HasAccessToShipment(shipment))
-                return RedirectToAction("List");
-
-            shipment.TrackingNumber = model.TrackingNumber;
-            _shipmentService.UpdateShipment(shipment);
-
-            return RedirectToAction("ShipmentDetails", new { id = shipment.Id });
-        }
-
-        [HttpPost, ActionName("ShipmentDetails")]
-        [FormValueRequired("setadmincomment")]
-        public ActionResult SetShipmentAdminComment(ShipmentModel model)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageOrders))
-                return AccessDeniedView();
-
-            var shipment = _shipmentService.GetShipmentById(model.Id);
-            if (shipment == null)
-                //No shipment found with the specified id
-                return RedirectToAction("List");
-
-            //a vendor should have access only to his products
-            if (_workContext.CurrentVendor != null && !HasAccessToShipment(shipment))
-                return RedirectToAction("List");
-
-            shipment.AdminComment = model.AdminComment;
-            _shipmentService.UpdateShipment(shipment);
-
-            return RedirectToAction("ShipmentDetails", new { id = shipment.Id });
-        }
-
-        [HttpPost, ActionName("ShipmentDetails")]
-        [FormValueRequired("setasshipped")]
-        public ActionResult SetAsShipped(int id)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageOrders))
-                return AccessDeniedView();
-
-            var shipment = _shipmentService.GetShipmentById(id);
-            if (shipment == null)
-                //No shipment found with the specified id
-                return RedirectToAction("List");
-
-            //a vendor should have access only to his products
-            if (_workContext.CurrentVendor != null && !HasAccessToShipment(shipment))
-                return RedirectToAction("List");
-
-            try
-            {
-                _orderProcessingService.Ship(shipment, true);
-                return RedirectToAction("ShipmentDetails", new { id = shipment.Id });
-            }
-            catch (Exception exc)
-            {
-                //error
-                ErrorNotification(exc, true);
-                return RedirectToAction("ShipmentDetails", new { id = shipment.Id });
-            }
-        }
-
-        [HttpPost, ActionName("ShipmentDetails")]
-        [FormValueRequired("saveshippeddate")]
-        public ActionResult EditShippedDate(ShipmentModel model)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageOrders))
-                return AccessDeniedView();
-
-            var shipment = _shipmentService.GetShipmentById(model.Id);
-            if (shipment == null)
-                //No shipment found with the specified id
-                return RedirectToAction("List");
-
-            //a vendor should have access only to his products
-            if (_workContext.CurrentVendor != null && !HasAccessToShipment(shipment))
-                return RedirectToAction("List");
-
-            try
-            {
-                if (!model.ShippedDateUtc.HasValue)
-                {
-                    throw new Exception("Enter shipped date");
-                }
-                shipment.ShippedDateUtc = model.ShippedDateUtc;
-                _shipmentService.UpdateShipment(shipment);
-                return RedirectToAction("ShipmentDetails", new { id = shipment.Id });
-            }
-            catch (Exception exc)
-            {
-                //error
-                ErrorNotification(exc, true);
-                return RedirectToAction("ShipmentDetails", new { id = shipment.Id });
-            }
-        }
-
-        [HttpPost, ActionName("ShipmentDetails")]
-        [FormValueRequired("setasdelivered")]
-        public ActionResult SetAsDelivered(int id)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageOrders))
-                return AccessDeniedView();
-
-            var shipment = _shipmentService.GetShipmentById(id);
-            if (shipment == null)
-                //No shipment found with the specified id
-                return RedirectToAction("List");
-
-            //a vendor should have access only to his products
-            if (_workContext.CurrentVendor != null && !HasAccessToShipment(shipment))
-                return RedirectToAction("List");
-
-            try
-            {
-                _orderProcessingService.Deliver(shipment, true);
-                return RedirectToAction("ShipmentDetails", new { id = shipment.Id });
-            }
-            catch (Exception exc)
-            {
-                //error
-                ErrorNotification(exc, true);
-                return RedirectToAction("ShipmentDetails", new { id = shipment.Id });
-            }
-        }
-
-
-        [HttpPost, ActionName("ShipmentDetails")]
-        [FormValueRequired("savedeliverydate")]
-        public ActionResult EditDeliveryDate(ShipmentModel model)
-        {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageOrders))
-                return AccessDeniedView();
-
-            var shipment = _shipmentService.GetShipmentById(model.Id);
-            if (shipment == null)
-                //No shipment found with the specified id
-                return RedirectToAction("List");
-
-            //a vendor should have access only to his products
-            if (_workContext.CurrentVendor != null && !HasAccessToShipment(shipment))
-                return RedirectToAction("List");
-
-            try
-            {
-                if (!model.DeliveryDateUtc.HasValue)
-                {
-                    throw new Exception("Enter delivery date");
-                }
-                shipment.DeliveryDateUtc = model.DeliveryDateUtc;
-                _shipmentService.UpdateShipment(shipment);
-                return RedirectToAction("ShipmentDetails", new { id = shipment.Id });
-            }
-            catch (Exception exc)
-            {
-                //error
-                ErrorNotification(exc, true);
-                return RedirectToAction("ShipmentDetails", new { id = shipment.Id });
-            }
         }
 
         public ActionResult PdfPackagingSlip(int shipmentId)

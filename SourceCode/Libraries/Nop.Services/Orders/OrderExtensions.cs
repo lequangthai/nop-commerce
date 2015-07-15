@@ -55,6 +55,30 @@ namespace Nop.Services.Orders
             }
             return totalInShipments;
         }
+        /// <summary>
+        /// Gets a total number of items in all shipments
+        /// </summary>
+        /// <param name="orderShippingItem">Order item</param>
+        /// <returns>Total number of items in all shipmentss</returns>
+        public static int GetTotalNumberOfItemsInAllShipment(this OrderShippingItem orderShippingItem)
+        {
+            if (orderShippingItem == null)
+                throw new ArgumentNullException("orderShippingItem");
+
+            var totalInShipments = 0;
+            var shipments = orderShippingItem.OrderShipping.Shipments.ToList();
+            for (int i = 0; i < shipments.Count; i++)
+            {
+                var shipment = shipments[i];
+                var si = shipment.ShipmentItems
+                    .FirstOrDefault(x => x.OrderShippingItemId == orderShippingItem.Id);
+                if (si != null)
+                {
+                    totalInShipments += si.Quantity;
+                }
+            }
+            return totalInShipments;
+        }
 
         /// <summary>
         /// Gets a total number of already items which can be added to new shipments
@@ -69,6 +93,25 @@ namespace Nop.Services.Orders
             var totalInShipments = orderItem.GetTotalNumberOfItemsInAllShipment();
 
             var qtyOrdered = orderItem.Quantity;
+            var qtyCanBeAddedToShipmentTotal = qtyOrdered - totalInShipments;
+            if (qtyCanBeAddedToShipmentTotal < 0)
+                qtyCanBeAddedToShipmentTotal = 0;
+
+            return qtyCanBeAddedToShipmentTotal;
+        }
+        /// <summary>
+        /// Gets a total number of already items which can be added to new shipments
+        /// </summary>
+        /// <param name="orderShippingItem">Order item</param>
+        /// <returns>Total number of already delivered items which can be added to new shipments</returns>
+        public static int GetTotalNumberOfItemsCanBeAddedToShipment(this OrderShippingItem orderShippingItem)
+        {
+            if (orderShippingItem == null)
+                throw new ArgumentNullException("orderShippingItem");
+
+            var totalInShipments = orderShippingItem.GetTotalNumberOfItemsInAllShipment();
+
+            var qtyOrdered = orderShippingItem.Quantity;
             var qtyCanBeAddedToShipmentTotal = qtyOrdered - totalInShipments;
             if (qtyCanBeAddedToShipmentTotal < 0)
                 qtyCanBeAddedToShipmentTotal = 0;
@@ -172,8 +215,6 @@ namespace Nop.Services.Orders
             return result;
         }
 
-
-
         /// <summary>
         /// Gets a value indicating whether an order has items to be added to a shipment
         /// </summary>
@@ -199,6 +240,33 @@ namespace Nop.Services.Orders
             }
             return false;
         }
+        /// <summary>
+        /// Gets a value indicating whether an order has items to be added to a shipment
+        /// </summary>
+        /// <param name="orderShipping">Order</param>
+        /// <returns>A value indicating whether an order has items to be added to a shipment</returns>
+        public static bool HasItemsToAddToShipment(this OrderShipping orderShipping)
+        {
+            if (orderShipping == null)
+                throw new ArgumentNullException("orderShipping");
+
+            foreach (var orderShippingItem in orderShipping.OrderShippingItems)
+            {
+                //we can ship only shippable products
+                if (!orderShippingItem.OrderItem.Product.IsShipEnabled)
+                    continue;
+
+                var totalNumberOfItemsCanBeAddedToShipment =
+                    orderShippingItem.GetTotalNumberOfItemsCanBeAddedToShipment();
+                if (totalNumberOfItemsCanBeAddedToShipment <= 0)
+                    continue;
+
+                //yes, we have at least one item to create a new shipment
+                return true;
+            }
+            return false;
+        }
+
         /// <summary>
         /// Gets a value indicating whether an order has items to ship
         /// </summary>
