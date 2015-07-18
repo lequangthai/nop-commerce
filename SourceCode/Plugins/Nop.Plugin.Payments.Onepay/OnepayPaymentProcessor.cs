@@ -124,17 +124,15 @@ namespace Nop.Plugin.Payments.Onepay
             //throw new NotImplementedException();
         }
 
-       
-
         public void PostProcessPayment(PostProcessPaymentRequest postProcessPaymentRequest)
         {
             RandomStringGenerator RSG = new RandomStringGenerator();
             RSG.MinLowerCaseCharacters = 25;
             RSG.RepeatCharacters = false;
-            
+
             Debug.WriteLine(RSG.Generate(25));
             Debug.WriteLine("PostProcessPayment");
-            
+
             var nfi = new CultureInfo("en-US", false).NumberFormat;
             var url = GetPaymentUrl();
             var gatewayUrl = new Uri(url);
@@ -143,61 +141,94 @@ namespace Nop.Plugin.Payments.Onepay
             var merchTxnRef = RSG.Generate(25);
             var orderInfo = RSG.Generate(25);
 
-            post.Add("Title", "onepay paygate");
-            post.Add("vpc_Locale", "vn");
-            post.Add("vpc_Version", "2");
-            post.Add("vpc_Command", "pay");
-            post.Add("vpc_Merchant", "ONEPAY");
-            post.Add("vpc_AccessCode", "D67342C2");
-            post.Add("vpc_MerchTxnRef", merchTxnRef);
-            post.Add("vpc_OrderInfo", "TEST" + orderInfo);
-            post.Add("vpc_Amount", "200000");
-            post.Add("vpc_Currency", "VND");
-            post.Add("vpc_ReturnURL", "http://localhost:15536/onepagecheckout");
+            post.Add("mid", "20130114001");
+            post.Add("ref", merchTxnRef);
+            post.Add("cur", "SGD");
+            post.Add("amt", "20");
+            post.Add("ccnum", "4111111111111111");
 
-            post.Add("vpc_SHIP_Street01", "");
-            post.Add("vpc_SHIP_Provice", "");
-            post.Add("vpc_SHIP_City", "");
-            post.Add("vpc_SHIP_Country", "");
-            post.Add("vpc_Customer_Phone", "");
-            post.Add("vpc_Customer_Email", "");
-            post.Add("vpc_Customer_Id", "");
+            post.Add("ccdate", "1511");
+            post.Add("cccvv", "989");
+            post.Add("paytype", "3");
+            post.Add("transtype", "sale");
 
-            post.Add("vpc_TicketNo", order.CustomerIp);
-
+            post.Add("returnurl", "http://localhost:15536/onepagecheckout");
             
-            
-            //-------------------
-            string SECURE_SECRET = "A3EFDFABA8653DF2342E8DAC29B51AF0"; 
-            VPCRequest conn = new VPCRequest("https://mtf.onepay.vn/onecomm-pay/vpc.op");
-            conn.SetSecureSecret(SECURE_SECRET);
-            // Add the Digital Order Fields for the functionality you wish to use
-            // Core Transaction Fields
-            conn.AddDigitalOrderField("Title", "onepay paygate");
-            conn.AddDigitalOrderField("vpc_Locale", "vn");//Chon ngon ngu hien thi tren cong thanh toan (vn/en)
-            conn.AddDigitalOrderField("vpc_Version", "2");
-            conn.AddDigitalOrderField("vpc_Command", "pay");
-            conn.AddDigitalOrderField("vpc_Merchant", "ONEPAY");
-            conn.AddDigitalOrderField("vpc_AccessCode", "D67342C2");
-            conn.AddDigitalOrderField("vpc_MerchTxnRef", merchTxnRef);
-            conn.AddDigitalOrderField("vpc_OrderInfo", "TEST" + orderInfo);
-            conn.AddDigitalOrderField("vpc_Amount", "200000");
-            conn.AddDigitalOrderField("vpc_Currency", "VND");
-            conn.AddDigitalOrderField("vpc_ReturnURL", "http://localhost:15536/onepagecheckout");
-            // Thong tin them ve khach hang. De trong neu khong co thong tin
-            conn.AddDigitalOrderField("vpc_SHIP_Street01", "");
-            conn.AddDigitalOrderField("vpc_SHIP_Provice", "");
-            conn.AddDigitalOrderField("vpc_SHIP_City", "");
-            conn.AddDigitalOrderField("vpc_SHIP_Country", "");
-            conn.AddDigitalOrderField("vpc_Customer_Phone", "");
-            conn.AddDigitalOrderField("vpc_Customer_Email", "");
-            conn.AddDigitalOrderField("vpc_Customer_Id", "");
-            // Dia chi IP cua khach hang
-            conn.AddDigitalOrderField("vpc_TicketNo", order.CustomerIp);
-
-            post.Add("vpc_SecureHash", conn.CreateSHA256Signature(true));
             post.Post();
         }
+
+        //public void PostProcessPayment(PostProcessPaymentRequest postProcessPaymentRequest)
+        //{
+        //    RandomStringGenerator RSG = new RandomStringGenerator();
+        //    RSG.MinLowerCaseCharacters = 25;
+        //    RSG.RepeatCharacters = false;
+            
+        //    Debug.WriteLine(RSG.Generate(25));
+        //    Debug.WriteLine("PostProcessPayment");
+            
+        //    var nfi = new CultureInfo("en-US", false).NumberFormat;
+        //    var url = GetPaymentUrl();
+        //    var gatewayUrl = new Uri(url);
+        //    var post = new RemotePost { Url = gatewayUrl.ToString(), Method = "POST" };
+        //    var order = postProcessPaymentRequest.Order;
+        //    var merchTxnRef = RSG.Generate(25);
+        //    var orderInfo = RSG.Generate(25);
+
+        //    post.Add("Title", "onepay paygate");
+        //    post.Add("vpc_Locale", "vn");
+        //    post.Add("vpc_Version", "2");
+        //    post.Add("vpc_Command", "pay");
+        //    post.Add("vpc_Merchant", "ONEPAY");
+        //    post.Add("vpc_AccessCode", "D67342C2");
+        //    post.Add("vpc_MerchTxnRef", merchTxnRef);
+        //    post.Add("vpc_OrderInfo", "TEST" + orderInfo);
+        //    post.Add("vpc_Amount", "200000");
+        //    post.Add("vpc_Currency", "VND");
+        //    post.Add("vpc_ReturnURL", "http://localhost:15536/onepagecheckout");
+
+        //    post.Add("vpc_SHIP_Street01", "");
+        //    post.Add("vpc_SHIP_Provice", "");
+        //    post.Add("vpc_SHIP_City", "");
+        //    post.Add("vpc_SHIP_Country", "");
+        //    post.Add("vpc_Customer_Phone", "");
+        //    post.Add("vpc_Customer_Email", "");
+        //    post.Add("vpc_Customer_Id", "");
+
+        //    post.Add("vpc_TicketNo", order.CustomerIp);
+
+            
+            
+        //    //-------------------
+        //    string SECURE_SECRET = "A3EFDFABA8653DF2342E8DAC29B51AF0"; 
+        //    VPCRequest conn = new VPCRequest("https://mtf.onepay.vn/onecomm-pay/vpc.op");
+        //    conn.SetSecureSecret(SECURE_SECRET);
+        //    // Add the Digital Order Fields for the functionality you wish to use
+        //    // Core Transaction Fields
+        //    conn.AddDigitalOrderField("Title", "onepay paygate");
+        //    conn.AddDigitalOrderField("vpc_Locale", "vn");//Chon ngon ngu hien thi tren cong thanh toan (vn/en)
+        //    conn.AddDigitalOrderField("vpc_Version", "2");
+        //    conn.AddDigitalOrderField("vpc_Command", "pay");
+        //    conn.AddDigitalOrderField("vpc_Merchant", "ONEPAY");
+        //    conn.AddDigitalOrderField("vpc_AccessCode", "D67342C2");
+        //    conn.AddDigitalOrderField("vpc_MerchTxnRef", merchTxnRef);
+        //    conn.AddDigitalOrderField("vpc_OrderInfo", "TEST" + orderInfo);
+        //    conn.AddDigitalOrderField("vpc_Amount", "200000");
+        //    conn.AddDigitalOrderField("vpc_Currency", "VND");
+        //    conn.AddDigitalOrderField("vpc_ReturnURL", "http://localhost:15536/onepagecheckout");
+        //    // Thong tin them ve khach hang. De trong neu khong co thong tin
+        //    conn.AddDigitalOrderField("vpc_SHIP_Street01", "");
+        //    conn.AddDigitalOrderField("vpc_SHIP_Provice", "");
+        //    conn.AddDigitalOrderField("vpc_SHIP_City", "");
+        //    conn.AddDigitalOrderField("vpc_SHIP_Country", "");
+        //    conn.AddDigitalOrderField("vpc_Customer_Phone", "");
+        //    conn.AddDigitalOrderField("vpc_Customer_Email", "");
+        //    conn.AddDigitalOrderField("vpc_Customer_Id", "");
+        //    // Dia chi IP cua khach hang
+        //    conn.AddDigitalOrderField("vpc_TicketNo", order.CustomerIp);
+
+        //    post.Add("vpc_SecureHash", conn.CreateSHA256Signature(true));
+        //    post.Post();
+        //}
 
         public ProcessPaymentResult ProcessPayment(ProcessPaymentRequest processPaymentRequest)
         {
@@ -400,8 +431,11 @@ namespace Nop.Plugin.Payments.Onepay
         /// <returns></returns>
         private string GetPaymentUrl()
         {
-            return _onePayPaymentSettings.UseSandbox ? "https://mtf.onepay.vn/onecomm-pay/vpc.op" :
-                "https://mtf.onepay.vn/onecomm-pay/vpc.op";
+            //return _onePayPaymentSettings.UseSandbox ? "https://mtf.onepay.vn/onecomm-pay/vpc.op" :
+            //    "https://mtf.onepay.vn/onecomm-pay/vpc.op";
+
+            return _onePayPaymentSettings.UseSandbox ? "https://test.wirecard.com.sg/easypay2/paymentpage.do" :
+                "https://test.wirecard.com.sg/easypay2/paymentpage.do";
         }
 
         /// <summary>
