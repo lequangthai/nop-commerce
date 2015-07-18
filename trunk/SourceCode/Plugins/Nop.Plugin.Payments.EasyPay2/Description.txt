@@ -1,0 +1,8 @@
+﻿Group: Payment methods
+FriendlyName: EasyPay2
+SystemName: Payments.EasyPay2
+Version: 1.00
+SupportedVersions: 3.60
+Author: t2a
+DisplayOrder: 1
+FileName: Nop.Plugin.Payments.EasyPay2.dll
