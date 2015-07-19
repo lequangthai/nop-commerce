@@ -52,6 +52,7 @@ using Nop.Services.Vendors;
 using Nop.Web.Framework.Mvc.Routes;
 using Nop.Web.Framework.Themes;
 using Nop.Web.Framework.UI;
+using Nop.Core.Domain.Catalog;
 
 namespace Nop.Web.Framework
 {
@@ -113,7 +114,9 @@ namespace Nop.Web.Framework
 
 
             builder.RegisterGeneric(typeof(EfRepository<>)).As(typeof(IRepository<>)).InstancePerLifetimeScope();
-            
+
+            builder.RegisterType(typeof(CustomProductRepository)).As(typeof(IRepository<Product>)).InstancePerLifetimeScope();
+
             //plugins
             builder.RegisterType<PluginFinder>().As<IPluginFinder>().InstancePerLifetimeScope();
             builder.RegisterType<OfficialFeedManager>().As<IOfficialFeedManager>().InstancePerLifetimeScope();

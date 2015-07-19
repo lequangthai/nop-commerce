@@ -36,6 +36,7 @@ using Nop.Web.Framework;
 using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Kendoui;
 using Nop.Web.Framework.Mvc;
+using Nop.Data;
 
 namespace Nop.Admin.Controllers
 {
@@ -83,6 +84,7 @@ namespace Nop.Admin.Controllers
         private readonly IProductAttributeFormatter _productAttributeFormatter;
         private readonly IProductAttributeParser _productAttributeParser;
         private readonly IDownloadService _downloadService;
+        private readonly IDbContext _dbContext;
 
         #endregion
 
@@ -127,7 +129,7 @@ namespace Nop.Admin.Controllers
             IShoppingCartService shoppingCartService,
             IProductAttributeFormatter productAttributeFormatter,
             IProductAttributeParser productAttributeParser,
-            IDownloadService downloadService)
+            IDownloadService downloadService, IDbContext dbContext)
         {
             this._productService = productService;
             this._productTemplateService = productTemplateService;
@@ -169,6 +171,7 @@ namespace Nop.Admin.Controllers
             this._productAttributeFormatter = productAttributeFormatter;
             this._productAttributeParser = productAttributeParser;
             this._downloadService = downloadService;
+            this._dbContext = dbContext;
         }
 
         #endregion 
@@ -2596,6 +2599,32 @@ namespace Nop.Admin.Controllers
             return View(model);
         }
 
+        #endregion
+
+        #region Product Settings
+        public ActionResult ProductSetting()
+        {
+            var model = new ProductSettingModel();
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult ProductSetting(ProductSettingModel vm)
+        {
+            if (ModelState.IsValid)
+            {
+                var temp = string.Empty;
+                for (int i = 1; i <= vm.MaxCartQuantity; i++)
+                {
+                    temp += i + ",";
+                }
+                temp = temp.TrimEnd(',');
+                var sql = string.Format(" UPDATE Product SET OrderMaximumQuantity = {0}, AllowedQuantities = '{1}';", vm.MaxCartQuantity, temp);   
+                    _dbContext.ExecuteSqlCommand(sql);
+                return RedirectToAction("Index");
+            }
+            return View();
+        }
         #endregion
 
         #region Purchased with order

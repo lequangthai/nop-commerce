@@ -158,8 +158,7 @@ namespace Nop.Services.Catalog
         /// <returns>Result</returns>
         public static int[] ParseAllowedQuantities(this Product product)
         {
-            if (product == null)
-                throw new ArgumentNullException("product");
+            if (product == null) throw new ArgumentNullException("product");
 
             var result = new List<int>();
             if (!String.IsNullOrWhiteSpace(product.AllowedQuantities))

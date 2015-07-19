@@ -146,6 +146,10 @@
                 </div>
                 @Html.Action("ProductsAlsoPurchased", "Product", new { productId = Model.Id })
                 @Html.Action("RelatedProducts", "Product", new { productId = Model.Id })
+
+                <div>
+                    @Html.Action("RecentlyViewedProductsBlock", "Product", new { productThumbPictureSize = 415, displayMode="Horizontal" })
+                </div>
             </div>
         }
         @Html.Widget("productdetails_bottom", Model.Id)

@@ -1,0 +1,21 @@
+﻿@{
+    ViewBag.Title = "ProductSetting";
+}
+@model ProductSettingModel
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "category-form" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="section-header">
+        <div class="title">
+            Reset the maximum quantity of a product in the shopping cart
+        </div>
+        <div class="options">
+            <input type="submit" name="save" class="k-button" value="@T("Admin.Common.Save")" />
+        </div>
+    </div>
+    <div>
+        <span>Maximum Quantity Of Cart:</span>
+        @Html.TextBoxFor(x => x.MaxCartQuantity)
+    </div>
+}
+
