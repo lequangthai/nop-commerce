@@ -164,6 +164,7 @@ namespace Nop.Plugin.Payments.EasyPay2
             var merchTxnRef = RSG.Generate(25);
             var orderInfo = RSG.Generate(25);
 
+
             post.Add("mid", "20130114001");
             post.Add("ref", merchTxnRef);
             post.Add("cur", "SGD");
