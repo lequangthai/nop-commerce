@@ -1,0 +1,102 @@
+﻿@{
+    Layout = "~/Views/Shared/_ColumnsOne.cshtml";
+    var contentPath = "/Themes/Takashimaya/Content";
+}
+<div class="page home-page">
+    <div class="page-body">
+        @*@Html.Widget("home_page_top")
+        @Html.Action("TopicBlock", "Topic", new { systemName = "HomePageText" })
+        @Html.Widget("home_page_before_categories")
+        @Html.Action("HomepageCategories", "Catalog")
+        @Html.Widget("home_page_before_products")
+        @Html.Action("HomepageProducts", "Product")
+        @Html.Widget("home_page_before_best_sellers")
+        @Html.Action("HomepageBestSellers", "Product")
+        @Html.Widget("home_page_before_news")
+        @Html.Action("HomePageNews", "News")
+        @Html.Widget("home_page_before_poll")
+        @Html.Action("HomePagePolls", "Poll")
+        @Html.Widget("home_page_bottom")*@
+
+        <div class="main-wrapper">
+            <!-- main slide show -->
+            <div id="main-top-slide" class="carousel slide" data-ride="carousel">
+                <ol class="carousel-indicators">
+                    <li data-target="#main-top-slide" data-slide-to="0" class="active"></li>
+                    <li data-target="#main-top-slide" data-slide-to="1" class=""></li>
+
+                </ol>
+                <div class="carousel-inner">
+                    <div class="item active">
+                        <img data-src="" alt="First slide" src="@contentPath/images/main-banner-1.jpg">
+                        <!--<div class="container">
+                        <div class="carousel-caption">
+                            <h1>Example headline.</h1>
+                            <p>Note: If you're viewing this page via a <code>file://</code> URL, the "next" and "previous" Glyphicon buttons on the left and right might not load/display properly due to web browser security rules.</p>
+                            <p><a class="btn btn-lg btn-primary" href="#" role="button">Sign up today</a></p>
+                        </div>
+                    </div>-->
+                    </div>
+                    <div class="item">
+                        <img data-src="" alt="Second slide" src="@contentPath/images/main-banner-1.jpg">
+                        <!--<div class="container">
+                        <div class="carousel-caption">
+                            <h1>Another example headline.</h1>
+                            <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+                            <p><a class="btn btn-lg btn-primary" href="#" role="button">Learn more</a></p>
+                        </div>
+                    </div>-->
+                    </div>
+
+                </div>
+                <a class="left carousel-control" href="#main-top-slide" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
+                <a class="right carousel-control" href="#main-top-slide" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+            </div>
+            <!-- end main slide show -->
+
+            <div class="row">
+                <div class="col-xs-6 col-sm-4">
+                    <div class="feature-product-box">
+                        <img src="@contentPath/images/feature-product.jpg" alt="product name" class="img-responsive">
+                        <div class="caption">
+                            <div class="blur">
+                                <div class="caption-text">
+                                    <h1>Amazing Caption</h1>
+                                    <p>Whatever It Is - Always Awesome</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6 col-sm-4">
+                    <a href="http://google.com">
+                        <div class="feature-product-box">
+                            <img src="@contentPath/images/feature-product.jpg" alt="product name" class="img-responsive">
+                            <div class="caption">
+                                <div class="blur">
+                                    <div class="caption-text">
+                                        <h1>Amazing Caption</h1>
+                                        <p>Whatever It Is - Always Awesome</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-xs-6 col-sm-4">
+                    <div class="feature-product-box">
+                        <img src="@contentPath/images/feature-product.jpg" alt="product name" class="img-responsive">
+                        <div class="caption">
+                            <div class="blur">
+                                <div class="caption-text">
+                                    <h1>Amazing Caption</h1>
+                                    <p>Whatever It Is - Always Awesome</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+</div>

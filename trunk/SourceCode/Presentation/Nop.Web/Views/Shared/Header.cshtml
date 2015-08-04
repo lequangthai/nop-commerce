@@ -6,6 +6,7 @@
     //logo path
     var currentThemeName = EngineContext.Current.Resolve<IThemeContext>().WorkingThemeName;
     var logoPath = "~/Themes/" + currentThemeName + "/Content/images/logo.png";
+    var contentPath = "/Themes/" + currentThemeName + "/Content";
 
     //store name
     var storeName = EngineContext.Current.Resolve<IStoreContext>().CurrentStore.GetLocalized(x => x.Name);
@@ -13,7 +14,7 @@
 
 <div class="header">
     @Html.Widget("header")
-    <div class="header-upper">
+    @*<div class="header-upper">
         <div class="header-selectors-wrapper">
             
             @Html.Action("TaxTypeSelector", "Common")
@@ -37,6 +38,34 @@
         </div>
         <div class="search-box">
             @Html.Action("SearchBox", "Catalog")
+        </div>
+    </div>*@
+    <div class="header-links-wrapper">
+        @Html.Action("HeaderLinks", "Common")
+        @Html.Action("FlyoutShoppingCart", "ShoppingCart")
+    </div>
+    <div class="container header-wrapper">
+        <div class="main-logo col-md-6 col-sm-6">
+            <img src="@contentPath/images/logo.png" alt="">
+        </div>
+        <div class="col-md-6 col-sm-6 header-right ">
+            <div class="account-bar text-right">
+                <a href="javascript:void(0)" class="btn-login"><i class="fa fa-pencil"></i>Member Login</a>
+                <a href="javascript:void(0)">Sign Up</a>
+            </div>
+            <div class="row header-right-bottom">
+                <div class="col-md-6 shop-cart">
+                    <span>Shopping Cart</span><span>(0 items - $0.00)</span>
+                </div>
+                <div class="col-md-6">
+                    <form>
+                        <div class="form-group po-relative">
+                            <input type="text" class="form-control input-search" placeholder="Search">
+                            <a href="" class="btn-search"></a>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </div>

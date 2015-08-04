@@ -1,0 +1,67 @@
+
+.fl{ float: left;}
+.fr{ float: right;}
+.clear{ clear:both;}
+.po-relative{ position: relative;}
+
+/*  header */
+.main-logo{ margin-top: 40px;}
+
+.header{ height: 120px; background: url('../images/header-bg.png');}
+.header-wrapper{ height: 100%; position: relative; }
+.shop-cart { margin-top: 8px;}
+.input-search{ border-color: #FFCCCB;}
+.btn-search{ position: absolute; top: 4px; right: 2px; background: url('../images/icon-search.png'); height: 26px; width: 22px;}
+.header-right{ position: absolute; right:0; bottom: -5px; }
+.header-right-bottom{ margin-top: 15px;}
+
+
+
+.account-bar{ margin: 20px 0;	}
+.account-bar a{ padding: 0 10px; margin:0; color:#333; }
+.account-bar a:first-child{ border-right: 1px solid black; margin-right: -5px;}
+.btn-login .fa{ margin-right: 5px; color: black;}
+/* nav-bar */
+.navbar-default { background: #FFCCCB !important;border-radius: 0; }
+.navbar-nav li.active a{ color: white !important; background: #BD072D !important;}
+.navbar-nav li.navitem:hover{ background: pink;}
+.navbar-nav li.navitem:hover a{color: white;}
+.navbar-collapse{padding-left:0;}
+
+.social-icons {padding-top:15px;margin-right: 10px;}
+.social-icons span, .social-icons ul {float: left;}
+.social-icons ul { margin:0 0 0 5px; padding: 0;}
+.social-icons li{ display: inline;margin: 0 5px; font-size: 18px;}
+.social-icons .fa{ color: black;}
+
+/* feature product boxes */
+.feature-product-box{ margin: 20px 0; position: relative; }
+.feature-product-box img{ width: 100%;}
+.feature-product-box .caption {
+width: 100%; height: 100%; top:0;
+padding: 10px;
+cursor: pointer;
+position: absolute;
+opacity: 0;
+-webkit-transition: all 0.6s ease-in-out;
+-moz-transition: all 0.6s ease-in-out;
+-o-transition: all 0.6s ease-in-out;
+-ms-transition: all 0.6s ease-in-out;
+transition: all 0.6s ease-in-out;
+
+}
+.feature-product-box .caption .blur{ width: 100%; height: 100%; margin: auto; display: table; background-color: rgba(255,255,255,0.9); padding: 10px; }
+.feature-product-box:hover .caption { opacity: 1; }
+
+/* FOOTER */
+footer{ background-color:#FFCCCB; font-size: 11px;}
+.footer p{ padding: 0; margin:0;}
+.footer-left { text-align: left; float:left; padding-top: 10px !important;}
+.footer-left span{ margin-right: 5px;}
+.footer-left a{ padding: 0 10px; border-left: 1px solid #333; text-decoration: none; color: #333}
+.subscribe { float:right; padding: 7px 10px 5px 20px !important; background: #BD072D; color: white; }
+.subscribe input{ margin-top: -4px; color: #333; } 
+.subscribe input[type='text']{ width: 120px; margin: 0 2px; background:#FFCCCB; border: none; color: white; padding: 2px;}
+.btn-go{ padding: 2px; margin: 0;}
+
+
