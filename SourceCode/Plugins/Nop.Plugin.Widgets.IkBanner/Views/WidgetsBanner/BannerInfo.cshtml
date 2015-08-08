@@ -6,7 +6,7 @@
 @using Nop.Core.Html;
 @if (!Model.IsStatic)
 { 
-<div class="slide-banner-container">
+<div class="slide-banner-container banner-container">
     <div class="slide-inner">
         <ul class="slides">               
             @foreach (var banner in Model.AvailableBanners)
@@ -23,8 +23,13 @@
 }
 else
 {
-foreach (var banner in Model.AvailableBanners)
-{
-    @Html.Raw(banner.BannerHtml)
+    <div class="banner-container">
+        @foreach (var banner in Model.AvailableBanners)
+        {
+        @Html.Raw(banner.BannerHtml)
+        }
+    </div>
 }
-}
+<script>
+    $('.banner-container img').addClass('img-responsive');
+</script>
