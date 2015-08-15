@@ -25,6 +25,7 @@ namespace Nop.Services.Orders
         #region Fields
 
         private readonly IRepository<ShoppingCartItem> _sciRepository;
+        private readonly IRepository<ShippingCartItem> _shippingCartItemRepository; 
         private readonly IWorkContext _workContext;
         private readonly IStoreContext _storeContext;
         private readonly ICurrencyService _currencyService;
@@ -69,6 +70,7 @@ namespace Nop.Services.Orders
         /// <param name="genericAttributeService">Generic attribute service</param>
         /// <param name="productAttributeService">Product attribute service</param>
         public ShoppingCartService(IRepository<ShoppingCartItem> sciRepository,
+            IRepository<ShippingCartItem> shippingCartItemRepository,
             IWorkContext workContext, IStoreContext storeContext,
             ICurrencyService currencyService,
             IProductService productService, ILocalizationService localizationService,
@@ -86,6 +88,7 @@ namespace Nop.Services.Orders
             IProductAttributeService productAttributeService)
         {
             this._sciRepository = sciRepository;
+            this._shippingCartItemRepository = shippingCartItemRepository;
             this._workContext = workContext;
             this._storeContext = storeContext;
             this._currencyService = currencyService;
@@ -1244,6 +1247,132 @@ namespace Nop.Services.Orders
                 //save customer
                 _customerService.UpdateCustomer(toCustomer);
                  
+            }
+        }
+
+        public void AddShippingCart(int storeId, Customer customer, int shoppingCartItemId, int shippingCartPosition, string recipientName)
+        {
+            var shoppingCartItem = customer.ShoppingCartItems
+                .Where(sci => sci.ShoppingCartType == ShoppingCartType.ShoppingCart)
+                .LimitPerStore(storeId).FirstOrDefault(c => c.Id == shoppingCartItemId);
+            if (shoppingCartItem != null)
+            {
+                var shippingCart =
+                    customer.ShippingCarts.FirstOrDefault(c => c.RecipientName.ToLower().Equals(recipientName.ToLower()));
+                if (shippingCart == null)
+                {
+                    shippingCart = new ShippingCart {Customer = customer, RecipientName = recipientName.ToLower()};
+                    customer.ShippingCarts.Add(shippingCart);
+                    _customerService.UpdateCustomer(customer);
+                }
+                var foundItem = false;
+                foreach (var sCart in customer.ShippingCarts)
+                {
+                    var existsShippingItem =
+                        sCart.ShippingCartItems.FirstOrDefault(
+                            c =>
+                                c.ShoppingCartItemId == shoppingCartItemId &&
+                                c.ShippingCartPosition == shippingCartPosition);
+                    if (existsShippingItem != null)
+                    {
+                        if (existsShippingItem.ShippingCartId != shippingCart.Id)
+                        {
+                            sCart.ShippingCartItems.Remove(existsShippingItem);
+                            existsShippingItem.ShippingCart = shippingCart;
+                        }
+                        foundItem = true;
+                    }
+                }
+                if (!foundItem)
+                {
+                    var newShippingCartItem = new ShippingCartItem
+                    {
+                        ShippingCart = shippingCart,
+                        ShoppingCartItem = shoppingCartItem,
+                        ShippingCartPosition = shippingCartPosition
+                    };
+                    shippingCart.ShippingCartItems.Add(newShippingCartItem);
+                }
+                _customerService.UpdateCustomer(customer);
+            }
+        }
+
+        public void UpdateShippingCart(int storeId, Customer customer, int shoppingCartItemId, int shippingCartPosition, int shippingCartId)
+        {
+            var shoppingCartItem = customer.ShoppingCartItems
+                .Where(sci => sci.ShoppingCartType == ShoppingCartType.ShoppingCart)
+                .LimitPerStore(storeId).FirstOrDefault(c => c.Id == shoppingCartItemId);
+            if (shoppingCartItem != null)
+            {
+                var shippingCart =
+                    customer.ShippingCarts.FirstOrDefault(c => c.Id == shippingCartId);
+                if (shippingCart != null)
+                {
+                    var foundItem = false;
+                    foreach (var sCart in customer.ShippingCarts)
+                    {
+                        var existsShippingItem =
+                            sCart.ShippingCartItems.FirstOrDefault(
+                                c =>
+                                    c.ShoppingCartItemId == shoppingCartItemId &&
+                                    c.ShippingCartPosition == shippingCartPosition);
+                        if (existsShippingItem != null)
+                        {
+                            if (existsShippingItem.ShippingCartId != shippingCart.Id)
+                            {
+                                sCart.ShippingCartItems.Remove(existsShippingItem);
+                                existsShippingItem.ShippingCart = shippingCart;
+                            }
+                            foundItem = true;
+                        }
+                    }
+                    if (!foundItem)
+                    {
+                        var newShippingCartItem = new ShippingCartItem
+                        {
+                            ShippingCart = shippingCart,
+                            ShoppingCartItem = shoppingCartItem,
+                            ShippingCartPosition = shippingCartPosition
+                        };
+                        shippingCart.ShippingCartItems.Add(newShippingCartItem);
+                    }
+                    _customerService.UpdateCustomer(customer);
+                }
+            }
+        }
+
+        public void DeleteShippingCart(int storeId, Customer customer, int shoppingCartItemId, int shippingCartPosition)
+        {
+            var shoppingCartItem = customer.ShoppingCartItems
+                .Where(sci => sci.ShoppingCartType == ShoppingCartType.ShoppingCart)
+                .LimitPerStore(storeId).FirstOrDefault(c => c.Id == shoppingCartItemId);
+            if (shoppingCartItem != null)
+            {
+                var listShippingCartItems =
+                    _shippingCartItemRepository.Table.Where(c => c.ShoppingCartItemId == shoppingCartItemId)
+                        .OrderBy(c => c.ShippingCartPosition)
+                        .ToList();
+                var existsItemToDelete = listShippingCartItems.Any(c => c.ShippingCartPosition == shippingCartPosition);
+                if (existsItemToDelete)
+                {
+                    var lastPosition = shoppingCartItem.Quantity - 1;
+                    for (var i = 0; i <= lastPosition; i++)
+                    {
+                        if (i == shippingCartPosition)
+                        {
+                            _shippingCartItemRepository.Delete(listShippingCartItems[i]);
+                        }
+                        if (i > shippingCartPosition)
+                        {
+                            listShippingCartItems[i].ShippingCartPosition = i - 1;
+                            _shippingCartItemRepository.Update(listShippingCartItems[i]);
+                        }
+                    }
+                    UpdateShoppingCartItem(customer,
+                        shoppingCartItem.Id, shoppingCartItem.AttributesXml, shoppingCartItem.CustomerEnteredPrice,
+                        shoppingCartItem.RentalStartDateUtc, shoppingCartItem.RentalEndDateUtc,
+                        shoppingCartItem.Quantity - 1, true);
+                }
             }
         }
 

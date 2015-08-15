@@ -15,7 +15,7 @@ namespace Nop.Data.Mapping.Orders
                 .WithMany(o => o.OrderShippings)
                 .HasForeignKey(o => o.OrderId);
 
-            this.HasRequired(o => o.ShippingAddress)
+            this.HasOptional(o => o.ShippingAddress)
                 .WithMany()
                 .HasForeignKey(o => o.ShippingAddressId);
         }

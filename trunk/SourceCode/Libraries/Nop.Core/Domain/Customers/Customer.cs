@@ -196,7 +196,13 @@ namespace Nop.Core.Domain.Customers
             get { return _addresses ?? (_addresses = new List<Address>()); }
             protected set { _addresses = value; }            
         }
-        
+
+        private ICollection<ShippingCart> _shippingCarts;
+        public virtual ICollection<ShippingCart> ShippingCarts
+        {
+            get { return _shippingCarts ?? (_shippingCarts = new List<ShippingCart>()); }
+            protected set { _shippingCarts = value; }
+        }
         #endregion
     }
 }

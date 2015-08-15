@@ -55,11 +55,6 @@ namespace Nop.Services.Orders
             }
             return totalInShipments;
         }
-        /// <summary>
-        /// Gets a total number of items in all shipments
-        /// </summary>
-        /// <param name="orderShippingItem">Order item</param>
-        /// <returns>Total number of items in all shipmentss</returns>
         public static int GetTotalNumberOfItemsInAllShipment(this OrderShippingItem orderShippingItem)
         {
             if (orderShippingItem == null)
@@ -99,11 +94,6 @@ namespace Nop.Services.Orders
 
             return qtyCanBeAddedToShipmentTotal;
         }
-        /// <summary>
-        /// Gets a total number of already items which can be added to new shipments
-        /// </summary>
-        /// <param name="orderShippingItem">Order item</param>
-        /// <returns>Total number of already delivered items which can be added to new shipments</returns>
         public static int GetTotalNumberOfItemsCanBeAddedToShipment(this OrderShippingItem orderShippingItem)
         {
             if (orderShippingItem == null)
@@ -150,6 +140,30 @@ namespace Nop.Services.Orders
 
             return result;
         }
+        public static int GetTotalNumberOfNotYetShippedItems(this OrderShippingItem orderShippingItem)
+        {
+            if (orderShippingItem == null)
+                throw new ArgumentNullException("orderShippingItem");
+
+            var result = 0;
+            var shipments = orderShippingItem.OrderShipping.Shipments.ToList();
+            for (int i = 0; i < shipments.Count; i++)
+            {
+                var shipment = shipments[i];
+                if (shipment.ShippedDateUtc.HasValue)
+                    //already shipped
+                    continue;
+
+                var si = shipment.ShipmentItems
+                    .FirstOrDefault(x => x.OrderShippingItemId == orderShippingItem.Id);
+                if (si != null)
+                {
+                    result += si.Quantity;
+                }
+            }
+
+            return result;
+        }
 
         /// <summary>
         /// Gets a total number of already shipped items
@@ -180,6 +194,30 @@ namespace Nop.Services.Orders
                 }
             }
             
+            return result;
+        }
+        public static int GetTotalNumberOfShippedItems(this OrderShippingItem orderShippingItem)
+        {
+            if (orderShippingItem == null)
+                throw new ArgumentNullException("orderShippingItem");
+
+            var result = 0;
+            var shipments = orderShippingItem.OrderShipping.Shipments.ToList();
+            for (int i = 0; i < shipments.Count; i++)
+            {
+                var shipment = shipments[i];
+                if (!shipment.ShippedDateUtc.HasValue)
+                    //not shipped yet
+                    continue;
+
+                var si = shipment.ShipmentItems
+                    .FirstOrDefault(x => x.OrderShippingItemId == orderShippingItem.Id);
+                if (si != null)
+                {
+                    result += si.Quantity;
+                }
+            }
+
             return result;
         }
 
@@ -214,6 +252,30 @@ namespace Nop.Services.Orders
 
             return result;
         }
+        public static int GetTotalNumberOfDeliveredItems(this OrderShippingItem orderShippingItem)
+        {
+            if (orderShippingItem == null)
+                throw new ArgumentNullException("orderShippingItem");
+
+            var result = 0;
+            var shipments = orderShippingItem.OrderShipping.Shipments.ToList();
+            for (int i = 0; i < shipments.Count; i++)
+            {
+                var shipment = shipments[i];
+                if (!shipment.DeliveryDateUtc.HasValue)
+                    //not delivered yet
+                    continue;
+
+                var si = shipment.ShipmentItems
+                    .FirstOrDefault(x => x.OrderShippingItemId == orderShippingItem.Id);
+                if (si != null)
+                {
+                    result += si.Quantity;
+                }
+            }
+
+            return result;
+        }
 
         /// <summary>
         /// Gets a value indicating whether an order has items to be added to a shipment
@@ -240,11 +302,6 @@ namespace Nop.Services.Orders
             }
             return false;
         }
-        /// <summary>
-        /// Gets a value indicating whether an order has items to be added to a shipment
-        /// </summary>
-        /// <param name="orderShipping">Order</param>
-        /// <returns>A value indicating whether an order has items to be added to a shipment</returns>
         public static bool HasItemsToAddToShipment(this OrderShipping orderShipping)
         {
             if (orderShipping == null)
@@ -292,6 +349,27 @@ namespace Nop.Services.Orders
             }
             return false;
         }
+        public static bool HasItemsToShip(this OrderShipping orderShipping)
+        {
+            if (orderShipping == null)
+                throw new ArgumentNullException("orderShipping");
+
+            foreach (var orderShippingItem in orderShipping.OrderShippingItems)
+            {
+                //we can ship only shippable products
+                if (!orderShippingItem.OrderItem.Product.IsShipEnabled)
+                    continue;
+
+                var totalNumberOfNotYetShippedItems = orderShippingItem.GetTotalNumberOfNotYetShippedItems();
+                if (totalNumberOfNotYetShippedItems <= 0)
+                    continue;
+
+                //yes, we have at least one item to ship
+                return true;
+            }
+            return false;
+        }
+
         /// <summary>
         /// Gets a value indicating whether an order has items to deliver
         /// </summary>
@@ -310,6 +388,27 @@ namespace Nop.Services.Orders
 
                 var totalNumberOfShippedItems = orderItem.GetTotalNumberOfShippedItems();
                 var totalNumberOfDeliveredItems = orderItem.GetTotalNumberOfDeliveredItems();
+                if (totalNumberOfShippedItems <= totalNumberOfDeliveredItems)
+                    continue;
+
+                //yes, we have at least one item to deliver
+                return true;
+            }
+            return false;
+        }
+        public static bool HasItemsToDeliver(this OrderShipping orderShipping)
+        {
+            if (orderShipping == null)
+                throw new ArgumentNullException("orderShipping");
+
+            foreach (var orderShippingItem in orderShipping.OrderShippingItems)
+            {
+                //we can ship only shippable products
+                if (!orderShippingItem.OrderItem.Product.IsShipEnabled)
+                    continue;
+
+                var totalNumberOfShippedItems = orderShippingItem.GetTotalNumberOfShippedItems();
+                var totalNumberOfDeliveredItems = orderShippingItem.GetTotalNumberOfDeliveredItems();
                 if (totalNumberOfShippedItems <= totalNumberOfDeliveredItems)
                     continue;
 

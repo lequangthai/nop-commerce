@@ -57,6 +57,7 @@ namespace Nop.Web.Models.ShoppingCart
                 Picture = new PictureModel();
                 AllowedQuantities = new List<SelectListItem>();
                 Warnings = new List<string>();
+                ShippingCartItems = new List<ShippingCartItemModel>();
             }
             public string Sku { get; set; }
 

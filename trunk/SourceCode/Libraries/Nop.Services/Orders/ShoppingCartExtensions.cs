@@ -25,6 +25,11 @@ namespace Nop.Services.Orders
                     return true;
             return false;
         }
+        public static bool RequiresShipping(this ShippingCart shippingCart)
+        {
+            return
+                shippingCart.ShippingCartItems.Any(shippingCartItem => shippingCartItem.ShoppingCartItem.IsShipEnabled);
+        }
 
         /// <summary>
         /// Gets a number of product in the cart

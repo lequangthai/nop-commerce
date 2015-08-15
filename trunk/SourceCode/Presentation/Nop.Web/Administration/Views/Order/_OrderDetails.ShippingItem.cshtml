@@ -193,9 +193,6 @@
                 <col />
                 <col />
                 <col />
-                <col />
-                <col />
-                <col />
                 <thead>
                     <tr class="headerstyle">
                         <th align="center">
@@ -205,16 +202,7 @@
                             @T("Admin.Orders.Products.ProductName")
                         </th>
                         <th align="center">
-                            @T("Admin.Orders.Products.Price")
-                        </th>
-                        <th align="center">
                             @T("Admin.Orders.Products.Quantity")
-                        </th>
-                        <th align="center">
-                            @T("Admin.Orders.Products.Discount")
-                        </th>
-                        <th align="center">
-                            @T("Admin.Orders.Products.Total")
                         </th>
                     </tr>
                 </thead>
@@ -287,23 +275,8 @@
                                     }
                                 </div>
                             </td>
-                            <td align="center" style="width: 15%;">
-                                @item.UnitPriceExclTax
-                                <br/>
-                                @item.UnitPriceInclTax
-                            </td>
                             <td align="center" style="width: 10%;">
                                 <div>@item.Quantity</div>
-                            </td>
-                            <td align="center" style="width: 15%;">
-                                @item.DiscountInclTax
-                                    <br />
-                                    @item.DiscountExclTax
-                            </td>
-                            <td align="center" style="width: 15%;">
-                                @item.SubTotalInclTax
-                                    <br />
-                                    @item.SubTotalExclTax
                             </td>
                         </tr>
                     }

@@ -69,6 +69,8 @@
     <Compile Include="Mapping\Common\AddressAttributeValueMap.cs" />
     <Compile Include="Mapping\Orders\OrderShippingItemMap.cs" />
     <Compile Include="Mapping\Orders\OrderShippingMap.cs" />
+    <Compile Include="Mapping\Orders\ShippingCartItemMap.cs" />
+    <Compile Include="Mapping\Orders\ShippingCartMap.cs" />
     <Compile Include="Mapping\Topics\TopicTemplateMap.cs" />
     <Compile Include="QueryableExtensions.cs" />
     <Compile Include="Extensions.cs" />
