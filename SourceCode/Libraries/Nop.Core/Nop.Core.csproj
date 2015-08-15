@@ -104,6 +104,8 @@
     <Compile Include="Domain\Orders\OrderShippingItem.cs" />
     <Compile Include="Domain\Orders\OrderByCountryReportLine.cs" />
     <Compile Include="Domain\Orders\OrderShipping.cs" />
+    <Compile Include="Domain\Orders\ShippingCart.cs" />
+    <Compile Include="Domain\Orders\ShippingCartItem.cs" />
     <Compile Include="Domain\Seo\WwwRequirement.cs" />
     <Compile Include="Domain\Shipping\Events.cs" />
     <Compile Include="Domain\Shipping\Warehouse.cs" />

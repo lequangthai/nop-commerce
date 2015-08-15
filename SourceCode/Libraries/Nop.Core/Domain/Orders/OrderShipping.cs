@@ -7,7 +7,7 @@ namespace Nop.Core.Domain.Orders
 {
     public class OrderShipping : BaseEntity
     {
-        public int ShippingAddressId { get; set; }
+        public int? ShippingAddressId { get; set; }
 
         public virtual Address ShippingAddress { get; set; }
 

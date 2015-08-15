@@ -70,6 +70,7 @@ namespace Nop.Services.Orders
         private readonly IAffiliateService _affiliateService;
         private readonly IEventPublisher _eventPublisher;
         private readonly IPdfService _pdfService;
+        private readonly IOrderShippingService _orderShippingService;
 
         private readonly ShippingSettings _shippingSettings;
         private readonly PaymentSettings _paymentSettings;
@@ -149,6 +150,7 @@ namespace Nop.Services.Orders
             ICustomerActivityService customerActivityService,
             ICurrencyService currencyService,
             IAffiliateService affiliateService,
+            IOrderShippingService orderShippingService,
             IEventPublisher eventPublisher,
             IPdfService pdfService,
             ShippingSettings shippingSettings,
@@ -186,6 +188,7 @@ namespace Nop.Services.Orders
             this._customerActivityService = customerActivityService;
             this._currencyService = currencyService;
             this._affiliateService = affiliateService;
+            this._orderShippingService = orderShippingService;
             this._eventPublisher = eventPublisher;
             this._pdfService = pdfService;
             this._paymentSettings = paymentSettings;
@@ -1844,6 +1847,14 @@ namespace Nop.Services.Orders
                 _productService.BookReservedInventory(orderItem.Product, item.WarehouseId, -item.Quantity);
             }
 
+            //check status for OrderShipping
+            var orderShipping = shipment.OrderShipping;
+            if (orderShipping.HasItemsToAddToShipment() || orderShipping.HasItemsToShip())
+                orderShipping.ShippingStatusId = (int)ShippingStatus.PartiallyShipped;
+            else
+                orderShipping.ShippingStatusId = (int)ShippingStatus.Shipped;
+            _orderShippingService.UpdateOrderShipping(orderShipping);
+
             //check whether we have more items to ship
             if (order.HasItemsToAddToShipment() || order.HasItemsToShip())
                 order.ShippingStatusId = (int)ShippingStatus.PartiallyShipped;
@@ -1906,6 +1917,13 @@ namespace Nop.Services.Orders
             shipment.DeliveryDateUtc = DateTime.UtcNow;
             _shipmentService.UpdateShipment(shipment);
 
+            //set status for OrderShipping
+            var orderShipping = shipment.OrderShipping;
+            if (!orderShipping.HasItemsToAddToShipment() && !orderShipping.HasItemsToShip() && !orderShipping.HasItemsToDeliver())
+                orderShipping.ShippingStatusId = (int)ShippingStatus.Delivered;
+            _orderShippingService.UpdateOrderShipping(orderShipping);
+
+            //set status for Order
             if (!order.HasItemsToAddToShipment() && !order.HasItemsToShip() && !order.HasItemsToDeliver())
                 order.ShippingStatusId = (int)ShippingStatus.Delivered;
             _orderService.UpdateOrder(order);

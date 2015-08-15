@@ -830,7 +830,7 @@ namespace Nop.Web.Controllers
             }
 
             return View(model);
-        }
+        }    
         [HttpPost, ActionName("ShippingMethod")]
         [FormValueRequired("nextstep")]
         [ValidateInput(false)]
@@ -894,8 +894,8 @@ namespace Nop.Web.Controllers
             
             return RedirectToRoute("CheckoutPaymentMethod");
         }
-        
-        
+
+
         public ActionResult PaymentMethod()
         {
             //validation

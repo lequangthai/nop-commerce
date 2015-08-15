@@ -15,7 +15,8 @@ namespace Nop.Data.Mapping.Orders
 
             this.HasRequired(osi => osi.OrderItem)
                 .WithMany()
-                .HasForeignKey(osi => osi.OrderItemId);
+                .HasForeignKey(osi => osi.OrderItemId)
+                .WillCascadeOnDelete(false);
         }
     }
 }

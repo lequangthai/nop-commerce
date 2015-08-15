@@ -620,15 +620,17 @@ namespace Nop.Admin.Controllers
                         orderShippingModel.ShippingAddressGoogleMapsUrl = string.Format("http://maps.google.com/maps?f=q&hl=en&ie=UTF8&oe=UTF8&geocode=&q={0}", Server.UrlEncode(orderShipping.ShippingAddress.Address1 + " " + orderShipping.ShippingAddress.ZipPostalCode + " " + orderShipping.ShippingAddress.City + " " + (orderShipping.ShippingAddress.Country != null ? orderShipping.ShippingAddress.Country.Name : "")));
                     }
                     orderShippingModel.ShippingMethod = orderShipping.ShippingMethod;
-                    orderShippingModel.CanAddNewShipments = order.HasItemsToAddToShipment();
+                    orderShippingModel.CanAddNewShipments = orderShipping.HasItemsToAddToShipment();
                     orderShippingModel.IsLoggedInAsVendor = _workContext.CurrentVendor != null;
 
                     foreach (var orderShippingItem in orderShipping.OrderShippingItems)
                     {
                         var orderItem = model.Items.FirstOrDefault(c => c.Id == orderShippingItem.OrderItem.Id);
+                        var newOrderItem = orderItem.CloneJson();
+                        newOrderItem.Quantity = orderShippingItem.Quantity;
                         if (orderItem != null)
                         {
-                            orderShippingModel.OrderItems.Add(orderItem);
+                            orderShippingModel.OrderItems.Add(newOrderItem);
                         }
                     }
 
