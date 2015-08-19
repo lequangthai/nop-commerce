@@ -23,6 +23,8 @@ namespace Nop.Web.Models.ShoppingCart
             ButtonPaymentMethodActionNames = new List<string>();
             ButtonPaymentMethodControllerNames = new List<string>();
             ButtonPaymentMethodRouteValues = new List<RouteValueDictionary>();
+
+            RecipientNames = new List<string>();
         }
 
         public bool OnePageCheckoutEnabled { get; set; }

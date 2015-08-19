@@ -463,6 +463,10 @@ namespace Nop.Admin.Models.Orders
             public string ShippingAddressGoogleMapsUrl { get; set; }
             public bool CanAddNewShipments { get; set; }
             public bool IsLoggedInAsVendor { get; set; }
+            public string GrettingType { get; set; }
+            public string From { get; set; }
+            public string To { get; set; }
+            public string Message { get; set; }
             
             public IList<OrderItemModel> OrderItems { get; set; } 
         }

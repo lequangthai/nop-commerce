@@ -11,7 +11,6 @@ namespace Nop.Core.Domain.Orders
 
         public virtual Address ShippingAddress { get; set; }
 
-        
         public int CustomerId { get; set; }
 
         public virtual Customer Customer { get; set; }
@@ -22,7 +21,11 @@ namespace Nop.Core.Domain.Orders
 
         public string ShippingRateComputationMethodSystemName { get; set; }
 
+        public string Title { get; set; }
+
         public DateTime? ExpectedDeliveryDate { get; set; }
+
+        public string ExpectedDeliveryPeriod { get; set; }
 
         public string RecipientName { get; set; }
 
@@ -33,5 +36,14 @@ namespace Nop.Core.Domain.Orders
             get { return _shippingCartItems ?? (_shippingCartItems = new List<ShippingCartItem>()); }
             protected set { _shippingCartItems = value; }
         }
+
+
+        public string GreetingType { get; set; }
+
+        public string To { get; set; }
+
+        public string From { get; set; }
+
+        public string Message { get; set; }
     }
 }

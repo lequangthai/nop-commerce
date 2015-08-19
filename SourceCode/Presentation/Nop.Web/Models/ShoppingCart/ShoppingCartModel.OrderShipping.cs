@@ -13,15 +13,12 @@ namespace Nop.Web.Models.ShoppingCart
 
         public partial class ShippingCartItemModel : BaseNopEntityModel
         {
-            public ShippingCartItemModel()
-            {
-                RecipientList = new List<SelectListItem>();
-            }
-
-            public List<SelectListItem>  RecipientList { get; set; }
+            public string RecipientName { get; set; }
 
             public int ShippingCartPosition { get; set; }
         }
+
+        public List<string> RecipientNames { get; set; } 
     }
 }
 
