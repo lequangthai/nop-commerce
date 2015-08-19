@@ -157,6 +157,53 @@
                 </td>
             </tr>
         }
+        @if (!string.IsNullOrEmpty(Model.GrettingType)
+            || !string.IsNullOrEmpty(Model.From)
+            || !string.IsNullOrEmpty(Model.To)
+            || !string.IsNullOrEmpty(Model.Message))
+        {
+         <tr>
+            <td class="adminTitle">
+                Greeting information:
+            </td>
+            <td class="adminData">
+                <table style="border: solid 1px black; padding: 5px;">
+                    <tr>
+                        <td>
+                            @T("Admin.Orders.Shipping.GreetingType"):
+                        </td>
+                        <td>
+                            @Model.GrettingType
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @T("Admin.Orders.Shipping.From"):
+                        </td>
+                        <td>
+                            @Model.From
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @T("Admin.Orders.Shipping.To"):
+                        </td>
+                        <td>
+                            @Model.To
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            @T("Admin.Orders.Shipping.Message"):
+                        </td>
+                        <td>
+                            @Model.Message
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>       
+        }
         <tr>
             <td class="adminTitle">
                 @Html.NopLabelFor(model => model.ShippingMethod):

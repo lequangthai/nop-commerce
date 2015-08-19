@@ -53,6 +53,19 @@ namespace Nop.Core.Domain.Orders
 
         public DateTime? ExpectedDeliveryDate { get; set; }
 
+        public string ExpectedDeliveryPeriod { get; set; }
+
+        public string Title { get; set; }
+
         public string RecipientName { get; set; }
+
+
+        public string GreetingType { get; set; }
+
+        public string To { get; set; }
+
+        public string From { get; set; }
+
+        public string Message { get; set; }
     }
 }

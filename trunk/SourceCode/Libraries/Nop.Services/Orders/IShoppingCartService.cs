@@ -195,10 +195,12 @@ namespace Nop.Services.Orders
         /// <param name="includeCouponCodes">A value indicating whether to coupon codes (discount and gift card) should be also re-applied</param>
         void MigrateShoppingCart(Customer fromCustomer, Customer toCustomer, bool includeCouponCodes);
 
-        void AddShippingCart(int storeId, Customer customer, int shoppingCartItemId, int shippingCartPosition, string recipientName);
+        void UpdateShippingCart(int storeId, Customer customer, int shoppingCartItemId, int shippingCartPosition, string recipientName);
 
         void UpdateShippingCart(int storeId, Customer customer, int shoppingCartItemId, int shippingCartPosition, int shippingCartId);
 
-        void DeleteShippingCart(int storeId, Customer customer, int shoppingCartItemId, int shippingCartPosition);
+        void DeleteShippingCart(int storeId, Customer customer, int shoppingCartItemId, int shippingCartId);
+
+        void DeleteShippingCartItems(int storeId, Customer customer, int shoppingCartItemId);
     }
 }

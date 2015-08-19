@@ -634,6 +634,11 @@ namespace Nop.Admin.Controllers
                         }
                     }
 
+                    orderShippingModel.GrettingType = orderShipping.GreetingType;
+                    orderShippingModel.From = orderShipping.From;
+                    orderShippingModel.To = orderShipping.To;
+                    orderShippingModel.Message = orderShipping.Message;
+
                     model.OrderShippings.Add(orderShippingModel);
                 }
             }

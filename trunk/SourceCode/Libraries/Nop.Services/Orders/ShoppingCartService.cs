@@ -1250,7 +1250,7 @@ namespace Nop.Services.Orders
             }
         }
 
-        public void AddShippingCart(int storeId, Customer customer, int shoppingCartItemId, int shippingCartPosition, string recipientName)
+        public void UpdateShippingCart(int storeId, Customer customer, int shoppingCartItemId, int shippingCartPosition, string recipientName)
         {
             var shoppingCartItem = customer.ShoppingCartItems
                 .Where(sci => sci.ShoppingCartType == ShoppingCartType.ShoppingCart)
@@ -1341,7 +1341,7 @@ namespace Nop.Services.Orders
             }
         }
 
-        public void DeleteShippingCart(int storeId, Customer customer, int shoppingCartItemId, int shippingCartPosition)
+        public void DeleteShippingCart(int storeId, Customer customer, int shoppingCartItemId, int shippingCartId)
         {
             var shoppingCartItem = customer.ShoppingCartItems
                 .Where(sci => sci.ShoppingCartType == ShoppingCartType.ShoppingCart)
@@ -1352,22 +1352,15 @@ namespace Nop.Services.Orders
                     _shippingCartItemRepository.Table.Where(c => c.ShoppingCartItemId == shoppingCartItemId)
                         .OrderBy(c => c.ShippingCartPosition)
                         .ToList();
-                var existsItemToDelete = listShippingCartItems.Any(c => c.ShippingCartPosition == shippingCartPosition);
-                if (existsItemToDelete)
+                var itemToDelete = listShippingCartItems.FirstOrDefault(c => c.ShippingCartId == shippingCartId);
+                if (itemToDelete != null)
                 {
-                    var lastPosition = shoppingCartItem.Quantity - 1;
-                    for (var i = 0; i <= lastPosition; i++)
+                    for (var i = itemToDelete.ShippingCartPosition + 1; i < listShippingCartItems.Count; i++)
                     {
-                        if (i == shippingCartPosition)
-                        {
-                            _shippingCartItemRepository.Delete(listShippingCartItems[i]);
-                        }
-                        if (i > shippingCartPosition)
-                        {
-                            listShippingCartItems[i].ShippingCartPosition = i - 1;
-                            _shippingCartItemRepository.Update(listShippingCartItems[i]);
-                        }
+                        listShippingCartItems[i].ShippingCartPosition = i - 1;
+                        _shippingCartItemRepository.Update(listShippingCartItems[i]);
                     }
+                    _shippingCartItemRepository.Delete(itemToDelete);
                     UpdateShoppingCartItem(customer,
                         shoppingCartItem.Id, shoppingCartItem.AttributesXml, shoppingCartItem.CustomerEnteredPrice,
                         shoppingCartItem.RentalStartDateUtc, shoppingCartItem.RentalEndDateUtc,
@@ -1376,6 +1369,26 @@ namespace Nop.Services.Orders
             }
         }
 
+        public void DeleteShippingCartItems(int storeId, Customer customer, int shoppingCartItemId)
+        {
+            var shoppingCartItem = customer.ShoppingCartItems
+                .Where(sci => sci.ShoppingCartType == ShoppingCartType.ShoppingCart)
+                .LimitPerStore(storeId).FirstOrDefault(c => c.Id == shoppingCartItemId);
+            if (shoppingCartItem != null)
+            {
+                var listShippingCartItems =
+                    _shippingCartItemRepository.Table.Where(c => c.ShoppingCartItemId == shoppingCartItemId)
+                        .OrderBy(c => c.ShippingCartPosition)
+                        .ToList();
+                if (shoppingCartItem.Quantity < listShippingCartItems.Count)
+                {
+                    for (var i = shoppingCartItem.Quantity; i < listShippingCartItems.Count; i++)
+                    {
+                        _shippingCartItemRepository.Delete(listShippingCartItems[i]);
+                    }
+                }
+            }
+        }
         #endregion
     }
 }

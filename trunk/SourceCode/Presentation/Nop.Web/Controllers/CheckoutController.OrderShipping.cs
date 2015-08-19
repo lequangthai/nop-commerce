@@ -13,8 +13,6 @@ namespace Nop.Web.Controllers
 {
     public partial class CheckoutController : BasePublicController
     {
-        //public ActionResult CreateShippingCart()
-
         public ActionResult ShippingAddress(int recepientId)
         {
             //validation
@@ -152,6 +150,13 @@ namespace Nop.Web.Controllers
                     _workContext.CurrentCustomer.Addresses.Add(address);
                 }
                 shippingCart.ShippingAddress = address;
+
+                //update Gretting message
+                shippingCart.GreetingType = form["greetingtype"] ?? string.Empty;
+                shippingCart.From = form["from"] ?? string.Empty;
+                shippingCart.To = form["to"] ?? string.Empty;
+                shippingCart.Message = form["message"] ?? string.Empty;
+
                 _customerService.UpdateCustomer(_workContext.CurrentCustomer);
 
                 return RedirectToRoute("CheckoutShippingMethod");

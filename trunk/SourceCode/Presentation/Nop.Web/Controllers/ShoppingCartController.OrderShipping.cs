@@ -1,50 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-using Nop.Core;
-using Nop.Core.Caching;
 using Nop.Core.Domain.Catalog;
-using Nop.Core.Domain.Common;
 using Nop.Core.Domain.Customers;
-using Nop.Core.Domain.Directory;
 using Nop.Core.Domain.Discounts;
-using Nop.Core.Domain.Media;
 using Nop.Core.Domain.Orders;
 using Nop.Core.Domain.Shipping;
-using Nop.Core.Domain.Tax;
 using Nop.Services.Catalog;
 using Nop.Services.Common;
-using Nop.Services.Customers;
-using Nop.Services.Directory;
-using Nop.Services.Discounts;
 using Nop.Services.Localization;
-using Nop.Services.Logging;
-using Nop.Services.Media;
-using Nop.Services.Messages;
 using Nop.Services.Orders;
 using Nop.Services.Payments;
 using Nop.Services.Security;
 using Nop.Services.Seo;
-using Nop.Services.Shipping;
-using Nop.Services.Tax;
 using Nop.Web.Extensions;
 using Nop.Web.Framework.Controllers;
-using Nop.Web.Framework.Mvc;
 using Nop.Web.Framework.Security;
-using Nop.Web.Framework.Security.Captcha;
-using Nop.Web.Infrastructure.Cache;
-using Nop.Web.Models.Media;
 using Nop.Web.Models.ShoppingCart;
 
 namespace Nop.Web.Controllers
 {
     public partial class ShoppingCartController : BasePublicController
     {
+        private const string MySelft = "myselft";
+
         #region Ultities
         [NonAction]
         protected virtual void PrepareShippingCartModel(ShoppingCartModel model,
@@ -337,13 +319,26 @@ namespace Nop.Web.Controllers
                     var existsShippingItem = existsShippingItems.FirstOrDefault(c => c.ShippingCartPosition == i);
                     var shippingCartItemModel = new ShoppingCartModel.ShippingCartItemModel
                     {
-                        RecipientList = BuildDropdownForRecipient(existsShippingItem.ShippingCartId, shippingCarts),
+                        RecipientName = existsShippingItem != null ? existsShippingItem.ShippingCart.RecipientName : string.Empty,
                         ShippingCartPosition = i
                     };
                     cartItemModel.ShippingCartItems.Add(shippingCartItemModel);
                 }
                 
                 model.Items.Add(cartItemModel);
+            }
+
+            #endregion
+
+            #region ShippingCartItems
+            model.RecipientNames = shippingCarts.Select(c => c.RecipientName).ToList();
+            if (model.RecipientNames.Contains(MySelft) && model.RecipientNames.IndexOf(MySelft) != 0)
+            {
+                model.RecipientNames.Remove(MySelft);
+            }
+            if (!model.RecipientNames.Contains(MySelft))
+            {
+                model.RecipientNames.Insert(0, MySelft);
             }
 
             #endregion
@@ -432,34 +427,6 @@ namespace Nop.Web.Controllers
             #endregion
         }
 
-        private List<SelectListItem> BuildDropdownForRecipient(int selectedValue, IList<ShippingCart> shippingCarts)
-        {
-            var list = new List<SelectListItem>();
-            list.Add(new SelectListItem
-            {
-                Value = RecipientDropdownListValue.SelectNewRecipientId.ToString(),
-                Text = "-- Select New Recipient --"
-            });
-            list.Add(new SelectListItem
-            {
-                Value = RecipientDropdownListValue.Myself.ToString(),
-                Text = "Myself",
-                Selected = RecipientDropdownListValue.Myself == selectedValue
-            });
-            shippingCarts = shippingCarts.OrderBy(c => c.RecipientName).ToList();
-            foreach (var shippingCart in shippingCarts)
-            {
-                list.Add(new SelectListItem
-                {
-                    Value = shippingCart.Id.ToString(),
-                    Text = shippingCart.RecipientName,
-                    Selected = shippingCart.Id == selectedValue
-                });
-            }
-
-            return list;
-        }
-
         #endregion
 
         [NopHttpsRequirement(SslRequirement.Yes)]
@@ -472,7 +439,7 @@ namespace Nop.Web.Controllers
                 .Where(sci => sci.ShoppingCartType == ShoppingCartType.ShoppingCart)
                 .LimitPerStore(_storeContext.CurrentStore.Id)
                 .ToList();
-            var shippingCarts = _workContext.CurrentCustomer.ShippingCarts.ToList();
+            var shippingCarts = _workContext.CurrentCustomer.ShippingCarts.OrderBy(c=>c.RecipientName).ToList();
             var shippingCartItems = new List<ShippingCartItem>();
             foreach (var shippingCart in shippingCarts)
             {
@@ -497,6 +464,7 @@ namespace Nop.Web.Controllers
                 .ToList();
 
             var allIdsToRemove = form["removefromcart"] != null ? form["removefromcart"].Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(x => int.Parse(x)).ToList() : new List<int>();
+            var formKeys = form.AllKeys.ToList();
 
             //current warnings <cart item identifier, warnings>
             var innerWarnings = new Dictionary<int, IList<string>>();
@@ -507,20 +475,35 @@ namespace Nop.Web.Controllers
                     _shoppingCartService.DeleteShoppingCartItem(sci, ensureOnlyActiveCheckoutAttributes: true);
                 else
                 {
-                    foreach (string formKey in form.AllKeys)
-                        if (formKey.Equals(string.Format("itemquantity{0}", sci.Id), StringComparison.InvariantCultureIgnoreCase))
+                    var formQuantityKey = string.Format("itemquantity{0}", sci.Id);
+                    if (formKeys.Any(c => c.Equals(formQuantityKey, StringComparison.InvariantCultureIgnoreCase)))
+                    {
+                        int newQuantity;
+                        if (int.TryParse(form[formQuantityKey], out newQuantity))
                         {
-                            int newQuantity;
-                            if (int.TryParse(form[formKey], out newQuantity))
-                            {
-                                var currSciWarnings = _shoppingCartService.UpdateShoppingCartItem(_workContext.CurrentCustomer,
+                            var currSciWarnings =
+                                _shoppingCartService.UpdateShoppingCartItem(_workContext.CurrentCustomer,
                                     sci.Id, sci.AttributesXml, sci.CustomerEnteredPrice,
                                     sci.RentalStartDateUtc, sci.RentalEndDateUtc,
                                     newQuantity, true);
-                                innerWarnings.Add(sci.Id, currSciWarnings);
-                            }
-                            break;
+                            innerWarnings.Add(sci.Id, currSciWarnings);
                         }
+                    }
+                    var formReceipientKey = string.Format("recipient{0}", sci.Id);
+                    if (formKeys.Any(c => c.Equals(formReceipientKey, StringComparison.InvariantCultureIgnoreCase)))
+                    {
+                        var reciepientNames = form[formReceipientKey].Split(';').ToList();
+                        for (int i = 0; i < reciepientNames.Count; i++)
+                        {
+                            var recipientName = reciepientNames[i];
+                            if (!string.IsNullOrEmpty(recipientName))
+                            {
+                                _shoppingCartService.UpdateShippingCart(_storeContext.CurrentStore.Id,
+                                _workContext.CurrentCustomer, sci.Id, i, recipientName);
+                            }
+                        }
+                    }
+                    _shoppingCartService.DeleteShippingCartItems(_storeContext.CurrentStore.Id, _workContext.CurrentCustomer, sci.Id);
                 }
             }
 
