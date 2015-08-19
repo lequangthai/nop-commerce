@@ -81,8 +81,32 @@ namespace Nop.Plugin.Payments.EasyPay2
 
         public CapturePaymentResult Capture(CapturePaymentRequest capturePaymentRequest)
         {
+            var webClient = new WebClient();
+            var form = new NameValueCollection();
+            var order = capturePaymentRequest.Order;
             var result = new CapturePaymentResult();
-            result.AddError("Capture method not supported");
+            form.Add("mid", _easyPay2PaymentSettings.mid);
+            form.Add("ref", order.OrderGuid.ToString());
+            form.Add("cur", _easyPay2PaymentSettings.cur);
+            form.Add("amt", order.OrderTotal.ToString());
+            form.Add("paytype", "3");
+            form.Add("transtype", "capture");
+            var responseData = webClient.UploadValues(GetPaymentProcessUrl(), form);
+            var reply = Encoding.ASCII.GetString(responseData);
+            string[] responseFields = reply.Split('&');
+            List<String> errorList = new List<String>();
+            if (("YES").Equals(responseFields[4].Split('=')[1]))
+            {
+                _logger.Information("Void action success !!!");
+                result.NewPaymentStatus = PaymentStatus.Paid;
+            }
+            else
+            {
+                errorList.Add(responseFields[5].Split('=')[1]);
+                errorList.Add(responseFields[11].Split('=')[1]);
+                result.Errors = errorList;
+                _logger.Error("OOPS void action !!!" + responseFields[5].Split('=')[1] + " " + responseFields[11].Split('=')[1]);
+            }
             return result;
         }
 
@@ -90,7 +114,7 @@ namespace Nop.Plugin.Payments.EasyPay2
         {
             Debug.WriteLine("GetAdditionalHandlingFee");
             var result = this.CalculateAdditionalFee(_orderTotalCalculationService, cart,
-                _easyPay2PaymentSettings.AdditionalFee, _easyPay2PaymentSettings.AdditionalFeePercentage);
+                _easyPay2PaymentSettings.additionalFee, _easyPay2PaymentSettings.additionalFeePercentage);
             return result;
         }
 
@@ -125,35 +149,6 @@ namespace Nop.Plugin.Payments.EasyPay2
 
         public void PostProcessPayment(PostProcessPaymentRequest postProcessPaymentRequest)
         {
-            //RandomStringGenerator RSG = new RandomStringGenerator();
-            //RSG.MinLowerCaseCharacters = 25;
-            //RSG.RepeatCharacters = false;
-            //var webClient = new WebClient();
-            //var form = new NameValueCollection();
-
-            //var order = postProcessPaymentRequest.Order;
-            //var merchTxnRef = RSG.Generate(25);
-            
-            //form.Add("mid", "20130114001");
-            //form.Add("ref", merchTxnRef);
-            //form.Add("cur", "SGD");
-            //form.Add("amt", "8");
-
-            //form.Add("ccnum", _encryptionService.DecryptText(order.CardNumber));
-            //form.Add("ccdate", _encryptionService.DecryptText(order.CardExpirationYear) + _encryptionService.DecryptText(order.CardExpirationMonth));
-            //form.Add("cccvv", _encryptionService.DecryptText(order.CardCvv2));
-            //form.Add("paytype", "36");
-            //form.Add("transtype", "sale4");
-            //form.Add("returnurl", "http://localhost:15536/onepagecheckout");
-            //var responseData = webClient.UploadValues(GetPaymentUrl(), form);
-            //var reply = Encoding.ASCII.GetString(responseData);
-
-            //Debug.Print(reply);
-            RandomStringGenerator RSG = new RandomStringGenerator();
-            RSG.MinLowerCaseCharacters = 25;
-            RSG.RepeatCharacters = false;
-            //var orderPaymentInfo = _httpContext.Session["OrderPaymentInfo"];//_httpContext.Session["OrderPaymentInfo"];
-            Debug.WriteLine(RSG.Generate(25));
             Debug.WriteLine("PostProcessPayment");
 
             var nfi = new CultureInfo("en-US", false).NumberFormat;
@@ -161,82 +156,32 @@ namespace Nop.Plugin.Payments.EasyPay2
             var gatewayUrl = new Uri(url);
             var post = new RemotePost { Url = gatewayUrl.ToString(), Method = "POST" };
             var order = postProcessPaymentRequest.Order;
-            var merchTxnRef = RSG.Generate(25);
-            var orderInfo = RSG.Generate(25);
 
-
-            post.Add("mid", "20130114001");
-            post.Add("ref", merchTxnRef);
-            post.Add("cur", "SGD");
-            post.Add("amt", "20");
+            post.Add("mid", _easyPay2PaymentSettings.mid);
+            post.Add("ref", order.OrderGuid.ToString());
+            post.Add("cur", _easyPay2PaymentSettings.cur);
+            post.Add("amt", order.OrderTotal.ToString());
             post.Add("ccnum", _encryptionService.DecryptText(order.CardNumber));
             post.Add("ccdate", _encryptionService.DecryptText(order.CardExpirationYear) + _encryptionService.DecryptText(order.CardExpirationMonth));
             post.Add("cccvv", _encryptionService.DecryptText(order.CardCvv2));
             post.Add("paytype", "3");
-            post.Add("transtype", "sale");
-            //post.Add("statusurl", "http://www.telemoneyworld.com.sg?paytype=3&transtype=sale&ccnum=4111111111111111&ccdate=1511&cccvv=989");
-            post.Add("returnurl", "http://localhost:15536/onepagecheckout");
-            Debug.Print("ccdate: " + _encryptionService.DecryptText(order.CardExpirationYear) + _encryptionService.DecryptText(order.CardExpirationMonth));
 
+            if (_easyPay2PaymentSettings.transactMode == TransactMode.Authorize)
+                post.Add("transtype", "auth");
+            else if (_easyPay2PaymentSettings.transactMode == TransactMode.AuthorizeAndCapture)
+                post.Add("transtype", "sale");
+            else
+                throw new NopException("Not supported transaction mode");
+
+            post.Add("statusurl", GetReturnStatusUrl("statusurl", postProcessPaymentRequest));
+            post.Add("returnurl", GetReturnStatusUrl("returnurl", postProcessPaymentRequest));
+            Debug.Print("ccdate: " + _encryptionService.DecryptText(order.CardExpirationYear) + _encryptionService.DecryptText(order.CardExpirationMonth));
             post.Post();
         }
 
         public ProcessPaymentResult ProcessPayment(ProcessPaymentRequest processPaymentRequest)
         {
-
-            //RandomStringGenerator RSG = new RandomStringGenerator();
-            //RSG.MinLowerCaseCharacters = 25;
-            //RSG.RepeatCharacters = false;
-            //var webClient = new WebClient();
-            //var form = new NameValueCollection();
-            //var merchTxnRef = RSG.Generate(25);
-            //form.Add("mid", "20130114001");
-            //form.Add("ref", merchTxnRef);
-            //form.Add("cur", "SGD");
-            //form.Add("amt", processPaymentRequest.OrderTotal.ToString());
-            //form.Add("ccnum", processPaymentRequest.CreditCardNumber);
-            //form.Add("ccdate", processPaymentRequest.CreditCardExpireYear.ToString() + processPaymentRequest.CreditCardExpireMonth.ToString());
-            //form.Add("cccvv", processPaymentRequest.CreditCardCvv2);
-            //form.Add("paytype", "3");
-            //form.Add("transtype", "sale");
-            //form.Add("returnurl", "http://localhost:15536/onepagecheckout");
-            //var responseData = webClient.UploadValues(GetPaymentUrl(), form);
-            //var reply = Encoding.ASCII.GetString(responseData);
-            //string[] responseFields = reply.Split('&');
             var result = new ProcessPaymentResult();
-            //List<String> errorList = new List<String>();
-            //if (("NO").Equals(responseFields[4].Split('=')[1]))
-            //{
-            //    errorList.Add(responseFields[5].Split('=')[1]);
-            //    errorList.Add(responseFields[11].Split('=')[1]);
-            //    result.Errors = errorList;
-            //    _logger.Error("FAILLLL !!!" + responseFields[5].Split('=')[1] + " " + responseFields[11].Split('=')[1]);
-            //    result.NewPaymentStatus = PaymentStatus.Pending;
-            //}
-            //else {
-            //    _logger.Error("SUCCESS !!!");
-            //    result.NewPaymentStatus = PaymentStatus.Paid;
-            //    result.AllowStoringCreditCardNumber = true;
-            //}
-
-            switch (_easyPay2PaymentSettings.TransactMode)
-            {
-                case TransactMode.Pending:
-                    result.NewPaymentStatus = PaymentStatus.Pending;
-                    break;
-                case TransactMode.Authorize:
-                    result.NewPaymentStatus = PaymentStatus.Authorized;
-                    break;
-                case TransactMode.AuthorizeAndCapture:
-                    result.NewPaymentStatus = PaymentStatus.Paid;
-                    break;
-                default:
-                    {
-                        result.AddError("Not supported transaction type");
-                        return result;
-                    }
-            }
-
             return result;
         }
 
@@ -262,14 +207,39 @@ namespace Nop.Plugin.Payments.EasyPay2
         {
             get
             {
-                return false;
+                return true;
             }
         }
 
         public VoidPaymentResult Void(VoidPaymentRequest voidPaymentRequest)
         {
+            var webClient = new WebClient();
+            var form = new NameValueCollection();
+            var order = voidPaymentRequest.Order;
             var result = new VoidPaymentResult();
-            result.AddError("Void method not supported");
+            form.Add("mid", _easyPay2PaymentSettings.mid);
+            form.Add("ref", order.OrderGuid.ToString());
+            form.Add("cur", _easyPay2PaymentSettings.cur);
+            form.Add("amt", order.OrderTotal.ToString());
+            form.Add("paytype", "3");
+            form.Add("transtype", "void");
+            form.Add("subtranstype", "auth");
+            var responseData = webClient.UploadValues(GetPaymentProcessUrl(), form);
+            var reply = Encoding.ASCII.GetString(responseData);
+            string[] responseFields = reply.Split('&');
+            List<String> errorList = new List<String>();
+            if (("YES").Equals(responseFields[4].Split('=')[1]))
+            {
+                _logger.Information("Void action success !!!");
+                result.NewPaymentStatus = PaymentStatus.Voided;
+            }
+            else
+            {
+                errorList.Add(responseFields[5].Split('=')[1]);
+                errorList.Add(responseFields[11].Split('=')[1]);
+                result.Errors = errorList;
+                _logger.Error("OOPS void action !!!" + responseFields[5].Split('=')[1] + " " + responseFields[11].Split('=')[1]);
+            }
             return result;
         }
 
@@ -279,10 +249,17 @@ namespace Nop.Plugin.Payments.EasyPay2
             //settings
             var settings = new EasyPay2PaymentSettings
             {
-                
+
             };
             _settingService.SaveSetting(settings);
-            //this.AddOrUpdatePluginLocaleResource("Plugins.Payments.Onepay.Fields.RedirectionTip", "You will be redirected to Onepay site to complete the order.");
+            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.EasyPay2.Fields.RedirectionTip", "You will be redirected to EasyPay site to complete the order.");
+            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.EasyPay2.Fields.mid", "Merchant ID");
+            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.EasyPay2.Fields.cur", "Currentcy");
+            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.EasyPay2.Fields.transtype", "transtyle");
+            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.EasyPay2.Fields.TransactModeValues", "Transaction mode");
+            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.EasyPay2.Fields.TransactModeValues.Hint", "Choose transaction mode");
+            this.AddOrUpdatePluginLocaleResource("Plugins.Payments.EasyPay2.Fields.url", "URL payment gateway");
+            
             base.Install();
         }
 
@@ -291,6 +268,13 @@ namespace Nop.Plugin.Payments.EasyPay2
             Debug.WriteLine("Uninstall");
             //settings
             _settingService.DeleteSetting<EasyPay2PaymentSettings>();
+            this.DeletePluginLocaleResource("Plugins.Payments.EasyPay2.Fields.RedirectionTip");
+            this.DeletePluginLocaleResource("Plugins.Payments.EasyPay2.Fields.mid");
+            this.DeletePluginLocaleResource("Plugins.Payments.EasyPay2.Fields.cur");
+            this.DeletePluginLocaleResource("Plugins.Payments.EasyPay2.Fields.transtype");
+            this.DeletePluginLocaleResource("Plugins.Payments.EasyPay2.Fields.TransactModeValues");
+            this.DeletePluginLocaleResource("Plugins.Payments.EasyPay2.Fields.TransactModeValues.Hint");
+            this.DeletePluginLocaleResource("Plugins.Payments.EasyPay2.Fields.url");
             base.Uninstall();
         }
 
@@ -303,7 +287,7 @@ namespace Nop.Plugin.Payments.EasyPay2
         {
             get
             {
-                return false;
+                return true;
             }
         }
 
@@ -374,7 +358,39 @@ namespace Nop.Plugin.Payments.EasyPay2
         /// <returns></returns>
         private string GetPaymentUrl()
         {
-            return "https://test.wirecard.com.sg/easypay2/paymentpage.do";
+            return _easyPay2PaymentSettings.url;
+        }
+
+        /// <summary>
+        /// Gets payment URL
+        /// </summary>
+        /// <returns></returns>
+        private string GetPaymentProcessUrl()
+        {
+            return "https://test.wirecard.com.sg/easypay2/paymentprocess.do";
+        }
+
+        /// <summary>
+        /// Gets payment URL
+        /// </summary>
+        /// <returns></returns>
+        private string GetReturnStatusUrl(string type, PostProcessPaymentRequest postProcessPaymentRequest)
+        {
+            string leftPath = HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority);
+            var order = postProcessPaymentRequest.Order;
+            StringBuilder url = new StringBuilder();
+            url.Append(leftPath);
+            url.Append("/Plugins/PaymentEasyPay2/statusHandler");
+            url.Append("?orderId=" + order.Id);
+            url.Append("&orderGuid=" + order.OrderGuid);
+            if (type.Equals("statusurl"))
+	        {
+		        url.Append("&type=statusUrl");
+	        } else {
+                url.Append("&type=returnUrl");
+            }
+
+            return url.ToString();
         }
 
         #endregion

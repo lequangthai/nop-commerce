@@ -8,11 +8,11 @@ namespace Nop.Plugin.Payments.EasyPay2
         /// <summary>
         /// Pending
         /// </summary>
-        Pending = 0,
+        //Pending = 0,
         /// <summary>
         /// Authorize
         /// </summary>
-        Authorize = 1,
+        Authorize = 0,
         /// <summary>
         /// Authorize and capture
         /// </summary>

@@ -93,6 +93,7 @@
     <Compile Include="Models\PaymentInfoModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RandomStringGenerator.cs" />
+    <Compile Include="RouteProvider.cs" />
     <Compile Include="TransactMode.cs" />
     <Compile Include="Validators\PaymentInfoValidator.cs" />
   </ItemGroup>
