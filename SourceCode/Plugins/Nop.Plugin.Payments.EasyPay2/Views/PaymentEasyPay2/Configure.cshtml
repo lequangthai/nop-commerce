@@ -7,16 +7,73 @@
 @Html.Action("StoreScopeConfiguration", "Setting", new { area = "Admin" })
 
 <script type="text/javascript">
-	$(document).ready(function () {
+    $(document).ready(function () {
+        $("#cur").attr('disabled', 'disabled');
 
-		
-	});
-
+        $(".btn-save").on("click", function (event) {
+            $("#cur").removeAttr('disabled');
+            $(this).closest('form').submit();
+            $("#cur").attr('disabled', 'disabled');
+        });
+    });
 
 </script>
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-   <span>Config test</span>
+    <table class="adminContent">
+        <tr id="transactMode-tr">
+            <td class="adminTitle">
+                @Html.OverrideStoreCheckboxFor(model => model.TransactModeId_OverrideForStore, model => model.TransactModeId, Model.ActiveStoreScopeConfiguration)
+                @Html.NopLabelFor(model => model.TransactModeValues):
+            </td>
+            <td class="adminData">
+                @Html.DropDownList("TransactModeId", Model.TransactModeValues)
+            </td>
+        </tr>
+        <tr id="mid-tr">
+            <td class="adminTitle">
+                @Html.OverrideStoreCheckboxFor(model => model.mid_OverrideForStore, model => model.mid, Model.ActiveStoreScopeConfiguration)
+                @Html.NopLabelFor(model => model.mid)
+                <br />
+            </td>
+            <td class="adminData">
+                @Html.EditorFor(model => model.mid)
+                @Html.ValidationMessageFor(model => model.mid)
+            </td>
+        </tr>
+
+        <tr id="cur-tr">
+            <td class="adminTitle">
+                @Html.OverrideStoreCheckboxFor(model => model.cur_OverrideForStore, model => model.cur, Model.ActiveStoreScopeConfiguration)
+                @Html.NopLabelFor(model => model.cur)
+                
+                <br />
+            </td>
+            <td class="adminData">
+                @Html.EditorFor(model => model.cur)
+                @Html.ValidationMessageFor(model => model.cur)
+            </td>
+        </tr>
+
+        <tr id="url-tr">
+            <td class="adminTitle">
+                @Html.OverrideStoreCheckboxFor(model => model.url_OverrideForStore, model => model.url, Model.ActiveStoreScopeConfiguration)
+                @Html.NopLabelFor(model => model.url)
+                <br />
+            </td>
+            <td class="adminData">
+                @Html.EditorFor(model => model.url)
+                @Html.ValidationMessageFor(model => model.url)
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="2">
+                <input type="button" name="save" class="k-button btn-save" value="@T("Admin.Common.Save")" />
+            </td>
+        </tr>
+    </table>
+
 }
