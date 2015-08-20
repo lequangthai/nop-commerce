@@ -209,6 +209,7 @@ namespace Nop.Services.Orders
             public PlaceOrderContainter()
             {
                 this.Cart = new List<ShoppingCartItem>();
+                this.ShippingCartItems = new List<ShippingCartItem>();
                 this.AppliedDiscounts = new List<Discount>();
                 this.AppliedGiftCards = new List<AppliedGiftCard>();
             }
@@ -235,6 +236,7 @@ namespace Nop.Services.Orders
             public string CheckoutAttributesXml { get; set; }
 
             public IList<ShoppingCartItem> Cart { get; set; }
+            public List<ShippingCartItem> ShippingCartItems { get; set; } 
             public List<Discount> AppliedDiscounts { get; set; }
             public List<AppliedGiftCard> AppliedGiftCards { get; set; }
 
@@ -365,6 +367,16 @@ namespace Nop.Services.Orders
                     .Where(sci => sci.ShoppingCartType == ShoppingCartType.ShoppingCart)
                     .LimitPerStore(processPaymentRequest.StoreId)
                     .ToList();
+
+                //load shipping cart items
+                foreach (var shippingCart in details.Customer.ShippingCarts)
+                {
+                    details.ShippingCartItems =
+                        details.ShippingCartItems.Union(
+                            shippingCart.ShippingCartItems.Where(
+                                shippingCartItem =>
+                                    details.Cart.Any(sci => sci.Id == shippingCartItem.ShoppingCartItemId))).ToList();
+                }
 
                 if (details.Cart.Count == 0)
                     throw new NopException("Cart is empty");
@@ -1241,6 +1253,62 @@ namespace Nop.Services.Orders
                             };
                             order.OrderItems.Add(orderItem);
                             _orderService.UpdateOrder(order);
+
+                            //save OrderShipping
+                            //1. find ShippingCarts of current shoppingCartItem
+                            var shippingCartItemsOfCurrentSCI =
+                                details.ShippingCartItems.Where(
+                                    shippingCartItem => shippingCartItem.ShoppingCartItemId == shippingCartItem.Id).ToList();
+                            var shippingCarts = shippingCartItemsOfCurrentSCI.Select(c => c.ShippingCart).Distinct().ToList();
+                            foreach (var shippingCart in shippingCarts)
+                            {
+                                var orderShippng =
+                                    order.OrderShippings.FirstOrDefault(
+                                        c =>
+                                            c.RecipientName.Equals(shippingCart.RecipientName,
+                                                StringComparison.OrdinalIgnoreCase));
+                                if (orderShippng == null)
+                                {
+                                    orderShippng = new OrderShipping
+                                    {
+                                        ExpectedDeliveryDate = shippingCart.ExpectedDeliveryDate,
+                                        RecipientName = shippingCart.RecipientName,
+                                        ExpectedDeliveryPeriod = shippingCart.ExpectedDeliveryPeriod,
+                                        From = shippingCart.From,
+                                        GreetingType = shippingCart.GreetingType,
+                                        Message = shippingCart.Message,
+                                        PickUpInStore = shippingCart.PickUpInStore,
+                                        ShippingAddress = shippingCart.ShippingAddress,
+                                        ShippingMethod = shippingCart.ShippingMethod,
+                                        ShippingRateComputationMethodSystemName =
+                                            shippingCart.ShippingRateComputationMethodSystemName,
+                                        ShippingStatus =
+                                            shippingCart.RequiresShipping()
+                                                ? ShippingStatus.NotYetShipped
+                                                : ShippingStatus.ShippingNotRequired,
+                                        Title = shippingCart.Title,
+                                        To = shippingCart.To
+                                    };
+                                }
+
+                                var orderShippingItem =
+                                    orderShippng.OrderShippingItems.FirstOrDefault(c => c.OrderItemId == orderItem.Id);
+                                if (orderShippingItem == null)
+                                {
+                                    orderShippingItem = new OrderShippingItem
+                                    {
+                                        OrderItem = orderItem,
+                                        OrderShipping = orderShippng,
+                                        Quantity =
+                                            shippingCartItemsOfCurrentSCI.Count(c => c.ShippingCartId == shippingCart.Id)
+                                    };
+                                    orderShippng.OrderShippingItems.Add(orderShippingItem);
+
+                                }
+
+                                order.OrderShippings.Add(orderShippng);
+                                _orderService.UpdateOrder(order);
+                            }
 
                             //gift cards
                             if (sc.Product.IsGiftCard)
