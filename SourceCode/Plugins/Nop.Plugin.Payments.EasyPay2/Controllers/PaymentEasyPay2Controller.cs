@@ -72,7 +72,6 @@ namespace Nop.Plugin.Payments.EasyPay2.Controllers
             var storeScope = this.GetActiveStoreScopeConfiguration(_storeService, _workContext);
             var easyPay2PaymentSettings = _settingService.LoadSetting<EasyPay2PaymentSettings>(storeScope);
             var model = new ConfigurationModel();
-            
             model.mid = easyPay2PaymentSettings.mid;
             model.cur= easyPay2PaymentSettings.cur;
             model.transtype = easyPay2PaymentSettings.transtype;

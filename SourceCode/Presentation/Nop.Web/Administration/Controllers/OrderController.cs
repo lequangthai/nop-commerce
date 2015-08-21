@@ -447,8 +447,12 @@ namespace Nop.Admin.Controllers
             model.CanMarkOrderAsPaid = _orderProcessingService.CanMarkOrderAsPaid(order);
             model.CanRefund = _orderProcessingService.CanRefund(order);
             model.CanRefundOffline = _orderProcessingService.CanRefundOffline(order);
-            model.CanPartiallyRefund = _orderProcessingService.CanPartiallyRefund(order, decimal.Zero);
-            model.CanPartiallyRefundOffline = _orderProcessingService.CanPartiallyRefundOffline(order, decimal.Zero);
+            //comment CanPartiallyRefund
+            //@anhtran
+            //model.CanPartiallyRefund = _orderProcessingService.CanPartiallyRefund(order, decimal.Zero);
+            //model.CanPartiallyRefundOffline = _orderProcessingService.CanPartiallyRefundOffline(order, decimal.Zero);
+            model.CanPartiallyRefund = false;
+            model.CanPartiallyRefundOffline = false;
             model.CanVoid = _orderProcessingService.CanVoid(order);
             model.CanVoidOffline = _orderProcessingService.CanVoidOffline(order);
             
@@ -741,6 +745,9 @@ namespace Nop.Admin.Controllers
 
             //payment statuses
             model.AvailablePaymentStatuses = PaymentStatus.Pending.ToSelectList(false).ToList();
+            //Remove partially refunded
+            //@anhtran
+            model.AvailablePaymentStatuses.RemoveAt(3);
             model.AvailablePaymentStatuses.Insert(0, new SelectListItem { Text = _localizationService.GetResource("Admin.Common.All"), Value = "0" });
             if (paymentStatusId.HasValue)
             {
