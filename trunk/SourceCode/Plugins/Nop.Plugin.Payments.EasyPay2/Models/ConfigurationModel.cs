@@ -38,5 +38,6 @@ namespace Nop.Plugin.Payments.EasyPay2.Models
 
         public bool url_OverrideForStore { get; set; }
 
+
     }
 }

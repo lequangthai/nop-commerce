@@ -45,7 +45,7 @@
                                         LogoUrl: { editable: false, type: "string" },
                                         SupportCapture: { editable: false, type: "boolean" },
                                         SupportRefund: { editable: false, type: "boolean" },
-                                        SupportPartiallyRefund: { editable: false, type: "boolean" },
+                                        SupportPartiallyRefund: { editable: false, type: "boolean"},
                                         SupportVoid: { editable: false, type: "boolean" },
                                         RecurringPaymentType: { editable: false, type: "string" },
                                         DisplayOrder: { editable: true, type: "number" },
@@ -111,6 +111,7 @@
                             width: 100,
                             headerAttributes: { style: "text-align:center" },
                             attributes: { style: "text-align:center" },
+                            hidden: true,
                             template: '<img src="@Url.Content("~/Administration/Content/images/")active-#=SupportPartiallyRefund#.gif" />'
                         }, {
                             field: "SupportVoid",
