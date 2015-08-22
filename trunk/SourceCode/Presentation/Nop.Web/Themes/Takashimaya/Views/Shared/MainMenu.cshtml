@@ -1,4 +1,5 @@
-﻿<nav class="navbar navbar-default" role="navigation">
+﻿
+@*<nav class="navbar navbar-default" role="navigation">
     <div class="container">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
@@ -31,4 +32,58 @@
             </ul>
         </div><!-- /.navbar-collapse -->
     </div>
-</nav>
+</nav>*@
+
+@{
+    var contentPath = "/Themes/Takashimaya/Content";
+}
+<div class="navigation-mobile cbp-spmenu cbp-spmenu-vertical cbp-spmenu-left">
+    <div class="container">
+        <div class="row">
+            sdfsadfasdfsadf
+
+        </div>
+    </div>
+</div> <!-- navigation mobile -->
+
+
+<div class="navigation-top">
+
+
+    <nav id="nav-top" class="container">
+        <ul>
+            <!--  <li><a href="javascript:void(0);"><img src="images/icon-mobile-menu.png" alt="button mobile menu"></a></li>-->
+            <li class="active"><a href="javascript:void(0);">HOME</a></li>
+            <li class="has-sub">
+                <a href="javascript:void(0);">FOOD</a>
+                <div class="nav-sub">
+                    <ul>
+                        <li><a href="javascript:void(0);">Hampers</a></li>
+                        <li><a href="javascript:void(0);">Japanese Confectionery</a></li>
+                        <li><a href="javascript:void(0);">Hampers</a></li>
+                    </ul>
+                </div>
+            </li>
+            <li><a href="javascript:void(0);">OCCASIONS</a></li>
+
+            <li>
+                <a href="javascript:void(0);">CONTACT</a>
+
+            </li>
+        </ul>
+
+        <div class="main-site">
+            <a href="http://takashimaya.com.sg">MAIN SITE</a>
+        </div>
+        <div class="nav-social">
+            <span>Connect with us:</span>
+            <a href="javascript:void(0);"><img src="@contentPath/images/icon_facebook.png" alt="Facebook"></a>
+            <a href="javascript:void(0);"><img src="@contentPath/images/icon_twitter.png" alt="Twitter"></a>
+            <a href="javascript:void(0);"><img src="@contentPath/images/icon_instagram.png" alt="Instagram"></a>
+        </div>
+
+
+    </nav>
+
+</div> <!-- navigation top -->
+

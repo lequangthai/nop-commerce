@@ -1,0 +1,70 @@
+@mixin link-color($color-normal, $color-hover, $color-visited: null)
+{
+  >a {
+    color: $color-normal;
+    text-decoration: none;
+    outline: none;
+  }
+
+  >a:hover {
+    color: $color-hover;
+  }
+
+  @if $color-visited != null {
+    >a:visited {
+      color: $color-visited;
+    }
+  }
+
+}
+
+
+.selectWhite
+{
+  position: relative;
+  display: inline-block;
+  line-height: normal;
+
+  select{
+    background-color: $wht;
+    border: none;
+    box-sizing: border-box;
+
+    font-size: 12px;
+    height: 26px;
+    outline: medium none;
+    padding: 5px 0 5px 5px;
+    display: inline-block;
+    position: relative;
+    -webkit-appearance: none;
+  }
+
+ &:before
+ {
+   font-family: "Glyphicons Halflings";
+   content: "\e114";
+   position: absolute;
+   top: 6px;
+   font-size: 14px;
+   right: 0;
+   width: 26px;
+   height: 26px;
+   color: $blue;
+   z-index: 10;
+   pointer-events: none;
+ }
+
+  &:after
+  {
+    background: $wht;
+    content:"";
+    height: 30px;
+    pointer-events: none;
+    position: absolute;
+    right: 1px;
+    top: 0;
+    width: 26px;
+    cursor: pointer;
+    color: $blue;
+  }
+}

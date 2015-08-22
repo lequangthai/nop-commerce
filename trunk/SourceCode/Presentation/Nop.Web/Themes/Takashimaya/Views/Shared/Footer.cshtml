@@ -1,16 +1,47 @@
 ﻿@{
     Layout = null;
+    var contentPath = "/Themes/Takashimaya/Content";
 }
-<footer>
-    <div class="container footer">
-        <p class="footer-left fl">
-            <span>@@ 2015 Takashimaya Singapore Ltd. All Rights Reserved</span> <a href="">FAQ</a> <a href="">DELIERY</a> <a href="">T&C</a> <a href="">PRIVACY</a>
-        </p>
-        <p class="subscribe text-right fr">
-            <span>Subscribe to Us</span>
-            <input type="text" name="yourname">
-            <input type="text" name="youremail">
-            <input type="button" value="GO" class="btn-go">
-        </p>
+<div class="bottom-footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 col-xs-12 content">
+                <div class="baby"><img src="@contentPath/images/icon_baby.png"></div>
+            </div>
+        </div>
     </div>
-</footer>
+</div> <!-- bottom -->
+
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="content">
+                <div class="col-md-7 col-xs-7 copyright">
+                    <ul>
+                        <li><a href="javascript:void(0)">©2015 Takashimaya Singapore Ltd. All Rights Reserved  </a></li>
+                        <li><a href="javascript:void(0);">FAQ </a></li>
+                        <li><a href="javascript:void(0);">DELIVERY </a></li>
+                        <li><a href="javascript:void(0);">T&C</a></li>
+                        <li><a href="javascript:void(0);">PRIVACY </a></li>
+                    </ul>
+                </div>
+
+                <div class="col-md-5 col-xs-5">
+
+                    <div class="subscribe">
+                        Subscribe to us
+                        <div class="input-group">
+                            <input class="form-input-box" type="text" placeholder="Your name">
+                            <input class="form-input-box" type="text" placeholder="Your email">
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default go">GO</button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</footer> <!-- footer -->

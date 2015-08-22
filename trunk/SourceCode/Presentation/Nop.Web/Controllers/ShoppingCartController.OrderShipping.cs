@@ -451,7 +451,7 @@ namespace Nop.Web.Controllers
         }
 
         [ValidateInput(false)]
-        [HttpPost, ActionName("Cart")]
+        [HttpPost, ActionName("ShippingCart")]
         [FormValueRequired("updateshippingcart")]
         public ActionResult UpdateShippingCart(FormCollection form)
         {

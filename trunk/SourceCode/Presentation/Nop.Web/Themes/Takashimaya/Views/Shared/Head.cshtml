@@ -9,8 +9,10 @@
 
     //add browser specific CSS files
     
-    <link href="~/Themes/Takashimaya/Content/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" type="text/css" href="/themes/takashimaya/content/css/font-awesome.min.css">
+    @*<link href="~/Themes/Takashimaya/Content/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="/themes/takashimaya/content/css/font-awesome.min.css">*@
+    <link rel="stylesheet" href="~/Themes/Takashimaya/Content/css/style.css">
+    <link rel="stylesheet" href="~/Themes/Takashimaya/Content/css/custom.css">
     var browser = Request.Browser;
     if (browser.Browser == "IE" && browser.MajorVersion == 8)
     {
@@ -26,7 +28,7 @@
         Html.AppendCssFileParts(string.Format("~/Themes/{0}/Content/css/styles.css", themeName));
     }
 
-    
+
     //add jQuery UI css file
     Html.AppendCssFileParts("~/Content/jquery-ui-themes/smoothness/jquery-ui-1.10.3.custom.min.css");
 

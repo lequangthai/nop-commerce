@@ -1,0 +1,22 @@
+// Respond-to mixin for Bootstrap v3 (Sass) (https://github.com/twbs/bootstrap-sass)
+// Author: @iamtyce
+// Original author: @wernah, based on @benschwarz
+
+// ******************** //
+//      RESPOND TO      //
+// ******************** //
+// Use: @include respond-to(screen-xs) { }
+
+@mixin respond-to($breakpoint) {
+
+  $respondToLoop: $screen-xs, $screen-sm, $screen-md, $screen-lg;
+ 
+  @each $respondTo in $respondToLoop {
+
+    @if $breakpoint == #{$respondTo} {
+      @media only #{$media} and ($feature: #{$respondTo}) { @content }
+    }
+
+  }
+
+}
