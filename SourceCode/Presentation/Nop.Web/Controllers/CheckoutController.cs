@@ -633,7 +633,7 @@ namespace Nop.Web.Controllers
             return View(model);
         }
 
-        public ActionResult ShippingAddress()
+        public ActionResult ShippingAddress(string recipientName = "myseft")
         {
             //validation
             var cart = _workContext.CurrentCustomer.ShoppingCartItems

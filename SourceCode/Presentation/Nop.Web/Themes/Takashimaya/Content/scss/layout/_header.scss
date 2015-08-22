@@ -1,0 +1,527 @@
+
+
+.header
+{
+  height: 120px;
+  width: 100%;
+  position: relative;
+  z-index: 20;
+  background: url("../images/bg.jpg") repeat 0 0;
+  &:after{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background: url("../images/bgTopGradient.png") repeat-x 0 0;
+    content: "";
+    pointer-events: none;
+  }
+
+  @include respond-to(767)
+  {
+    height: auto;
+  }
+
+
+
+  .header-right
+  {
+    @include make-xs-column(12,30px);
+    @include make-sm-column(8,30px);
+    @include make-md-column(8,30px);
+    @include make-lg-column(8,30px);
+    padding-left: 0;
+
+    @include respond-to(767)
+    {
+      height: auto;
+      padding: 0 0 15px;
+    }
+  }
+
+
+  .header-member
+  {
+    float: right;
+    list-style-type: none;
+    padding: 0;
+    margin: 20px 0 0;
+    li{
+      float: left;
+      margin: 0 0 0 10px;
+      padding: 0 0 0 10px;
+      border-left: 1px solid $blk;
+      font-size: 12px;
+
+      &:first-child{
+        border-left: none;
+      }
+
+      &.login{
+        background: url("../images/icon_pencil.png") no-repeat left center;
+        padding: 0 0 0 15px;
+      }
+
+    }
+  }
+
+  .header-cart
+  {
+    width: 100%;
+    float: right;
+    height: 32px;
+    margin: 20px 0 0;
+
+    .shopping-cart
+    {
+      float: right;
+      margin: 7px 10px 0 0;
+      font-weight: bold;
+      padding: 0 0 0 22px;
+      background: url("../images/icon_cart.png") no-repeat left center;
+      span{
+        font-weight: normal;
+      }
+    }
+
+  }
+
+  .search-top
+  {
+    float: right;
+    margin: 4px 0 0;
+    padding: 0 11px 0 0;
+    text-align: right;
+
+    .keyword
+    {
+      width: 230px;
+      margin-right: 0px;
+      float: left;
+      border: 1px solid $pink;
+      background-color: $wht;
+      border-right: none;
+      height: 29px;
+      padding: 3px;
+      -webkit-appearance: none;
+      -webkit-border-radius: 0;
+      color: $blk1;
+      @include border-left-radius(3px);
+
+      @include respond-to(phone)
+      {
+        width: 110px;
+      }
+
+      &.active {
+     //   -webkit-box-shadow: inset 0 0 10px 1px $brown;
+    //    box-shadow: inset 0 0 10px 1px $brown;
+      //  color: $grey;
+
+      }
+
+      &:focus{
+     //   border: 1px solid $grey;
+  //      @include box-shadow(0 0 7px rgba(0, 0, 0, 0.2) inset);
+      }
+
+    }
+
+    .btn-search{
+      height: 29px;
+      width: 25px;
+      padding: 2px 9px 5px 12px;
+      margin: 0px;
+      line-height: 18px;
+      font-size: 14px;
+      text-transform: uppercase;
+      font-weight: 400;
+      border: 1px solid $pink;
+      border-left: none;
+      background: url("../images/icon_search.png") no-repeat center center $wht;
+
+      @include border-radius(0 0 0 0);
+      @include border-right-radius(3px);
+      outline: none;
+
+
+
+      i{
+        color: $brown;
+        font-size: 18px;
+        margin: 2px 0 0;
+      }
+
+    }
+  }
+
+}
+
+.logo
+{
+  padding: 0;
+  margin: 25px 0 0;
+
+  @include respond-to(767)
+  {
+    text-align: center;
+    float: left;
+    margin: 2px 0 0;
+    img
+    {
+      width: 160px;
+    }
+  }
+
+}
+
+
+
+
+.navigation-top
+{
+
+  height: 40px;
+  clear: both;
+  position: relative;
+  margin: 0 0 22px;
+  background-color: $pink;
+
+  &.active-mobile
+  {
+    display: block;
+  }
+
+  @include respond-to(767)
+  {
+    display: none;
+    height: auto;
+    border-bottom: none;
+    background: none;
+  }
+
+  >#nav-top
+  {
+
+    height: 40px;
+    @include respond-to(767)
+    {
+      height: auto;
+    }
+
+    >ul{
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+      @include size(auto,40px);
+      float: left;
+      position: relative;
+
+      >li{
+        float: left;
+        @include link-color($blk1,$wht,"");
+        position: relative;
+
+        &.hover, &.active
+        {
+          >a{
+            color: $wht;
+            background-color: $red;
+          }
+        }
+
+        >a{
+
+
+          z-index: 10;
+          display: block;
+          text-align: center;
+          padding: 0 10px 0 23px;
+          height: 40px;
+          line-height: 40px;
+          position: relative;
+          text-transform: uppercase;
+
+          &:hover
+          {
+            color: $wht;
+            background-color: $red;
+          }
+
+
+          @include respond-to(767)
+          {
+            height: auto;
+            line-height: normal;
+            padding: 10px;
+
+            @include link-color($blue,$yellow,"");
+            text-align: left;
+          }
+        }
+
+
+
+        @include respond-to(767)
+        {
+          border-left: none;
+          width: 100%;
+          display: block;
+          border-top: 1px solid $blk1;
+          @include link-color($blk1,$red,"");
+          position: relative;
+          &:first-child{
+            border-top: none;
+            padding: 0;
+          }
+
+
+
+
+        }
+      }
+    }
+
+    .nav-social
+    {
+      float: right;
+      height: 40px;
+      line-height: 40px;
+      font-family: 'roboto_condensedregular';
+      margin: 0 18px 0 0;
+      a{
+        margin: 0 5px;
+      }
+      span{
+        margin: 0 5px 0 0;
+      }
+    }
+
+    .main-site
+    {
+      float: right;
+      height: 40px;
+      line-height: 40px;
+      background-color: $red;
+
+      a{
+        display: block;
+        color: $wht;
+        padding: 0 20px;
+      }
+    }
+
+
+
+  }
+}
+
+.nav-sub
+{
+  position: absolute;
+  width: 234px;
+  left: 0;
+  top: 40px;
+  height: auto;
+
+  background-color: #f3f3f3;
+  display: none;
+  z-index: 50;
+  @include transition(all 0.3s ease-out);
+  text-align: left;
+
+
+  @include respond-to(767){
+    position: relative;
+    height: auto;
+    top: 0;
+    background: none;
+    width: 100%;
+    text-align: left;
+  }
+
+  >ul{
+    padding: 0 10px;
+    list-style-type: none;
+    width: auto;
+    display: inline-block;
+    margin: 0 auto;
+
+
+    &:after{
+      display: block;
+      content: "";
+      clear: both;
+    }
+
+    >li{
+
+      text-align: left;
+      @include link-color($blk1,$red,"");
+      border-top: 1px dotted $grey;
+      width: 100%;
+      float: left;
+      line-height: 120%;
+
+
+
+      a{
+        display: block;
+        width: 100%;
+        padding: 7px 25px 7px 20px;
+
+      }
+
+      &:first-child{
+        border-left: none;
+        border-top: none;
+      }
+
+
+
+      @include respond-to(767)
+      {
+        float: none;
+        width: 100%;
+        border-left: none;
+        padding-bottom: 0;
+      }
+
+    }
+
+    @include respond-to(767)
+    {
+      padding: 0 0 7px;
+    }
+
+  }
+}
+
+
+
+.navigation-top
+{
+  #nav-top
+  {
+    li
+    {
+      &.hover
+      {
+        .nav-sub{
+          display: block;
+          @include transition(all 0.3s ease-out);
+        }
+      }
+    }
+  }
+}
+
+.navigation-mobile
+{
+  display: none;
+  width: 190px;
+  transition: all 0.3s ease 0s;
+  margin: 0 0 15px;
+  @include respond-to(767)
+  {
+    display: block;
+  }
+}
+
+.toggleBox
+{
+
+  background:#fff none repeat scroll 0 0;
+  border: 1px solid $grey;
+  overflow: hidden;
+  height: 47px;
+  float: left;
+  position: relative;
+  width: 46px;
+  margin: 0 15px 0 0;
+  display: none;
+  @include respond-to(767)
+  {
+    display: block;
+  }
+
+  .navToggle {
+    background: white none repeat scroll 0 0;
+    border: medium none;
+    border-radius: 0;
+    cursor: pointer;
+    height: 47px;
+    left: 0;
+    outline: medium none;
+    padding: 0 8px;
+    position: absolute;
+    top: 0;
+    z-index: 200;
+
+    .nav-icon {
+      background-color: $blk;
+      border-radius: 0;
+      display: block;
+      height: 3px;
+      left: 0;
+      margin-top: -1px;
+      position: relative;
+      top: 0;
+      transition: background 0.2s ease 0.2s;
+      width: 30px;
+
+      &:before, &:after
+      {
+        background-color: $blk;
+        @include border-radius(0);
+        content: "";
+        display: block;
+        height: 100%;
+        left: 0;
+        position: absolute;
+        transition: top 0.3s ease 0.2s, transform 0.3s ease 0s;
+        -moz-transition: 0.3s ease 0.2s, transform 0.3s ease 0s;
+
+        @include transform-origin(50% 50% 0);
+        width: 100%;
+      }
+
+      &:before{
+        top: -10px;
+        -moz-transform: rotate(0deg);
+        transform:  rotate(0deg);
+      }
+
+      &:after
+      {
+        top: 10px;
+        -moz-transform: rotate(0deg);
+        transform:  rotate(0deg);
+      }
+
+    }
+
+    &.open{
+      .nav-icon{
+        background-color: #fff;
+        &:before{
+          transform: rotate(45deg);
+          -moz-transform: rotate(45deg);
+          -o-transform: rotate(45deg);
+          top: 0;
+        }
+
+        &:after
+        {
+          transform: rotate(-45deg);
+          -moz-transform: rotate(-45deg);
+          -o-transform: rotate(-45deg);
+          top: 0;
+        }
+
+      }
+    }
+
+  }
+}

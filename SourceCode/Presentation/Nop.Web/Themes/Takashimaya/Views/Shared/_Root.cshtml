@@ -17,20 +17,24 @@
     </div>*@
     @Html.Partial("Mainmenu")
 
-    <div class="master-wrapper-content container">
-        @Html.Widget("content_before")
+    <main id="site-content" class="site-content">
+        <div class="container">
+            @Html.Widget("content_before")
 
-        @if (IsSectionDefined("Breadcrumb"))
-        {
-            @RenderSection("Breadcrumb") 
-        }
-        <div class="master-column-wrapper">
-            @RenderBody()
+            @if (IsSectionDefined("Breadcrumb"))
+            {
+                @RenderSection("Breadcrumb")
+            }
+            <div class="master-column-wrapper">
+                @RenderBody()
+            </div>
+            @Html.Widget("content_after")
         </div>
-        @Html.Widget("content_after")
-    </div>
+    </main> <!-- main contain -->
+    
     @*@Html.Action("Footer", "Common")*@
+    @Html.Partial("Footer")
 </div>
-@Html.Partial("Footer")
+
 @Html.Action("EuCookieLaw", "Common")
 @Html.Widget("body_end_html_tag_before")

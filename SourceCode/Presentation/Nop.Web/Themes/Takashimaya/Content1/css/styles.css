@@ -112,4 +112,8 @@ footer{ background-color:#FFCCCB; font-size: 11px;}
 .subscribe input[type='text']{ width: 120px; margin: 0 2px; background:#FFCCCB; border: none; color: white; padding: 2px;}
 .btn-go{ padding: 2px; margin: 0;}
 
+/* CART */
+table.cart thead{background-color: #BD072D; color: #fff; text-transform: uppercase;}
+table.cart thead th{ font-weight: normal;}
+
 

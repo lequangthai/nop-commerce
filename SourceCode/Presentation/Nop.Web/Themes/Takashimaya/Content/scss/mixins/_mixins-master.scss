@@ -1,0 +1,122 @@
+$screen-smd-max: 600px;
+$screen-sd-max: 480px;
+
+
+@function font-url($path)
+{
+  @return $path;
+}
+@function image-url($path) {
+  @return $path;
+}
+
+
+@function  font-path($path)
+{
+  @return $path;
+}
+
+@function  image-path($path)
+{
+  @return $path;
+}
+/*
+@mixin respond-to($media) {
+  @if $media == mobile-portrait {
+    @media only screen and (max-width: $break-mobile - 1) { @content; }
+  }
+  @else if $media == mobile-landscape {
+    @media only screen and (min-width: $break-mobile) and (max-width: $break-tablet - 1 ) { @content; }
+  }
+  @else if $media == tablet-portrait {
+    @media only screen and (min-width: $break-tablet) and (max-width: $break-large - 1 ) { @content; }
+  }
+  @else if $media == tablet {
+    @media only screen and (max-width: $break-large - 1 ) { @content; }
+  }
+  @else if $media == mobile {
+    @media only screen and (max-width: $break-tablet - 1 ) { @content; }
+  }
+  @else if $media == tablet-landscape{
+    @media only screen and (max-width: $break-full-width - 1 ) { @content; }
+  }
+}
+*/
+
+@mixin respond-to($media) {
+  /* Landscape phones and down */
+  @if $media == phone {
+    @media (max-width: $screen-sd-max - 1) { @content; }
+  }
+
+  @if $media == large-phone {
+    @media (max-width: $screen-smd-max - 1) { @content; }
+  }
+
+    /* Landscape phone to portrait tablet */
+  @else if $media == tablet-portrait {
+    @media (max-width: $screen-sm-max) {@content; }
+  }
+
+  @else if $media == medium-tablet {
+    @media (max-width: $screen-md-min - 1 ) {@content; }
+  }
+
+    /* Portrait tablet to landscape and desktop 768-979 */
+  @else if $media == tablet-landscape-desktop {
+    @media (min-width: $screen-sm-min) and (max-width: $screen-md-max) { @content; }
+  }
+    /* Large desktop */
+  @else if $media == large-desktop {
+    @media (min-width:  $screen-lg-min) { @content; }
+  }
+    // Non-Retina
+  @else if $media == non-retina {
+    @media screen and (-webkit-max-device-pixel-ratio: 1) { @content; }
+  }
+    // Retina Only
+  @else if $media == retina {
+    @media screen and (-webkit-min-device-pixel-ratio: 2) { @content; }
+  }
+    // Specific max width
+  @else {
+    @media only screen and (max-width: #{$media}px) { @content; }
+  }
+}
+
+
+
+
+
+@mixin background-size($value)
+{
+  -webkit-background-size: $value;
+  -moz-background-size: $value;
+  -o-background-size: $value;
+  background-size: $value;
+}
+
+@mixin border-radius($value)
+{
+  -webkit-border-radius: $value;
+  -moz-border-radius: $value;
+  -o-border-radius: $value;
+  border-radius: $value;
+
+}
+
+@mixin transition($value)
+{
+  webkit-transition: $value;
+ -moz-transition: $value;
+  -o-transition: $value;
+  transition: $value;
+}
+
+@mixin opacity($value)
+{
+  -moz-opacity: $value;
+  opacity: $value;
+}
+
+
