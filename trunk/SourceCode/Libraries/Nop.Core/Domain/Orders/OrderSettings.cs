@@ -3,7 +3,7 @@ using Nop.Core.Configuration;
 
 namespace Nop.Core.Domain.Orders
 {
-    public class OrderSettings : ISettings
+    public partial class OrderSettings : ISettings
     {
         /// <summary>
         /// Gets or sets a value indicating whether customer can make re-order

@@ -479,7 +479,10 @@ namespace Nop.Web.Controllers
 
             if (_orderSettings.OnePageCheckoutEnabled)
                 return RedirectToRoute("CheckoutOnePage");
-            
+
+            if (_orderSettings.ShippingCheckout)
+                return RedirectToRoute("NEXT_RECIPIENT");
+
             return RedirectToRoute("CheckoutBillingAddress");
         }
 

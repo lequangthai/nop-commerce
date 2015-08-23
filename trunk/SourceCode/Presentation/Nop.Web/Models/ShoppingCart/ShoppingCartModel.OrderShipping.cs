@@ -9,6 +9,8 @@ namespace Nop.Web.Models.ShoppingCart
         public partial class ShoppingCartItemModel : BaseNopEntityModel
         {
             public List<ShippingCartItemModel> ShippingCartItems { get; set; }
+
+            public decimal SubTotalValue { get; set; }
         }
 
         public partial class ShippingCartItemModel : BaseNopEntityModel

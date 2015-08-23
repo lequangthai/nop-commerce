@@ -1,2 +1,2 @@
 DataProvider: sqlserver
-DataConnectionString: Data Source=115.84.182.91;Initial Catalog=giadb;Integrated Security=False;Persist Security Info=False;User ID=sa;Password=web4g@min@!!%
+DataConnectionString: Data Source=115.84.182.91;Initial Catalog=gia2;Integrated Security=False;Persist Security Info=False;User ID=sa;Password=web4g@min@!!%

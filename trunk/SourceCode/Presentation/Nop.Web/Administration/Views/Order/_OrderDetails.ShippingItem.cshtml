@@ -4,8 +4,7 @@
 {
     <table class="adminContent">
         @if (Model.IsShippable && Model.ShippingAddress != null)
-        {
-            
+        {           
             <tr>
                 <td class="adminTitle">
                     @Html.NopLabelFor(model => model.ShippingAddress):
