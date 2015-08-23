@@ -85,6 +85,9 @@ namespace Nop.Core.Domain.Common
         /// </summary>
         public virtual StateProvince StateProvince { get; set; }
 
+        public string RecipientTitle { get; set; }
+
+        public string RecipientName { get; set; }
 
         public object Clone()
         {

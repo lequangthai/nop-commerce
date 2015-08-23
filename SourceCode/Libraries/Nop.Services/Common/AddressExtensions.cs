@@ -48,5 +48,30 @@ namespace Nop.Services.Common
                 ((String.IsNullOrEmpty(a.CustomAttributes) && String.IsNullOrEmpty(customAttributes)) || a.CustomAttributes == customAttributes));
         }
 
+        public static Address FindAddress(this List<Address> source,
+            string firstName, string lastName, string phoneNumber,
+            string email, string faxNumber, string company, string address1,
+            string address2, string city, int? stateProvinceId,
+            string zipPostalCode, int? countryId, string customAttributes,
+            string recipientTitle, string recipientName)
+        {
+            return source.Find(a => ((String.IsNullOrEmpty(a.FirstName) && String.IsNullOrEmpty(firstName)) || a.FirstName == firstName) &&
+                ((String.IsNullOrEmpty(a.LastName) && String.IsNullOrEmpty(lastName)) || a.LastName == lastName) &&
+                ((String.IsNullOrEmpty(a.PhoneNumber) && String.IsNullOrEmpty(phoneNumber)) || a.PhoneNumber == phoneNumber) &&
+                ((String.IsNullOrEmpty(a.Email) && String.IsNullOrEmpty(email)) || a.Email == email) &&
+                ((String.IsNullOrEmpty(a.FaxNumber) && String.IsNullOrEmpty(faxNumber)) || a.FaxNumber == faxNumber) &&
+                ((String.IsNullOrEmpty(a.Company) && String.IsNullOrEmpty(company)) || a.Company == company) &&
+                ((String.IsNullOrEmpty(a.Address1) && String.IsNullOrEmpty(address1)) || a.Address1 == address1) &&
+                ((String.IsNullOrEmpty(a.Address2) && String.IsNullOrEmpty(address2)) || a.Address2 == address2) &&
+                ((String.IsNullOrEmpty(a.City) && String.IsNullOrEmpty(city)) || a.City == city) &&
+                ((String.IsNullOrEmpty(a.RecipientTitle) && String.IsNullOrEmpty(recipientTitle)) || a.RecipientTitle == recipientTitle) &&
+                ((String.IsNullOrEmpty(a.RecipientName) && String.IsNullOrEmpty(recipientName)) || a.RecipientName == recipientName) &&
+                ((a.StateProvinceId.IsNullOrDefault() && stateProvinceId.IsNullOrDefault()) || a.StateProvinceId == stateProvinceId) &&
+                ((String.IsNullOrEmpty(a.ZipPostalCode) && String.IsNullOrEmpty(zipPostalCode)) || a.ZipPostalCode == zipPostalCode) &&
+                ((a.CountryId.IsNullOrDefault() && countryId.IsNullOrDefault()) || a.CountryId == countryId) &&
+                //actually we should parse custom address attibutes (in case if "Display order" is changed) and then compare
+                //bu we simplify this process and simply compare their values in XML
+                ((String.IsNullOrEmpty(a.CustomAttributes) && String.IsNullOrEmpty(customAttributes)) || a.CustomAttributes == customAttributes));
+        }
     }
 }

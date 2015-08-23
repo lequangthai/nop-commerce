@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Nop.Core.Domain.Customers;
+using Nop.Core.Domain.Orders;
 using Nop.Core.Domain.Shipping;
 using Nop.Services.Common;
 using Nop.Services.Orders;
@@ -13,11 +15,39 @@ namespace Nop.Web.Controllers
 {
     public partial class CheckoutController : BasePublicController
     {
-        public ActionResult ShippingAddress(int recepientId)
+        private List<ShippingCart> GetCurrentShippingCarts()
         {
-            //validation
-            var shippingCart =
-                _workContext.CurrentCustomer.ShippingCarts.FirstOrDefault(sci => sci.Id == recepientId);
+            return _workContext.CurrentCustomer.ShippingCarts.OrderBy(c => c.RecipientName).ToList();
+        }
+
+        private RedirectToRouteResult GetNextShippingCartAction(int recepientId)
+        {
+            var list = GetCurrentShippingCarts();
+            var currentShippingCart = list.FirstOrDefault(c => c.Id == recepientId);
+            if (currentShippingCart != null)
+            {
+                var currentIndex = list.IndexOf(currentShippingCart);
+                if (currentIndex < (list.Count - 1))
+                {
+                    return RedirectToRoute("NEXT_RECIPIENT", new {recepientId = list[currentIndex + 1].Id});
+                }
+            }
+            return RedirectToRoute("CONFIRM_ACTION");
+        }
+
+        public ActionResult ShippingAddress(int? recepientId)
+        {
+            ShippingCart shippingCart;
+            if (!recepientId.HasValue)
+            {
+                shippingCart = GetCurrentShippingCarts().FirstOrDefault();
+            }
+            else
+            {
+                shippingCart =
+                    _workContext.CurrentCustomer.ShippingCarts.FirstOrDefault(sci => sci.Id == recepientId);
+            }
+            
             if (shippingCart == null || shippingCart.ShippingCartItems.Count == 0)
                 return RedirectToRoute("ShoppingCart");
 
@@ -28,11 +58,31 @@ namespace Nop.Web.Controllers
             {
                 shippingCart.ShippingAddress = null;
                 _customerService.UpdateCustomer(_workContext.CurrentCustomer);
-                return RedirectToRoute("CheckoutShippingMethod");
+                return GetNextShippingCartAction(shippingCart.Id);
             }
 
             //model
             var model = PrepareShippingAddressModel(prePopulateNewAddressWithCustomerFields: true);
+            if (shippingCart.RequiresShipping() && shippingCart.ShippingAddress != null)
+            {
+                model.NewAddress.RecipientTitle = shippingCart.ShippingAddress.RecipientTitle;
+                model.NewAddress.RecipientName = shippingCart.ShippingAddress.RecipientName;
+                model.NewAddress.Address1 = shippingCart.ShippingAddress.Address1;
+                model.NewAddress.Address2 = shippingCart.ShippingAddress.Address2;
+                model.NewAddress.PhoneNumber = shippingCart.ShippingAddress.PhoneNumber;
+                model.NewAddress.ZipPostalCode = shippingCart.ShippingAddress.ZipPostalCode;
+                model.NewAddress.Email = shippingCart.ShippingAddress.Email;
+
+                model.PickUpInStore = shippingCart.PickUpInStore;
+                model.ExpectedDeliveryDate = shippingCart.ExpectedDeliveryDate;
+                model.ExpectedDeliveryPeriod = shippingCart.ExpectedDeliveryPeriod;
+
+                model.GreetingType = shippingCart.GreetingType;
+                model.To = shippingCart.To;
+                model.From = shippingCart.From;
+                model.Message = shippingCart.Message;
+            }
+            model.ShippingCart = shippingCart;
             return View(model);
         }
 
@@ -56,7 +106,7 @@ namespace Nop.Web.Controllers
                     false, _storeContext.CurrentStore.Id);
             }
 
-            return RedirectToRoute("CheckoutShippingMethod");
+            return GetNextShippingCartAction(shippingCart.Id);
         }
 
         [HttpPost, ActionName("ShippingCartAddress")]
@@ -81,7 +131,7 @@ namespace Nop.Web.Controllers
             {
                 shippingCart.ShippingAddress = null;
                 _customerService.UpdateCustomer(_workContext.CurrentCustomer);
-                return RedirectToRoute("CheckoutShippingMethod");
+                return GetNextShippingCartAction(shippingCart.Id);
             }
 
 
@@ -113,7 +163,7 @@ namespace Nop.Web.Controllers
                         _storeContext.CurrentStore.Id);
 
                     //load next step
-                    return RedirectToRoute("CheckoutShippingMethod");
+                    return GetNextShippingCartAction(shippingCart.Id);
                 }
 
                 //set value indicating that "pick up in store" option has not been chosen
@@ -136,7 +186,8 @@ namespace Nop.Web.Controllers
                     model.NewAddress.Email, model.NewAddress.FaxNumber, model.NewAddress.Company,
                     model.NewAddress.Address1, model.NewAddress.Address2, model.NewAddress.City,
                     model.NewAddress.StateProvinceId, model.NewAddress.ZipPostalCode,
-                    model.NewAddress.CountryId, customAttributes);
+                    model.NewAddress.CountryId, customAttributes,
+                    model.NewAddress.RecipientTitle, model.NewAddress.RecipientName);
                 if (address == null)
                 {
                     address = model.NewAddress.ToEntity();
@@ -151,15 +202,19 @@ namespace Nop.Web.Controllers
                 }
                 shippingCart.ShippingAddress = address;
 
+                shippingCart.PickUpInStore = model.PickUpInStore;
+                shippingCart.ExpectedDeliveryDate = model.ExpectedDeliveryDate;
+                shippingCart.ExpectedDeliveryPeriod = model.ExpectedDeliveryPeriod;
+
                 //update Gretting message
-                shippingCart.GreetingType = form["greetingtype"] ?? string.Empty;
-                shippingCart.From = form["from"] ?? string.Empty;
-                shippingCart.To = form["to"] ?? string.Empty;
-                shippingCart.Message = form["message"] ?? string.Empty;
+                shippingCart.GreetingType = model.GreetingType;
+                shippingCart.From = model.From;
+                shippingCart.To = model.To;
+                shippingCart.Message = model.Message;
 
                 _customerService.UpdateCustomer(_workContext.CurrentCustomer);
 
-                return RedirectToRoute("CheckoutShippingMethod");
+                return GetNextShippingCartAction(shippingCart.Id);
             }
 
 

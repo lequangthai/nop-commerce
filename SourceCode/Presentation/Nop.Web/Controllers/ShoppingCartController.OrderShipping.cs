@@ -529,5 +529,16 @@ namespace Nop.Web.Controllers
             }
             return View(model);
         }
+
+        [ChildActionOnly]
+        public ActionResult ShippingOrderTotals(bool isEditable)
+        {
+            var cart = _workContext.CurrentCustomer.ShoppingCartItems
+                .Where(sci => sci.ShoppingCartType == ShoppingCartType.ShoppingCart)
+                .LimitPerStore(_storeContext.CurrentStore.Id)
+                .ToList();
+            var model = PrepareOrderTotalsModel(cart, isEditable);
+            return PartialView(model);
+        }
     }
 }

@@ -351,6 +351,7 @@
     <Compile Include="Models\Profile\ProfileIndexModel.cs" />
     <Compile Include="Models\Profile\PostsModel.cs" />
     <Compile Include="Models\Profile\ProfilePostsModel.cs" />
+    <Compile Include="Models\ShoppingCart\OrderTotalsModel.OrderShipping.cs" />
     <Compile Include="Models\ShoppingCart\ShoppingCartModel.OrderShipping.cs" />
     <Compile Include="Models\ShoppingCart\MiniShoppingCartModel.cs" />
     <Compile Include="Models\ShoppingCart\WishlistEmailAFriendModel.cs" />
