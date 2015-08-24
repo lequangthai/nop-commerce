@@ -25,7 +25,7 @@ namespace Nop.Web.Controllers
 {
     public partial class ShoppingCartController : BasePublicController
     {
-        private const string MySelft = "myselft";
+        private const string MySelf = "myself";
 
         #region Ultities
         [NonAction]
@@ -332,13 +332,13 @@ namespace Nop.Web.Controllers
 
             #region ShippingCartItems
             model.RecipientNames = shippingCarts.Select(c => c.RecipientName).ToList();
-            if (model.RecipientNames.Contains(MySelft) && model.RecipientNames.IndexOf(MySelft) != 0)
+            if (model.RecipientNames.Contains(MySelf) && model.RecipientNames.IndexOf(MySelf) != 0)
             {
-                model.RecipientNames.Remove(MySelft);
+                model.RecipientNames.Remove(MySelf);
             }
-            if (!model.RecipientNames.Contains(MySelft))
+            if (!model.RecipientNames.Contains(MySelf))
             {
-                model.RecipientNames.Insert(0, MySelft);
+                model.RecipientNames.Insert(0, MySelf);
             }
 
             #endregion
@@ -492,7 +492,7 @@ namespace Nop.Web.Controllers
                     var formReceipientKey = string.Format("recipient{0}", sci.Id);
                     if (formKeys.Any(c => c.Equals(formReceipientKey, StringComparison.InvariantCultureIgnoreCase)))
                     {
-                        var reciepientNames = form[formReceipientKey].Split(';').ToList();
+                        var reciepientNames = form[formReceipientKey].Split(',').ToList();
                         for (int i = 0; i < reciepientNames.Count; i++)
                         {
                             var recipientName = reciepientNames[i];
@@ -512,8 +512,14 @@ namespace Nop.Web.Controllers
                 .Where(sci => sci.ShoppingCartType == ShoppingCartType.ShoppingCart)
                 .LimitPerStore(_storeContext.CurrentStore.Id)
                 .ToList();
+            var shippingCarts = _workContext.CurrentCustomer.ShippingCarts.OrderBy(c => c.RecipientName).ToList();
+            var shippingCartItems = new List<ShippingCartItem>();
+            foreach (var shippingCart in shippingCarts)
+            {
+                shippingCartItems.AddRange(shippingCart.ShippingCartItems);
+            }
             var model = new ShoppingCartModel();
-            PrepareShoppingCartModel(model, cart);
+            PrepareShippingCartModel(model, cart, shippingCarts, shippingCartItems);
             //update current warnings
             foreach (var kvp in innerWarnings)
             {
