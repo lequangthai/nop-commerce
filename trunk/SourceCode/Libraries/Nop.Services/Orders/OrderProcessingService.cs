@@ -209,6 +209,7 @@ namespace Nop.Services.Orders
             public PlaceOrderContainter()
             {
                 this.Cart = new List<ShoppingCartItem>();
+                this.ShippingCarts= new List<ShippingCart>();
                 this.ShippingCartItems = new List<ShippingCartItem>();
                 this.AppliedDiscounts = new List<Discount>();
                 this.AppliedGiftCards = new List<AppliedGiftCard>();
@@ -236,6 +237,7 @@ namespace Nop.Services.Orders
             public string CheckoutAttributesXml { get; set; }
 
             public IList<ShoppingCartItem> Cart { get; set; }
+            public IList<ShippingCart> ShippingCarts { get; set; } 
             public List<ShippingCartItem> ShippingCartItems { get; set; } 
             public List<Discount> AppliedDiscounts { get; set; }
             public List<AppliedGiftCard> AppliedGiftCards { get; set; }
@@ -377,6 +379,9 @@ namespace Nop.Services.Orders
                                 shippingCartItem =>
                                     details.Cart.Any(sci => sci.Id == shippingCartItem.ShoppingCartItemId))).ToList();
                 }
+
+                //load shipping cart
+                details.ShippingCarts = details.ShippingCartItems.Select(c => c.ShippingCart).Distinct().ToList();
 
                 if (details.Cart.Count == 0)
                     throw new NopException("Cart is empty");
@@ -571,7 +576,8 @@ namespace Nop.Services.Orders
             //payment total
             if (!processPaymentRequest.IsRecurringPayment)
             {
-                decimal paymentAdditionalFee = _paymentService.GetAdditionalHandlingFee(details.Cart, processPaymentRequest.PaymentMethodSystemName);
+                decimal paymentAdditionalFee = _paymentService.GetAdditionalHandlingFee(details.Cart,
+                    details.ShippingCarts, processPaymentRequest.PaymentMethodSystemName);
                 details.PaymentAdditionalFeeInclTax = _taxService.GetPaymentMethodAdditionalFee(paymentAdditionalFee, true, details.Customer);
                 details.PaymentAdditionalFeeExclTax = _taxService.GetPaymentMethodAdditionalFee(paymentAdditionalFee, false, details.Customer);
             }
@@ -620,6 +626,7 @@ namespace Nop.Services.Orders
                 decimal redeemedRewardPointsAmount;
 
                 var orderTotal = _orderTotalCalculationService.GetShoppingCartTotal(details.Cart,
+                    details.ShippingCarts,
                     out orderDiscountAmount, out orderAppliedDiscount, out appliedGiftCards,
                     out redeemedRewardPoints, out redeemedRewardPointsAmount);
                 if (!orderTotal.HasValue)
@@ -1287,7 +1294,8 @@ namespace Nop.Services.Orders
                                                 ? ShippingStatus.NotYetShipped
                                                 : ShippingStatus.ShippingNotRequired,
                                         Title = shippingCart.Title,
-                                        To = shippingCart.To
+                                        To = shippingCart.To,
+                                        ShippingFee = shippingCart.ShippingFee
                                     };
                                 }
 
@@ -2961,7 +2969,7 @@ namespace Nop.Services.Orders
 
             if (cart.Count > 0 && _orderSettings.MinOrderTotalAmount > decimal.Zero)
             {
-                decimal? shoppingCartTotalBase = _orderTotalCalculationService.GetShoppingCartTotal(cart);
+                decimal? shoppingCartTotalBase = _orderTotalCalculationService.GetShoppingCartTotal(cart, new List<ShippingCart>());
                 if (shoppingCartTotalBase.HasValue && shoppingCartTotalBase.Value < _orderSettings.MinOrderTotalAmount)
                     return false;
             }

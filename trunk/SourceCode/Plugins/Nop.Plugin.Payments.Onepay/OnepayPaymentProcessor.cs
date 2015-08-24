@@ -87,10 +87,10 @@ namespace Nop.Plugin.Payments.Onepay
             return result;
         }
 
-        public decimal GetAdditionalHandlingFee(IList<ShoppingCartItem> cart)
+        public decimal GetAdditionalHandlingFee(IList<ShoppingCartItem> cart, IList<ShippingCart> shippingCarts)
         {
             Debug.WriteLine("GetAdditionalHandlingFee");
-            var result = this.CalculateAdditionalFee(_orderTotalCalculationService, cart,
+            var result = this.CalculateAdditionalFee(_orderTotalCalculationService, cart, shippingCarts,
                 _onePayPaymentSettings.AdditionalFee, _onePayPaymentSettings.AdditionalFeePercentage);
             return result;
         }

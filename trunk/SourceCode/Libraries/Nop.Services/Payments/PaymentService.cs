@@ -217,7 +217,7 @@ namespace Nop.Services.Payments
         /// <param name="cart">Shoping cart</param>
         /// <param name="paymentMethodSystemName">Payment method system name</param>
         /// <returns>Additional handling fee</returns>
-        public virtual decimal GetAdditionalHandlingFee(IList<ShoppingCartItem> cart, string paymentMethodSystemName)
+        public virtual decimal GetAdditionalHandlingFee(IList<ShoppingCartItem> cart, IList<ShippingCart> shippingCarts, string paymentMethodSystemName)
         {
             if (String.IsNullOrEmpty(paymentMethodSystemName))
                 return decimal.Zero;
@@ -226,7 +226,7 @@ namespace Nop.Services.Payments
             if (paymentMethod == null)
                 return decimal.Zero;
 
-            decimal result = paymentMethod.GetAdditionalHandlingFee(cart);
+            decimal result = paymentMethod.GetAdditionalHandlingFee(cart, shippingCarts);
             if (result < decimal.Zero)
                 result = decimal.Zero;
             if (_shoppingCartSettings.RoundPricesDuringCalculation)

@@ -145,7 +145,7 @@ namespace Nop.Web.Controllers
             bool result = true;
 
             //check whether order total equals zero
-            decimal? shoppingCartTotalBase = _orderTotalCalculationService.GetShoppingCartTotal(cart, ignoreRewardPoints);
+            decimal? shoppingCartTotalBase = _orderTotalCalculationService.GetShoppingCartTotal(cart, new List<ShippingCart>(), ignoreRewardPoints);
             if (shoppingCartTotalBase.HasValue && shoppingCartTotalBase.Value == decimal.Zero)
                 result = false;
             return result;
@@ -320,7 +320,7 @@ namespace Nop.Web.Controllers
         }
 
         [NonAction]
-        protected virtual CheckoutPaymentMethodModel PreparePaymentMethodModel(IList<ShoppingCartItem> cart, int filterByCountryId)
+        protected virtual CheckoutPaymentMethodModel PreparePaymentMethodModel(IList<ShoppingCartItem> cart, IList<ShippingCart> shippingCarts, int filterByCountryId)
         {
             var model = new CheckoutPaymentMethodModel();
 
@@ -357,7 +357,7 @@ namespace Nop.Web.Controllers
                     LogoUrl = pm.PluginDescriptor.GetLogoUrl(_webHelper)
                 };
                 //payment method additional fee
-                decimal paymentMethodAdditionalFee = _paymentService.GetAdditionalHandlingFee(cart, pm.PluginDescriptor.SystemName);
+                decimal paymentMethodAdditionalFee = _paymentService.GetAdditionalHandlingFee(cart, shippingCarts, pm.PluginDescriptor.SystemName);
                 decimal rateBase = _taxService.GetPaymentMethodAdditionalFee(paymentMethodAdditionalFee, _workContext.CurrentCustomer);
                 decimal rate = _currencyService.ConvertFromPrimaryStoreCurrency(rateBase, _workContext.WorkingCurrency);
                 if (rate > decimal.Zero)
@@ -935,7 +935,7 @@ namespace Nop.Web.Controllers
             }
 
             //model
-            var paymentMethodModel = PreparePaymentMethodModel(cart, filterByCountryId);
+            var paymentMethodModel = PreparePaymentMethodModel(cart, new List<ShippingCart>(), filterByCountryId);
 
             if (_paymentSettings.BypassPaymentMethodSelectionIfOnlyOne &&
                 paymentMethodModel.PaymentMethods.Count == 1 && !paymentMethodModel.DisplayRewardPoints)
@@ -1234,7 +1234,7 @@ namespace Nop.Web.Controllers
                 }
 
                 //payment is required
-                var paymentMethodModel = PreparePaymentMethodModel(cart, filterByCountryId);
+                var paymentMethodModel = PreparePaymentMethodModel(cart, new List<ShippingCart>(), filterByCountryId);
 
                 if (_paymentSettings.BypassPaymentMethodSelectionIfOnlyOne &&
                     paymentMethodModel.PaymentMethods.Count == 1 && !paymentMethodModel.DisplayRewardPoints)

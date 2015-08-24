@@ -255,12 +255,6 @@ namespace Nop.Web.Infrastructure
                             new { orderId = @"\d+" },
                             new[] { "Nop.Web.Controllers" });
 
-            routes.MapLocalizedRoute("NEXT_RECIPIENT",
-                            "checkout/ShippingAddress/{recepientId}",
-                            new { controller = "Checkout", action = "ShippingAddress", recepientId = UrlParameter.Optional },
-                            new { recepientId = @"\d+" },
-                            new[] { "Nop.Web.Controllers" });
-
             //subscribe newsletters
             routes.MapLocalizedRoute("SubscribeNewsletter",
                             "subscribenewsletter",

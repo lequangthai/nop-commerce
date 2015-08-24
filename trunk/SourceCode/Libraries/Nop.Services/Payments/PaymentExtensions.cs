@@ -49,6 +49,7 @@ namespace Nop.Services.Payments
         /// <returns>Result</returns>
         public static decimal CalculateAdditionalFee(this IPaymentMethod paymentMethod, 
             IOrderTotalCalculationService orderTotalCalculationService, IList<ShoppingCartItem> cart,
+            IList<ShippingCart> shippingCarts, 
             decimal fee, bool usePercentage)
         {
             if (paymentMethod == null)
@@ -60,7 +61,7 @@ namespace Nop.Services.Payments
             if (usePercentage)
             {
                 //percentage
-                var orderTotalWithoutPaymentFee = orderTotalCalculationService.GetShoppingCartTotal(cart, usePaymentMethodAdditionalFee: false);
+                var orderTotalWithoutPaymentFee = orderTotalCalculationService.GetShoppingCartTotal(cart, shippingCarts, usePaymentMethodAdditionalFee: false);
                 result = (decimal)((((float)orderTotalWithoutPaymentFee) * ((float)fee)) / 100f);
             }
             else

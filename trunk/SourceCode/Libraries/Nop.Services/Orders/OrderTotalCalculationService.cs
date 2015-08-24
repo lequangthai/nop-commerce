@@ -746,7 +746,7 @@ namespace Nop.Services.Orders
             if (usePaymentMethodAdditionalFee && _taxSettings.PaymentMethodAdditionalFeeIsTaxable)
             {
                 decimal taxRate;
-                decimal paymentMethodAdditionalFee = _paymentService.GetAdditionalHandlingFee(cart, paymentMethodSystemName);
+                decimal paymentMethodAdditionalFee = _paymentService.GetAdditionalHandlingFee(cart, new List<ShippingCart>(),  paymentMethodSystemName);
                 decimal paymentMethodAdditionalFeeExclTax = _taxService.GetPaymentMethodAdditionalFee(paymentMethodAdditionalFee, false, customer, out taxRate);
                 decimal paymentMethodAdditionalFeeInclTax = _taxService.GetPaymentMethodAdditionalFee(paymentMethodAdditionalFee, true, customer, out taxRate);
 
@@ -791,7 +791,7 @@ namespace Nop.Services.Orders
         /// <param name="ignoreRewardPonts">A value indicating whether we should ignore reward points (if enabled and a customer is going to use them)</param>
         /// <param name="usePaymentMethodAdditionalFee">A value indicating whether we should use payment method additional fee when calculating order total</param>
         /// <returns>Shopping cart total;Null if shopping cart total couldn't be calculated now</returns>
-        public virtual decimal? GetShoppingCartTotal(IList<ShoppingCartItem> cart,
+        public virtual decimal? GetShoppingCartTotal_original(IList<ShoppingCartItem> cart,
             bool ignoreRewardPonts = false, bool usePaymentMethodAdditionalFee = true)
         {
             decimal discountAmount;
@@ -799,7 +799,7 @@ namespace Nop.Services.Orders
             int redeemedRewardPoints;
             decimal redeemedRewardPointsAmount;
             List<AppliedGiftCard> appliedGiftCards;
-            return GetShoppingCartTotal(cart, 
+            return GetShoppingCartTotal_original(cart, 
                 out discountAmount,
                 out appliedDiscount,
                 out appliedGiftCards,
@@ -821,7 +821,7 @@ namespace Nop.Services.Orders
         /// <param name="ignoreRewardPonts">A value indicating whether we should ignore reward points (if enabled and a customer is going to use them)</param>
         /// <param name="usePaymentMethodAdditionalFee">A value indicating whether we should use payment method additional fee when calculating order total</param>
         /// <returns>Shopping cart total;Null if shopping cart total couldn't be calculated now</returns>
-        public virtual decimal? GetShoppingCartTotal(IList<ShoppingCartItem> cart,
+        public virtual decimal? GetShoppingCartTotal_original(IList<ShoppingCartItem> cart,
             out decimal discountAmount, out Discount appliedDiscount,
             out List<AppliedGiftCard> appliedGiftCards,
             out int redeemedRewardPoints, out decimal redeemedRewardPointsAmount,
@@ -864,6 +864,7 @@ namespace Nop.Services.Orders
             if (usePaymentMethodAdditionalFee && !String.IsNullOrEmpty(paymentMethodSystemName))
             {
                 decimal paymentMethodAdditionalFee = _paymentService.GetAdditionalHandlingFee(cart,
+                    new List<ShippingCart>(), 
                     paymentMethodSystemName);
                 paymentMethodAdditionalFeeWithoutTax =
                     _taxService.GetPaymentMethodAdditionalFee(paymentMethodAdditionalFee,
