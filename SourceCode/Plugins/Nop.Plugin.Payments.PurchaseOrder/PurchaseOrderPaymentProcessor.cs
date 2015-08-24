@@ -82,9 +82,9 @@ namespace Nop.Plugin.Payments.PurchaseOrder
         /// </summary>
         /// <param name="cart">Shoping cart</param>
         /// <returns>Additional handling fee</returns>
-        public decimal GetAdditionalHandlingFee(IList<ShoppingCartItem> cart)
+        public decimal GetAdditionalHandlingFee(IList<ShoppingCartItem> cart, IList<ShippingCart> shippingCarts)
         {
-            var result = this.CalculateAdditionalFee(_orderTotalCalculationService, cart,
+            var result = this.CalculateAdditionalFee(_orderTotalCalculationService, cart, shippingCarts,
                 _purchaseOrderPaymentSettings.AdditionalFee, _purchaseOrderPaymentSettings.AdditionalFeePercentage);
             return result;
         }

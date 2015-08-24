@@ -110,10 +110,10 @@ namespace Nop.Plugin.Payments.EasyPay2
             return result;
         }
 
-        public decimal GetAdditionalHandlingFee(IList<ShoppingCartItem> cart)
+        public decimal GetAdditionalHandlingFee(IList<ShoppingCartItem> cart, IList<ShippingCart> shippingCarts)
         {
             Debug.WriteLine("GetAdditionalHandlingFee");
-            var result = this.CalculateAdditionalFee(_orderTotalCalculationService, cart,
+            var result = this.CalculateAdditionalFee(_orderTotalCalculationService, cart, shippingCarts,
                 _easyPay2PaymentSettings.additionalFee, _easyPay2PaymentSettings.additionalFeePercentage);
             return result;
         }

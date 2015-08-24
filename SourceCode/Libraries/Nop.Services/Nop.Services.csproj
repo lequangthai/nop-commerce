@@ -211,6 +211,7 @@
     <Compile Include="Helpers\UserAgentHelper.cs" />
     <Compile Include="Logging\ClearLogTask.cs" />
     <Compile Include="Media\ResizeType.cs" />
+    <Compile Include="Orders\OrderTotalCalculationService.OrderShipping.cs" />
     <Compile Include="Orders\IOrderShippingService.cs" />
     <Compile Include="Orders\OrderShippingService.cs" />
     <Compile Include="Shipping\EventPublisherExtensions.cs" />

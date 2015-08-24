@@ -573,12 +573,13 @@ namespace Nop.Web.Controllers
             var shippingCartItems = new List<ShippingCartItem>();
             shippingCartItems = _workContext.CurrentCustomer.ShippingCarts.Aggregate(shippingCartItems,
                 (current, shippingCart) => current.Union(shippingCart.ShippingCartItems).ToList());
+            var shippingCarts = shippingCartItems.Select(c => c.ShippingCart).Distinct().ToList();
             var model = new ShippingOrderModel();
             foreach (var shippingCart in _workContext.CurrentCustomer.ShippingCarts)
             {
                 model.ShippingOrderItems.Add(BuildShippingOrderItemModel(shippingCart, shippingCartItems, shoppingCartItems));
             }
-            model.OrderTotalsModel = PrepareOrderTotalsModel(shoppingCartItems, false);
+            model.OrderTotalsModel = PrepareOrderTotalsModel(shoppingCartItems, shippingCarts,  false);
             //add shippingFee of each shipment
             var currentShippingCarts =
                 _workContext.CurrentCustomer.ShippingCarts.Where(
@@ -616,7 +617,7 @@ namespace Nop.Web.Controllers
                 }
             }
             PrepareShoppingCartModel(model.ShoppingCartModel, cart, false, false, false, false);
-            model.OrderTotalsModel = PrepareOrderTotalsModel(cart, false);
+            model.OrderTotalsModel = PrepareOrderTotalsModel(cart, new List<ShippingCart>(),  false);
             if (model.OrderTotalsModel.OrderTotalValue >= OrderTotalValueForFreeShipping)
             {
                 shippingCart.ShippingFee = 0;

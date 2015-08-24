@@ -137,7 +137,12 @@ namespace Nop.Services.Orders
         /// <param name="cart">Cart</param>
         /// <param name="ignoreRewardPonts">A value indicating whether we should ignore reward points (if enabled and a customer is going to use them)</param>
         /// <param name="usePaymentMethodAdditionalFee">A value indicating whether we should use payment method additional fee when calculating order total</param>
-        decimal? GetShoppingCartTotal(IList<ShoppingCartItem> cart, bool ignoreRewardPonts = false, 
+        decimal? GetShoppingCartTotal_original(IList<ShoppingCartItem> cart, bool ignoreRewardPonts = false, 
+            bool usePaymentMethodAdditionalFee = true);
+
+        decimal? GetShoppingCartTotal(IList<ShoppingCartItem> cart, 
+            IList<ShippingCart> shippingCarts, 
+            bool ignoreRewardPonts = false,
             bool usePaymentMethodAdditionalFee = true);
 
         /// <summary>
@@ -152,14 +157,19 @@ namespace Nop.Services.Orders
         /// <param name="ignoreRewardPonts">A value indicating whether we should ignore reward points (if enabled and a customer is going to use them)</param>
         /// <param name="usePaymentMethodAdditionalFee">A value indicating whether we should use payment method additional fee when calculating order total</param>
         /// <returns>Shopping cart total;Null if shopping cart total couldn't be calculated now</returns>
-        decimal? GetShoppingCartTotal(IList<ShoppingCartItem> cart,
+        decimal? GetShoppingCartTotal_original(IList<ShoppingCartItem> cart,
             out decimal discountAmount, out Discount appliedDiscount,
             out List<AppliedGiftCard> appliedGiftCards,
             out int redeemedRewardPoints, out decimal redeemedRewardPointsAmount,
             bool ignoreRewardPonts = false, bool usePaymentMethodAdditionalFee = true);
 
 
-
+        decimal? GetShoppingCartTotal(IList<ShoppingCartItem> cart,
+            IList<ShippingCart> shippingCarts, 
+            out decimal discountAmount, out Discount appliedDiscount,
+            out List<AppliedGiftCard> appliedGiftCards,
+            out int redeemedRewardPoints, out decimal redeemedRewardPointsAmount,
+            bool ignoreRewardPonts = false, bool usePaymentMethodAdditionalFee = true);
 
 
         /// <summary>

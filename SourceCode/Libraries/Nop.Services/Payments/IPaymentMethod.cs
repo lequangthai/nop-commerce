@@ -38,7 +38,7 @@ namespace Nop.Services.Payments
         /// </summary>
         /// <param name="cart">Shoping cart</param>
         /// <returns>Additional handling fee</returns>
-        decimal GetAdditionalHandlingFee(IList<ShoppingCartItem> cart);
+        decimal GetAdditionalHandlingFee(IList<ShoppingCartItem> cart, IList<ShippingCart> shippingCarts);
 
         /// <summary>
         /// Captures payment

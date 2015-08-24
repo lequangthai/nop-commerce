@@ -67,5 +67,7 @@ namespace Nop.Core.Domain.Orders
         public string From { get; set; }
 
         public string Message { get; set; }
+
+        public decimal ShippingFee { get; set; }
     }
 }

@@ -872,7 +872,7 @@ namespace Nop.Web.Controllers
         }
 
         [NonAction]
-        protected virtual OrderTotalsModel PrepareOrderTotalsModel(IList<ShoppingCartItem> cart, bool isEditable)
+        protected virtual OrderTotalsModel PrepareOrderTotalsModel(IList<ShoppingCartItem> cart, IList<ShippingCart> shippingCarts, bool isEditable)
         {
             var model = new OrderTotalsModel();
             model.IsEditable = isEditable;
@@ -923,7 +923,7 @@ namespace Nop.Web.Controllers
                 //payment method fee
                 var paymentMethodSystemName = _workContext.CurrentCustomer.GetAttribute<string>(
                     SystemCustomerAttributeNames.SelectedPaymentMethod, _storeContext.CurrentStore.Id);
-                decimal paymentMethodAdditionalFee = _paymentService.GetAdditionalHandlingFee(cart, paymentMethodSystemName);
+                decimal paymentMethodAdditionalFee = _paymentService.GetAdditionalHandlingFee(cart, shippingCarts, paymentMethodSystemName);
                 decimal paymentMethodAdditionalFeeWithTaxBase = _taxService.GetPaymentMethodAdditionalFee(paymentMethodAdditionalFee, _workContext.CurrentCustomer);
                 if (paymentMethodAdditionalFeeWithTaxBase > decimal.Zero)
                 {
@@ -976,6 +976,7 @@ namespace Nop.Web.Controllers
                 int redeemedRewardPoints;
                 decimal redeemedRewardPointsAmount;
                 decimal? shoppingCartTotalBase = _orderTotalCalculationService.GetShoppingCartTotal(cart,
+                    shippingCarts,
                     out orderTotalDiscountAmountBase, out orderTotalAppliedDiscount,
                     out appliedGiftCards, out redeemedRewardPoints, out redeemedRewardPointsAmount);
                 if (shoppingCartTotalBase.HasValue)
@@ -2296,7 +2297,7 @@ namespace Nop.Web.Controllers
                 .Where(sci => sci.ShoppingCartType == ShoppingCartType.ShoppingCart)
                 .LimitPerStore(_storeContext.CurrentStore.Id)
                 .ToList();
-            var model = PrepareOrderTotalsModel(cart, isEditable);
+            var model = PrepareOrderTotalsModel(cart, new List<ShippingCart>(),  isEditable);
             return PartialView(model);
         }
 
