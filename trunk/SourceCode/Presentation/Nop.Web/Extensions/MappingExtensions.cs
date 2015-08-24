@@ -111,6 +111,8 @@ namespace Nop.Web.Extensions
                 model.ZipPostalCode = address.ZipPostalCode;
                 model.PhoneNumber = address.PhoneNumber;
                 model.FaxNumber = address.FaxNumber;
+                model.RecipientTitle = address.RecipientTitle;
+                model.RecipientName = address.RecipientName;
             }
 
             if (address == null && prePopulateWithCustomerFields)
@@ -130,6 +132,8 @@ namespace Nop.Web.Extensions
                 //model.StateProvinceId = customer.GetAttribute<int>(SystemCustomerAttributeNames.StateProvinceId);
                 model.PhoneNumber = customer.GetAttribute<string>(SystemCustomerAttributeNames.Phone);
                 model.FaxNumber = customer.GetAttribute<string>(SystemCustomerAttributeNames.Fax);
+                model.RecipientTitle = customer.GetAttribute<string>(SystemCustomerAttributeNames.RecipientTitle);
+                model.RecipientName = customer.GetAttribute<string>(SystemCustomerAttributeNames.RecipientName);
             }
 
             //countries and states

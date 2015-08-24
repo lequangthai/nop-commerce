@@ -17,6 +17,7 @@ using Nop.Services.Payments;
 using Nop.Services.Security;
 using Nop.Services.Seo;
 using Nop.Web.Extensions;
+using Nop.Web.Framework;
 using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Security;
 using Nop.Web.Models.ShoppingCart;
@@ -26,6 +27,8 @@ namespace Nop.Web.Controllers
     public partial class ShoppingCartController : BasePublicController
     {
         private const string MySelf = "myself";
+        private const decimal OrderTotalValueForFreeShipping = 150;
+        private const decimal ShippingFee = 15;
 
         #region Ultities
         [NonAction]
@@ -536,15 +539,114 @@ namespace Nop.Web.Controllers
             return View(model);
         }
 
+        public ActionResult ShippingOrderReview()
+        {
+            var model = BuildShippingOrderModel();
+            return PartialView(model);
+        }
+
+        [HttpPost, ActionName("ShippingCart")]
+        [FormValueRequired("updateshippingcart")]
+        public ActionResult ShippingOrderConfirm(bool isAcceptTerm)
+        {
+            if (isAcceptTerm)
+            {
+                return RedirectToRoute("PAYMENT_PROCESS");
+            }
+            var model = BuildShippingOrderModel();
+            return PartialView(model);
+        }
+
         [ChildActionOnly]
         public ActionResult ShippingOrderTotals(bool isEditable)
         {
-            var cart = _workContext.CurrentCustomer.ShoppingCartItems
+            var model = BuildShippingOrderModel();
+            return PartialView(model);
+        }
+
+        private ShippingOrderModel BuildShippingOrderModel()
+        {
+            var shoppingCartItems = _workContext.CurrentCustomer.ShoppingCartItems
                 .Where(sci => sci.ShoppingCartType == ShoppingCartType.ShoppingCart)
                 .LimitPerStore(_storeContext.CurrentStore.Id)
                 .ToList();
-            var model = PrepareOrderTotalsModel(cart, isEditable);
-            return PartialView(model);
+            var shippingCartItems = new List<ShippingCartItem>();
+            shippingCartItems = _workContext.CurrentCustomer.ShippingCarts.Aggregate(shippingCartItems,
+                (current, shippingCart) => current.Union(shippingCart.ShippingCartItems).ToList());
+            var model = new ShippingOrderModel();
+            foreach (var shippingCart in _workContext.CurrentCustomer.ShippingCarts)
+            {
+                model.ShippingOrderItems.Add(BuildShippingOrderItemModel(shippingCart, shippingCartItems, shoppingCartItems));
+            }
+            model.OrderTotalsModel = PrepareOrderTotalsModel(shoppingCartItems, false);
+            //add shippingFee of each shipment
+            var currentShippingCarts =
+                _workContext.CurrentCustomer.ShippingCarts.Where(
+                    shippingCart =>
+                        shippingCart.ShippingCartItems.Any(
+                            shippingCartItem =>
+                                shoppingCartItems.Any(
+                                    shoppingCarItem => shoppingCarItem.Id == shippingCartItem.ShoppingCartItemId)));
+            foreach (var shippingCart in currentShippingCarts)
+            {
+                model.OrderTotalsModel.OrderTotalValue += shippingCart.ShippingFee;
+            }
+            return model;
         }
+
+        private ShippingOrderItemModel BuildShippingOrderItemModel(ShippingCart shippingCart,
+            List<ShippingCartItem> shippingCartItems, List<ShoppingCartItem> shoppingCartItems)
+        {
+            var model = new ShippingOrderItemModel
+            {
+                ShippingCart = shippingCart,
+                ShoppingCartModel = new ShoppingCartModel()
+            };
+            var cart = new List<ShoppingCartItem>();
+            foreach (var shoppingCartItem in shoppingCartItems)
+            {
+                var count =
+                    shippingCartItems.Count(
+                        c => c.ShippingCartId == shippingCart.Id && c.ShoppingCartItemId == shoppingCartItem.Id);
+                if (count > 0)
+                {
+                    var modelItem = shoppingCartItem.CloneViaJson();
+                    modelItem.Quantity = count;
+                    cart.Add(modelItem);
+                }
+            }
+            PrepareShoppingCartModel(model.ShoppingCartModel, cart, false, false, false, false);
+            model.OrderTotalsModel = PrepareOrderTotalsModel(cart, false);
+            if (model.OrderTotalsModel.OrderTotalValue >= OrderTotalValueForFreeShipping)
+            {
+                shippingCart.ShippingFee = 0;
+            }
+            else
+            {
+                shippingCart.ShippingFee = ShippingFee;
+            }
+            return model;
+        }
+    }
+
+    public class ShippingOrderModel
+    {
+        public ShippingOrderModel()
+        {
+            ShippingOrderItems = new List<ShippingOrderItemModel>();
+        }
+
+        public List<ShippingOrderItemModel> ShippingOrderItems { get; set; }
+
+        public OrderTotalsModel OrderTotalsModel { get; set; }
+    }
+
+    public class ShippingOrderItemModel
+    {
+        public ShippingCart ShippingCart { get; set; }
+
+        public ShoppingCartModel ShoppingCartModel { get; set; }
+
+        public OrderTotalsModel OrderTotalsModel { get; set; }
     }
 }

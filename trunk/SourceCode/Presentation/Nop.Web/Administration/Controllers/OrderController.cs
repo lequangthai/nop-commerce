@@ -630,7 +630,7 @@ namespace Nop.Admin.Controllers
                     foreach (var orderShippingItem in orderShipping.OrderShippingItems)
                     {
                         var orderItem = model.Items.FirstOrDefault(c => c.Id == orderShippingItem.OrderItem.Id);
-                        var newOrderItem = orderItem.CloneJson();
+                        var newOrderItem = orderItem.CloneViaJson();
                         newOrderItem.Quantity = orderShippingItem.Quantity;
                         if (orderItem != null)
                         {
