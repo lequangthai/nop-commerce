@@ -22,12 +22,12 @@
             </div>
         }
         @*we add enctype = "multipart/form-data" because "File upload" attribute control type requires it*@
-        using (Html.BeginRouteForm("ShoppingCart", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        using (Html.BeginForm("ShippingCart","ShoppingCart", FormMethod.Post, new { enctype = "multipart/form-data" }))
         {
             <div class="basket">
                 <ul>
                     <li class="headings ">
-                        @if (false && Model.IsEditable)
+                        @if (Model.IsEditable)
                         {
                             <div class="remove-from-cart">
                                 @T("ShoppingCart.Remove")
@@ -48,9 +48,9 @@
                     @foreach (var item in Model.Items)
                     {
                         <li>
-                            @if (false && Model.IsEditable)
+                            @if ( Model.IsEditable)
                             {
-                                <div class="remove-from-cart">
+                                <div class="remove-from-cart remove">
                                     <input type="checkbox" name="removefromcart" value="@(item.Id)" />
                                 </div>
                             }
@@ -146,9 +146,10 @@
                             </div>
 
                             <div class="recipient" data-cartid="@item.Id">
-                                <div class="item-recipient" data-rename="MySelt"></div>
-                                <div class="item-recipient" data-rename="Thanh Truong"></div>
-                                <div class="item-recipient" data-rename=""></div>
+                                @foreach (var recipient in item.ShippingCartItems)
+                                {
+                                    <div class="item-recipient" data-rename="@recipient.RecipientName"></div>
+                                }
                             </div>
                         </li>
             <!-- item -->
@@ -157,11 +158,15 @@
                 <div id="recipient-warning-box" title="@T("Checkout.ShippingAddress")" style="display:none;">
                     <p>@T("Checkout.ShippingAddress.PleaseInputRecipient")</p>
                 </div>
-                <script type="text/javascript">
-                    var myself = "MySelf";
-                    var addnew = "New Recipient";
-                    var recipientOptions = [myself, "Thanh Truong", "Thai Le", addnew];
+                <input id="recipient-names" type="hidden" value="@String.Join(",",Model.RecipientNames)" />
 
+                <script type="text/javascript">
+                    var myself = "myself";
+                    var addnew = "new recipient";
+                    var recipientOptions = $('#recipient-names').val().split(',');
+                    if (recipientOptions.indexOf(myself) == -1) recipientOptions.splice(0, 0, myself);
+                    if (recipientOptions.indexOf(addnew) == -1) recipientOptions.splice(recipientOptions.length - 1, 0, addnew);
+                    
                     function loadRecipients() {
                         var recipientSelectList = $("<select class='select recipient-select'><select>");
                         $.each(recipientOptions, function (i) {
@@ -221,8 +226,6 @@
                         var recipients = $(this).parents('li:first').find('.recipient');
                         var totalRow = $(recipients).find('.item-recipient').length;
                         $(recipients).find('.item-recipient').each(function () {
-                            console.log($(this).index());
-                            console.log(this);
                             if ($(this).index() > qty-1) $(this).remove();
                         })
                         for (i = totalRow+1; i <= qty; i++) {
@@ -236,8 +239,8 @@
                         if ($('form .frm-add-new-recipient').length > 0) {
                             valid = false;
                             $('form .frm-add-new-recipient').addClass('required');
+                            $('#recipient-warning-box').dialog();
                         }
-                        $('#recipient-warning-box').dialog();
                         return valid;
                     }
                     $(document).ready(function () {
@@ -246,7 +249,7 @@
                                 return false;
                             }
                         })
-                    })
+                    });
                 </script>
 
             </div>
