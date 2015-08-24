@@ -29,6 +29,8 @@ namespace Nop.Core.Domain.Orders
 
         public string RecipientName { get; set; }
 
+        public decimal ShippingFee { get; set; }
+
 
         private ICollection<ShippingCartItem> _shippingCartItems;
         public virtual ICollection<ShippingCartItem> ShippingCartItems

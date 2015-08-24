@@ -21,6 +21,8 @@ namespace Nop.Core.Domain.Customers
         public static string VatNumberStatusId { get { return "VatNumberStatusId"; } }
         public static string TimeZoneId { get { return "TimeZoneId"; } }
         public static string CustomCustomerAttributes { get { return "CustomCustomerAttributes"; } }
+        public static string RecipientTitle { get { return "RecipientTitle"; } }
+        public static string RecipientName { get { return "RecipientName"; } }
 
         //Other attributes
         public static string DiscountCouponCode { get { return "DiscountCouponCode"; } }
